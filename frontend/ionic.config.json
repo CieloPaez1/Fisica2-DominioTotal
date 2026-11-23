@@ -1,0 +1,7 @@
+{
+  "name": "fisica2-trainer-ionic",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

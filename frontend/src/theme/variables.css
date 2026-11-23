@@ -1,0 +1,62 @@
+:root {
+  /** PALETA ILUSTRADA "¡HOLA CIELO! ♡ — FÍSICA 2 DOMINIO TOTAL" **/
+  --cielo-bg-midnight: #0e122b;
+  --cielo-bg-navy: #151a3a;
+  --cielo-bg-card-dark: #192045;
+  --cielo-bg-card-navy: #202854;
+
+  --cielo-lavender-light: #e7dfff;
+  --cielo-lavender-pastel: #d7c9ff;
+  --cielo-lavender-mid: #b79eff;
+  --cielo-purple-main: #8c6df7;
+  --cielo-purple-deep: #6b4ce6;
+  --cielo-purple-glow: rgba(140, 109, 247, 0.45);
+
+  --cielo-gold: #ffd166;
+  --cielo-coral: #ff5d73;
+  --cielo-emerald: #38e595;
+  --cielo-cyan: #5ce1e6;
+
+  --font-title: 'Baloo 2', 'Space Grotesk', sans-serif;
+  --font-display: 'Baloo 2', 'Space Grotesk', sans-serif;
+  --font-script: 'Caveat', cursive;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /** Variables Ionic **/
+  --ion-color-primary: #8c6df7;
+  --ion-color-primary-rgb: 140, 109, 247;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #7b60d9;
+  --ion-color-primary-tint: #987cf8;
+
+  --ion-color-secondary: #d7c9ff;
+  --ion-color-secondary-rgb: 215, 201, 255;
+  --ion-color-secondary-contrast: #151a3a;
+  --ion-color-secondary-contrast-rgb: 21, 26, 58;
+  --ion-color-secondary-shade: #bdb1e0;
+  --ion-color-secondary-tint: #dbceff;
+
+  --ion-color-tertiary: #ffd166;
+  --ion-color-success: #38e595;
+  --ion-color-warning: #ffd166;
+  --ion-color-danger: #ff5d73;
+
+  --ion-background-color: #0e122b;
+  --ion-background-color-rgb: 14, 18, 43;
+  --ion-text-color: #f8fafc;
+  --ion-text-color-rgb: 248, 250, 252;
+  --ion-card-background: #192045;
+  --ion-item-background: transparent;
+  --ion-toolbar-background: #121735;
+  --ion-toolbar-color: #f8fafc;
+  --ion-font-family: var(--font-sans);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #0e122b;
+  color: #f8fafc;
+  overflow-x: hidden;
+}

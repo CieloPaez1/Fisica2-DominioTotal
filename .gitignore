@@ -1,0 +1,22 @@
+# Dependencies & Build Outputs
+**/node_modules/
+**/.angular/
+**/dist/
+**/www/
+**/target/
+
+# Local H2 Database & Runtime Data
+backend/data/
+*.mv.db
+*.trace.db
+
+# Local Backups & Temp Files
+backup_pre_transform/
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE Configs
+.idea/
+.vscode/
+*.iml

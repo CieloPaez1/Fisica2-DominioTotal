@@ -47,12 +47,14 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
           <app-cielo-art [name]="activeMode === 'flashcards' ? 'tool-flashcards' : 'stopwatch-90s'" [width]="115" [height]="100"></app-cielo-art>
           <div class="ah-copy">
             <div class="ah-badges">
-              <span class="pill-purple">🃏 ENTRENADOR DE MEMORIA Y REFLEJOS • 24 TARJETAS</span>
+              <span class="pill-purple">
+                🔓 UNIDADES HABILITADAS: UNIDAD 1{{ highestUnlockedUnit > 1 ? (' A UNIDAD ' + highestUnlockedUnit) : ' (EXCLUSIVO)' }} • {{ masterBank.length }} TARJETAS
+              </span>
               <span class="pill-gold">🏆 RÉCORD: {{ highScore }} PTS</span>
             </div>
             <h1>Flashcards & Muerte Súbita (90s) ♡</h1>
             <p>
-              Elegí entre repasar a tu ritmo con las <strong>Tarjetas Flashcards Volteables</strong> o jugar al desafío contrarreloj de <strong>90 Segundos</strong>.
+              Solo aparecen tarjetas y preguntas de las unidades que ya desbloqueaste (<strong>Unidad 1{{ highestUnlockedUnit > 1 ? ' a Unidad ' + highestUnlockedUnit : '' }}</strong>). Al completar cada unidad al 100%, sus tarjetas se suman automáticamente al mazo.
             </p>
           </div>
           <div class="mode-toggle-pills">
@@ -646,27 +648,44 @@ export class SpeedDrillPage implements OnInit, OnDestroy {
   isCorrect = false;
 
   private timerInterval: any;
+  highestUnlockedUnit = 1;
 
-  masterBank: SpeedDrillQuestionDto[] = SPEED_DRILL_QUESTIONS.map(q => ({
-    id: q.id,
-    unitNumber: q.unitNumber,
-    category: q.category,
-    prompt: q.prompt,
-    options: q.options,
-    correctIndex: q.correctIndex,
-    explanation: q.explanation,
-    ruleHint: q.ruleHint
-  }));
-
+  masterBank: SpeedDrillQuestionDto[] = [];
   questions: SpeedDrillQuestionDto[] = [];
 
   constructor(private api: Fisica2ApiService) {}
 
   ngOnInit() {
     this.highScore = parseInt(localStorage.getItem(HIGH_SCORE_KEY) || '0', 10) || 0;
-    this.api.getSpeedDrillRound(24).subscribe((qs) => {
-      if (qs && qs.length > 0) {
-        this.masterBank = qs;
+    this.api.getUnits().subscribe();
+    this.api.units$.subscribe((units) => {
+      this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
+      this.refreshUnlockedDeck();
+    });
+  }
+
+  private refreshUnlockedDeck() {
+    const filteredLocal: SpeedDrillQuestionDto[] = SPEED_DRILL_QUESTIONS
+      .filter(q => q.unitNumber <= this.highestUnlockedUnit)
+      .map(q => ({
+        id: q.id,
+        unitNumber: q.unitNumber,
+        category: q.category,
+        prompt: q.prompt,
+        options: q.options,
+        correctIndex: q.correctIndex,
+        explanation: q.explanation,
+        ruleHint: q.ruleHint
+      }));
+    this.masterBank = filteredLocal;
+    if (this.flashIndex >= this.masterBank.length) {
+      this.flashIndex = 0;
+    }
+
+    this.api.getSpeedDrillRound(30).subscribe((qs) => {
+      const strictlyUnlocked = (qs || []).filter(item => (item.unitNumber || 1) <= this.highestUnlockedUnit);
+      if (strictlyUnlocked.length > 0) {
+        this.masterBank = strictlyUnlocked;
       }
     });
   }

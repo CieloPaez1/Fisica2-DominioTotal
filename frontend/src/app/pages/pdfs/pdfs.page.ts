@@ -134,14 +134,17 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
             </div>
 
             <div class="shelf-group">
-              <button class="shelf-pill" [class.active]="selectedUnitFilter === 0" (click)="selectedUnitFilter = 0">Todas</button>
+              <button class="shelf-pill" [class.active]="selectedUnitFilter === 0" (click)="selectedUnitFilter = 0">
+                🔓 Desbloqueadas (U1{{ highestUnlockedUnit > 1 ? '–U' + highestUnlockedUnit : '' }})
+              </button>
               <button
                 *ngFor="let uNum of [1, 2, 3, 4, 5, 6, 7, 8, 9]"
                 class="shelf-pill"
                 [class.active]="selectedUnitFilter === uNum"
-                (click)="selectedUnitFilter = uNum"
+                [style.opacity]="uNum <= highestUnlockedUnit ? '1' : '0.45'"
+                (click)="selectPdfUnitFilter(uNum)"
               >
-                U{{ uNum }}
+                {{ uNum <= highestUnlockedUnit ? 'U' + uNum : '🔒U' + uNum }}
               </button>
             </div>
           </div>
@@ -544,6 +547,7 @@ export class PdfsPage implements OnInit {
   manualDocTitle = '';
   manualDocUnit = 0;
   manualDocContent = '';
+  highestUnlockedUnit = 1;
 
   constructor(private api: Fisica2ApiService) {}
 
@@ -578,7 +582,22 @@ export class PdfsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.api.getUnits().subscribe();
+    this.api.units$.subscribe((units) => {
+      this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
+      if (this.selectedUnitFilter > this.highestUnlockedUnit) {
+        this.selectedUnitFilter = 0;
+      }
+    });
     this.loadPdfs();
+  }
+
+  selectPdfUnitFilter(uNum: number) {
+    if (uNum > this.highestUnlockedUnit) {
+      this.uploadSuccessMessage = `🔒 Los tomos de la Unidad ${uNum} se habilitan cuando completes la Unidad ${this.highestUnlockedUnit} al 100%.`;
+      return;
+    }
+    this.selectedUnitFilter = uNum;
   }
 
   loadPdfs() {
@@ -589,6 +608,13 @@ export class PdfsPage implements OnInit {
 
   get filteredPdfs(): PdfMetadataDto[] {
     return this.allPdfs.filter((p) => {
+      // Mostrar únicamente documentos pertenecientes a unidades desbloqueadas (o programa general)
+      const docUnits = p.unitNumbers && p.unitNumbers.length ? p.unitNumbers : [1];
+      const belongsToUnlocked = p.category === 'programa' || docUnits.some(u => u <= this.highestUnlockedUnit);
+      if (!belongsToUnlocked) {
+        return false;
+      }
+
       if (this.selectedCategory !== 'all' && p.category !== this.selectedCategory) {
         return false;
       }

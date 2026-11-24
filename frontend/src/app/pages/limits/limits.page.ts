@@ -11,6 +11,7 @@ import {
   IonContent,
 } from '@ionic/angular/standalone';
 import { KatexRenderService } from '../../services/katex-render.service';
+import { Fisica2ApiService } from '../../services/fisica2-api.service';
 import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo-illustration.component';
 
 interface LimitModel {
@@ -85,17 +86,17 @@ interface LimitModel {
           </div>
         </div>
 
-        <!-- SELECTOR ILUSTRADO DE FENÓMENOS FÍSICOS -->
+        <!-- SELECTOR ILUSTRADO DE FENÓMENOS FÍSICOS (SOLO UNIDADES DESBLOQUEADAS) -->
         <div class="model-picker-bar">
           <button
-            *ngFor="let m of models"
+            *ngFor="let m of unlockedModels"
             class="model-tab-btn"
             [class.active]="currentModel.id === m.id"
             (click)="selectModel(m)"
           >
             <app-cielo-art [name]="getUnitArt(m.unitNumber)" [width]="44" [height]="44"></app-cielo-art>
             <div class="mt-meta">
-              <span class="mt-unit">UNIDAD {{ m.unitNumber }}</span>
+              <span class="mt-unit">🔓 UNIDAD {{ m.unitNumber }}</span>
               <span class="mt-name">{{ m.name }}</span>
             </div>
           </button>
@@ -598,6 +599,56 @@ export class LimitsPage implements OnInit {
 
   models: LimitModel[] = [
     {
+      id: 'coulomb_r',
+      unitNumber: 1,
+      name: 'Ley de Coulomb (Decaimiento 1/r²)',
+      formulaLatex: 'F(r) = \\frac{k \\cdot |q_1| \\cdot |q_2|}{r^2}',
+      xLabel: 'r (distancia entre cargas)',
+      yLabel: 'F(r)',
+      xUnit: 'm',
+      yUnit: 'N',
+      xMin: 0.5,
+      xMax: 10,
+      xStep: 0.1,
+      defaultX: 2.0,
+      paramLabel: 'Producto de cargas |q₁·q₂|',
+      paramSymbol: 'q₁q₂',
+      paramUnit: 'μC²',
+      paramMin: 1,
+      paramMax: 20,
+      paramStep: 1,
+      defaultParam: 8,
+      evalFn: (r, qq) => (0.899 * qq) / Math.max(0.1, r * r),
+      asymptoteInfo: () => ({
+        yAsymptote: 0,
+        label: 'Asíntota Horizontal F → 0 cuando r → ∞'
+      }),
+      analyzeRegime: (r) => {
+        if (r <= 0.8) {
+          return {
+            regimeTitle: 'Límite de Corta Distancia (r → 0⁺)',
+            mathLimitExplanation: 'Al tender r a cero en el denominador r², el cociente k·q₁q₂ / r² crece abruptamente hacia infinito.',
+            physicalMeaning: 'A distancias muy pequeñas la repulsión o atracción electrostática se vuelve enorme.',
+            colloquiumRule: 'Recordá que la Ley de Coulomb vale para cargas puntuales (tamaño mucho menor que r).'
+          };
+        }
+        if (r >= 6.0) {
+          return {
+            regimeTitle: 'Límite Asintótico Lejano (r → ∞)',
+            mathLimitExplanation: 'Cuando r crece mucho, 1/r² tiende rápidamente a la asíntota horizontal F = 0.',
+            physicalMeaning: 'Cada vez que duplicás la distancia r, la fuerza cae 4 veces.',
+            colloquiumRule: 'A distancia infinita (r → ∞) las cargas dejan de interactuar y se toma energía potencial U(∞) = 0.'
+          };
+        }
+        return {
+          regimeTitle: 'Régimen de Inversa del Cuadrado (1 / r²)',
+          mathLimitExplanation: 'La pendiente negativa muestra cómo cae F(r) proporcionalmente a r⁻².',
+          physicalMeaning: 'Comprobá con el slider que en r = 4 m la fuerza es exactamente la cuarta parte que en r = 2 m.',
+          colloquiumRule: 'Siempre pasá r de centímetros a metros antes de elevar al cuadrado.'
+        };
+      }
+    },
+    {
       id: 'anillo_z',
       unitNumber: 1,
       name: 'Anillo Cargado en Eje z',
@@ -832,11 +883,26 @@ export class LimitsPage implements OnInit {
   ];
 
   currentModel: LimitModel = this.models[0];
+  highestUnlockedUnit = 1;
 
-  constructor(private katex: KatexRenderService) {}
+  constructor(
+    private katex: KatexRenderService,
+    private api: Fisica2ApiService
+  ) {}
 
   ngOnInit() {
+    this.api.getUnits().subscribe();
+    this.api.units$.subscribe((units) => {
+      this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
+      if (this.currentModel.unitNumber > this.highestUnlockedUnit) {
+        this.selectModel(this.unlockedModels[0] || this.models[0]);
+      }
+    });
     this.selectModel(this.models[0]);
+  }
+
+  get unlockedModels(): LimitModel[] {
+    return this.models.filter(m => m.unitNumber <= this.highestUnlockedUnit);
   }
 
   selectModel(m: LimitModel) {

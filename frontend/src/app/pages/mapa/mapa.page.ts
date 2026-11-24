@@ -10,6 +10,7 @@ import {
   IonContent,
 } from '@ionic/angular/standalone';
 import { CieloIllustrationComponent } from '../../components/cielo-illustration.component';
+import { Fisica2ApiService } from '../../services/fisica2-api.service';
 
 interface ConceptNode {
   id: number;
@@ -87,11 +88,15 @@ interface ConceptNode {
                 [attr.cx]="node.x"
                 [attr.cy]="node.y"
                 r="36"
-                [attr.fill]="getNodeColor(node)"
+                [attr.fill]="isUnitUnlocked(node.id) ? getNodeColor(node) : '#334155'"
                 class="node-circle"
               />
-              <text [attr.x]="node.x" [attr.y]="node.y - 4" class="node-num" text-anchor="middle">U{{ node.id }}</text>
-              <text [attr.x]="node.x" [attr.y]="node.y + 14" class="node-short-label" text-anchor="middle">{{ node.label }}</text>
+              <text [attr.x]="node.x" [attr.y]="node.y - 4" class="node-num" text-anchor="middle">
+                {{ isUnitUnlocked(node.id) ? ('U' + node.id) : ('🔒U' + node.id) }}
+              </text>
+              <text [attr.x]="node.x" [attr.y]="node.y + 14" class="node-short-label" text-anchor="middle">
+                {{ isUnitUnlocked(node.id) ? node.label : 'Bloqueada' }}
+              </text>
             </g>
           </svg>
         </div>
@@ -268,16 +273,37 @@ export class MapaPage implements OnInit {
   ];
 
   selectedNode: ConceptNode | null = null;
+  highestUnlockedUnit = 1;
+  lockedMapMsg = '';
   activeEdges: { x1: number; y1: number; x2: number; y2: number; highlighted: boolean }[] = [];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private api: Fisica2ApiService
+  ) {}
 
   ngOnInit() {
+    this.api.getUnits().subscribe();
+    this.api.units$.subscribe((units) => {
+      this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
+      if (this.selectedNode && this.selectedNode.id > this.highestUnlockedUnit) {
+        this.selectedNode = this.nodes[0];
+      }
+    });
     this.selectedNode = this.nodes[0];
     this.recomputeEdges();
   }
 
+  isUnitUnlocked(unitId: number): boolean {
+    return unitId <= this.highestUnlockedUnit;
+  }
+
   selectNode(node: ConceptNode) {
+    if (!this.isUnitUnlocked(node.id)) {
+      this.lockedMapMsg = `🔒 La Unidad ${node.id} está bloqueada en la constelación hasta que completes la Unidad ${this.highestUnlockedUnit} al 100%.`;
+      return;
+    }
+    this.lockedMapMsg = '';
     this.selectedNode = node;
     this.recomputeEdges();
   }

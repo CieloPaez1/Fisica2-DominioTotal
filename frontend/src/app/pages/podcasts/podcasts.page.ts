@@ -10,6 +10,7 @@ import {
   IonContent,
 } from '@ionic/angular/standalone';
 import { CATEDRA_PODCAST_SCRIPTS, UnitPodcastScript } from '../../data/audio-podcasts-data';
+import { Fisica2ApiService } from '../../services/fisica2-api.service';
 import { CieloIllustrationComponent } from '../../components/cielo-illustration.component';
 
 @Component({
@@ -54,18 +55,22 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
           </div>
         </div>
 
-        <!-- SELECTOR DE LAS 9 UNIDADES CON ILUSTRACIONES -->
+        <!-- SELECTOR DE UNIDADES (DESBLOQUEO SECUENCIAL ESTRICTO AL 100%) -->
         <div class="unit-episodes-bar">
           <button
             *ngFor="let ep of episodes"
             class="ep-btn"
             [class.active]="selectedUnit === ep.unitNumber"
+            [style.opacity]="isUnitUnlocked(ep.unitNumber) ? '1' : '0.5'"
             (click)="selectUnit(ep.unitNumber)"
           >
             <app-cielo-art [name]="getUnitArt(ep.unitNumber)" [width]="40" [height]="40"></app-cielo-art>
-            <span class="eb-num">Unidad {{ ep.unitNumber }}</span>
-            <span class="eb-dur">{{ ep.durationLabel }}</span>
+            <span class="eb-num">{{ isUnitUnlocked(ep.unitNumber) ? '🔓' : '🔒' }} U{{ ep.unitNumber }}</span>
+            <span class="eb-dur">{{ isUnitUnlocked(ep.unitNumber) ? ep.durationLabel : 'Bloqueada' }}</span>
           </button>
+        </div>
+        <div class="cielo-lavender-card" *ngIf="lockedPodcastMsg" style="padding: 12px 18px; background: #ffe4e6; border: 2.5px solid #f43f5e; color: #881337; font-weight: 800;">
+          {{ lockedPodcastMsg }}
         </div>
 
         <!-- CONSOLA REPRODUCTORA ILUSTRADA -->
@@ -314,19 +319,40 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
 })
 export class PodcastsPage implements OnInit, OnDestroy {
   selectedUnit = 1;
+  highestUnlockedUnit = 1;
+  lockedPodcastMsg = '';
   speechRate = 1.0;
   isPlaying = false;
   isPaused = false;
 
   episodes: UnitPodcastScript[] = CATEDRA_PODCAST_SCRIPTS;
 
-  ngOnInit() {}
+  constructor(private api: Fisica2ApiService) {}
+
+  ngOnInit() {
+    this.api.getUnits().subscribe();
+    this.api.units$.subscribe((units) => {
+      this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
+      if (this.selectedUnit > this.highestUnlockedUnit) {
+        this.selectedUnit = this.highestUnlockedUnit;
+      }
+    });
+  }
 
   ngOnDestroy() {
     this.stopSpeech();
   }
 
+  isUnitUnlocked(unitNum: number): boolean {
+    return unitNum <= this.highestUnlockedUnit;
+  }
+
   selectUnit(unitNum: number) {
+    if (!this.isUnitUnlocked(unitNum)) {
+      this.lockedPodcastMsg = `🔒 El episodio de la Unidad ${unitNum} se desbloquea al completar la Unidad ${this.highestUnlockedUnit} al 100%.`;
+      return;
+    }
+    this.lockedPodcastMsg = '';
     this.stopSpeech();
     this.selectedUnit = unitNum;
   }

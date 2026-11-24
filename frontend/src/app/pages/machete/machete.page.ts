@@ -12,6 +12,7 @@ import {
 } from '@ionic/angular/standalone';
 import { CATEDRA_CHEATSHEETS, UnitCheatsheet } from '../../data/cheatsheet-data';
 import { KatexRenderService } from '../../services/katex-render.service';
+import { Fisica2ApiService } from '../../services/fisica2-api.service';
 import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo-illustration.component';
 
 @Component({
@@ -61,20 +62,26 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
           </div>
         </div>
 
-        <!-- SELECTOR ILUSTRADO DE LAS 9 UNIDADES -->
+        <!-- SELECTOR ILUSTRADO DE UNIDADES (DESBLOQUEO SECUENCIAL ESTRICTO AL 100%) -->
         <div class="unit-selector-strip no-print">
           <button
             *ngFor="let sheet of allSheets"
             class="u-btn"
             [class.active]="selectedUnit === sheet.unitNumber"
+            [style.opacity]="isUnitUnlocked(sheet.unitNumber) ? '1' : '0.52'"
             (click)="selectUnit(sheet.unitNumber)"
           >
             <app-cielo-art [name]="getUnitArt(sheet.unitNumber)" [width]="38" [height]="38"></app-cielo-art>
             <div class="ub-meta">
-              <span class="ub-num">UNIDAD {{ sheet.unitNumber }}</span>
-              <span class="ub-short">{{ sheet.shortTitle }}</span>
+              <span class="ub-num">{{ isUnitUnlocked(sheet.unitNumber) ? '🔓' : '🔒' }} UNIDAD {{ sheet.unitNumber }}</span>
+              <span class="ub-short">{{ isUnitUnlocked(sheet.unitNumber) ? sheet.shortTitle : 'Bloqueada' }}</span>
             </div>
           </button>
+        </div>
+
+        <div class="cielo-lavender-card no-print" *ngIf="lockedSheetMessage" style="padding: 14px 20px; background: #ffe4e6; border: 3px solid #f43f5e; display: flex; justify-content: space-between; align-items: center;">
+          <strong style="color: #881337; font-size: 0.9rem;">{{ lockedSheetMessage }}</strong>
+          <button class="cielo-btn-purple" (click)="lockedSheetMessage = ''">Entendido ♡</button>
         </div>
 
         <!-- HOJA A4 ILUSTRADA DE ESTUDIO E IMPRESIÓN -->
@@ -489,13 +496,35 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
 })
 export class MachetePage implements OnInit {
   selectedUnit = 1;
+  highestUnlockedUnit = 1;
+  lockedSheetMessage = '';
   allSheets: UnitCheatsheet[] = CATEDRA_CHEATSHEETS;
 
-  constructor(private katex: KatexRenderService) {}
+  constructor(
+    private katex: KatexRenderService,
+    private api: Fisica2ApiService
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.api.getUnits().subscribe();
+    this.api.units$.subscribe((units) => {
+      this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
+      if (this.selectedUnit > this.highestUnlockedUnit) {
+        this.selectedUnit = this.highestUnlockedUnit;
+      }
+    });
+  }
+
+  isUnitUnlocked(unitNum: number): boolean {
+    return unitNum <= this.highestUnlockedUnit;
+  }
 
   selectUnit(unitNum: number) {
+    if (!this.isUnitUnlocked(unitNum)) {
+      this.lockedSheetMessage = `🔒 El formulario de la Unidad ${unitNum} está bloqueado. Completá la Unidad ${this.highestUnlockedUnit} al 100% primero.`;
+      return;
+    }
+    this.lockedSheetMessage = '';
     this.selectedUnit = unitNum;
   }
 

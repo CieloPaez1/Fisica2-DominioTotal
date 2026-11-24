@@ -248,23 +248,28 @@ export class Fisica2ApiService {
   }
 
   // ============================================================================
-  // 2. MUERTE SÚBITA (SPEED DRILL 90s - BANCO COMPLETO)
+  // 2. MUERTE SÚBITA Y FLASHCARDS (FILTRADO ESTRICTO A UNIDADES DESBLOQUEADAS)
   // ============================================================================
   getSpeedDrillRound(count: number = 24): Observable<SpeedDrillQuestionDto[]> {
-    return this.http.get<SpeedDrillQuestionDto[]>(`${this.baseUrl}/speed-drill/round?count=${count}`).pipe(
-      catchError(() => {
-        const fallback: SpeedDrillQuestionDto[] = SPEED_DRILL_QUESTIONS.map(q => ({
-          id: q.id,
-          unitNumber: q.unitNumber,
-          category: q.category,
-          prompt: q.prompt,
-          options: q.options,
-          correctIndex: q.correctIndex,
-          explanation: q.explanation,
-          ruleHint: q.ruleHint
-        }));
-        return of(this.shuffleArray(fallback).slice(0, count));
-      })
+    const maxUnlocked = this.getHighestUnlockedUnitNumber();
+    const localUnlocked: SpeedDrillQuestionDto[] = SPEED_DRILL_QUESTIONS
+      .filter(q => q.unitNumber <= maxUnlocked)
+      .map(q => ({
+        id: q.id,
+        unitNumber: q.unitNumber,
+        category: q.category,
+        prompt: q.prompt,
+        options: q.options,
+        correctIndex: q.correctIndex,
+        explanation: q.explanation,
+        ruleHint: q.ruleHint
+      }));
+
+    return this.http.get<SpeedDrillQuestionDto[]>(`${this.baseUrl}/speed-drill/round?count=50`).pipe(
+      tap(() => {}),
+      catchError(() => of([] as SpeedDrillQuestionDto[]))
+    ).pipe(
+      mapRemoteAndLocalUnlocked(localUnlocked, maxUnlocked, count, (arr) => this.shuffleArray(arr))
     );
   }
 
@@ -728,6 +733,33 @@ export class Fisica2ApiService {
     }
     return copy;
   }
+}
+
+function mapRemoteAndLocalUnlocked(
+  localUnlocked: SpeedDrillQuestionDto[],
+  maxUnlocked: number,
+  count: number,
+  shuffleFn: (arr: SpeedDrillQuestionDto[]) => SpeedDrillQuestionDto[]
+) {
+  return (source: Observable<SpeedDrillQuestionDto[]>) =>
+    new Observable<SpeedDrillQuestionDto[]>(subscriber => {
+      source.subscribe({
+        next: (remoteList) => {
+          const validRemote = (remoteList || []).filter(q => (q.unitNumber || 1) <= maxUnlocked);
+          const mergedMap = new Map<string, SpeedDrillQuestionDto>();
+          for (const item of [...localUnlocked, ...validRemote]) {
+            mergedMap.set(item.prompt, item);
+          }
+          const finalPool = Array.from(mergedMap.values());
+          subscriber.next(shuffleFn(finalPool).slice(0, count));
+          subscriber.complete();
+        },
+        error: () => {
+          subscriber.next(shuffleFn(localUnlocked).slice(0, count));
+          subscriber.complete();
+        }
+      });
+    });
 }
 
 function mapPdfsWithCatalog() {

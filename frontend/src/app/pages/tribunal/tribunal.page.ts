@@ -55,18 +55,22 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
             </div>
           </div>
 
-          <!-- Selector de las 9 Unidades con su Ilustración propia -->
+          <!-- Selector de Unidades (Desbloqueo Secuencial Estricto al 100%) -->
           <div class="nine-illustrated-units">
             <button
               *ngFor="let u of allNineUnits"
               class="u-illo-btn"
               [class.active]="selectedUnit === u.num"
+              [style.opacity]="isUnitUnlocked(u.num) ? '1' : '0.5'"
               (click)="selectUnit(u.num)"
             >
               <app-cielo-art [name]="u.art" [width]="38" [height]="40"></app-cielo-art>
-              <span class="uib-num">U{{ u.num }}</span>
-              <span class="uib-name">{{ u.short }}</span>
+              <span class="uib-num">{{ isUnitUnlocked(u.num) ? '🔓' : '🔒' }} U{{ u.num }}</span>
+              <span class="uib-name">{{ isUnitUnlocked(u.num) ? u.short : 'Bloqueada' }}</span>
             </button>
+          </div>
+          <div *ngIf="lockedTribunalMessage" style="margin-top: 12px; background: #ffe4e6; border: 2.5px solid #f43f5e; border-radius: 14px; padding: 10px 14px; color: #881337; font-weight: 800; font-size: 0.88rem;">
+            {{ lockedTribunalMessage }}
           </div>
         </div>
 
@@ -550,6 +554,8 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
 })
 export class TribunalPage implements OnInit {
   selectedUnit = 1;
+  highestUnlockedUnit = 1;
+  lockedTribunalMessage = '';
   stage: 'initial' | 'followup' | 'verdict' = 'initial';
   initialDefense = '';
   followUpDefense = '';
@@ -578,18 +584,37 @@ export class TribunalPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.api.getUnits().subscribe();
+    this.api.units$.subscribe((units) => {
+      this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
+      if (this.selectedUnit > this.highestUnlockedUnit) {
+        this.selectedUnit = this.highestUnlockedUnit;
+        this.loadCase();
+      }
+    });
+
     this.route.queryParams.subscribe((params) => {
       if (params['u']) {
         const uNum = parseInt(params['u'], 10);
         if (uNum >= 1 && uNum <= 9) {
-          this.selectedUnit = uNum;
+          this.selectUnit(uNum);
+          return;
         }
       }
       this.loadCase();
     });
   }
 
+  isUnitUnlocked(unitNum: number): boolean {
+    return unitNum <= this.highestUnlockedUnit;
+  }
+
   selectUnit(unitNum: number) {
+    if (!this.isUnitUnlocked(unitNum)) {
+      this.lockedTribunalMessage = `🔒 El examen oral de la Unidad ${unitNum} está bloqueado hasta que completes la Unidad ${this.highestUnlockedUnit} al 100%.`;
+      return;
+    }
+    this.lockedTribunalMessage = '';
     this.selectedUnit = unitNum;
     this.loadCase();
   }

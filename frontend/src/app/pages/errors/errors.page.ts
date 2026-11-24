@@ -194,16 +194,21 @@ interface RadarVertex {
               <div
                 *ngFor="let u of units"
                 class="roadmap-unit-row"
+                [style.opacity]="isUnitUnlocked(u.unitNumber) ? '1' : '0.52'"
                 (click)="repracticeUnit(u.unitNumber)"
               >
                 <app-cielo-art [name]="getUnitArt(u.unitNumber)" [width]="38" [height]="38"></app-cielo-art>
                 <div class="rur-info">
                   <div class="rur-top">
-                    <strong>Unidad {{ u.unitNumber }}: {{ getShortUnitName(u.unitNumber) }}</strong>
-                    <span class="rur-pct">{{ getUnitPct(u) }}%</span>
+                    <strong>
+                      {{ isUnitUnlocked(u.unitNumber) ? '🔓' : '🔒' }} Unidad {{ u.unitNumber }}: {{ getShortUnitName(u.unitNumber) }}
+                    </strong>
+                    <span class="rur-pct">
+                      {{ isUnitUnlocked(u.unitNumber) ? (getUnitPct(u) + '%') : 'Bloqueada' }}
+                    </span>
                   </div>
                   <div class="rur-bar-bg">
-                    <div class="rur-bar-fill" [style.width.%]="getUnitPct(u)"></div>
+                    <div class="rur-bar-fill" [style.width.%]="isUnitUnlocked(u.unitNumber) ? getUnitPct(u) : 0"></div>
                   </div>
                 </div>
               </div>
@@ -920,7 +925,14 @@ export class ErrorsPage implements OnInit {
     }
   }
 
+  isUnitUnlocked(unitNum: number): boolean {
+    return this.api.isUnitUnlocked(unitNum, this.units);
+  }
+
   repracticeUnit(unitNum: number) {
-    this.router.navigate(['/units'], { queryParams: { u: unitNum, tab: 'mcq' } });
+    if (!this.isUnitUnlocked(unitNum)) {
+      return;
+    }
+    this.router.navigate(['/units'], { queryParams: { u: unitNum, tab: 'teoria' } });
   }
 }

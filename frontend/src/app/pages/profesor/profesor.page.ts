@@ -12,6 +12,7 @@ import {
   IonContent,
 } from '@ionic/angular/standalone';
 import { KatexRenderService } from '../../services/katex-render.service';
+import { Fisica2ApiService } from '../../services/fisica2-api.service';
 import { CieloIllustrationComponent } from '../../components/cielo-illustration.component';
 
 export interface ProfessorScene {
@@ -90,21 +91,31 @@ export interface ProfessorUnitMasterclass {
       <div class="prof-studio-wrapper">
 
         <!-- ================================================================
-             SELECTOR DE UNIDAD (1 A 9) PARA LA CLASE DEL PROFESOR
+             SELECTOR DE UNIDAD (DESBLOQUEO SECUENCIAL ESTRICTO AL 100%)
              ================================================================ -->
         <div class="unit-class-strip">
           <button
             *ngFor="let mc of masterclasses"
             class="ucs-btn"
             [class.active]="selectedUnitNumber === mc.unitNumber"
+            [style.opacity]="isUnitUnlocked(mc.unitNumber) ? '1' : '0.55'"
             (click)="selectUnitClass(mc.unitNumber)"
           >
             <app-cielo-art [name]="getUnitArt(mc.unitNumber)" [width]="38" [height]="38"></app-cielo-art>
             <div class="ucs-meta">
-              <span class="ucs-num">UNIDAD {{ mc.unitNumber }}</span>
-              <span class="ucs-name">{{ mc.unitTitle }}</span>
+              <span class="ucs-num">
+                {{ isUnitUnlocked(mc.unitNumber) ? '🔓' : '🔒' }} UNIDAD {{ mc.unitNumber }}
+              </span>
+              <span class="ucs-name">
+                {{ isUnitUnlocked(mc.unitNumber) ? mc.unitTitle : 'Bloqueada (100% U' + (mc.unitNumber - 1) + ')' }}
+              </span>
             </div>
           </button>
+        </div>
+
+        <div class="cielo-lavender-card" *ngIf="lockedClassMessage" style="padding: 14px 20px; background: #ffe4e6; border: 3px solid #f43f5e; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+          <strong style="color: #881337; font-size: 0.92rem;">{{ lockedClassMessage }}</strong>
+          <button class="cielo-btn-purple" (click)="lockedClassMessage = ''">Entendido ♡</button>
         </div>
 
         <!-- ================================================================
@@ -574,22 +585,25 @@ export interface ProfessorUnitMasterclass {
 
           <div class="quick-questions-strip">
             <button class="qq-btn" (click)="askQuickQuestion('¿Qué es una carga eléctrica y de dónde sale la Ley de Coulomb?')">
-              ⚡ ¿Qué es una carga y la Ley de Coulomb?
+              ⚡ U1: ¿Qué es una carga y la Ley de Coulomb?
             </button>
-            <button class="qq-btn" (click)="askQuickQuestion('¿Qué es la Ley de Gauss y por qué adentro de un conductor el campo es cero?')">
-              🌐 ¿Qué es Gauss y el conductor?
+            <button class="qq-btn" (click)="askQuickQuestion('¿Qué es el campo eléctrico y cómo paso de cm a m y de microCoulombs a Coulombs?')">
+              📐 U1: ¿Qué es el Campo Eléctrico y cómo convierto unidades?
             </button>
-            <button class="qq-btn" (click)="askQuickQuestion('¿Qué es un capacitor, qué hace el dieléctrico y cómo paso de pF a nF y F?')">
-              🔋 ¿Qué es un capacitor y cómo paso pF a nF?
+            <button class="qq-btn" *ngIf="isUnitUnlocked(2)" (click)="askQuickQuestion('¿Qué es la Ley de Gauss y por qué adentro de un conductor el campo es cero?')">
+              🌐 U2: ¿Qué es Gauss y el conductor?
             </button>
-            <button class="qq-btn" (click)="askQuickQuestion('¿Qué es un campo magnético, la fuerza de Lorentz y un solenoide?')">
-              🧲 ¿Qué es el campo magnético y un solenoide?
+            <button class="qq-btn" *ngIf="isUnitUnlocked(4)" (click)="askQuickQuestion('¿Qué es un capacitor, qué hace el dieléctrico y cómo paso de pF a nF y F?')">
+              🔋 U4: ¿Qué es un capacitor y cómo paso pF a nF?
             </button>
-            <button class="qq-btn" (click)="askQuickQuestion('¿Qué dice la Ley de Faraday-Lenz y qué significa el signo menos?')">
-              🌀 ¿De dónde sale Faraday-Lenz?
+            <button class="qq-btn" *ngIf="isUnitUnlocked(7)" (click)="askQuickQuestion('¿Qué es un campo magnético, la fuerza de Lorentz y un solenoide?')">
+              🧲 U6-U7: ¿Qué es el campo magnético y un solenoide?
             </button>
-            <button class="qq-btn" (click)="askQuickQuestion('¿Qué es la impedancia RLC y cuándo entra en resonancia en corriente alterna?')">
-              〰️ ¿Qué es Impedancia RLC y Resonancia?
+            <button class="qq-btn" *ngIf="isUnitUnlocked(8)" (click)="askQuickQuestion('¿Qué dice la Ley de Faraday-Lenz y qué significa el signo menos?')">
+              🌀 U8: ¿De dónde sale Faraday-Lenz?
+            </button>
+            <button class="qq-btn" *ngIf="isUnitUnlocked(9)" (click)="askQuickQuestion('¿Qué es la impedancia RLC y cuándo entra en resonancia en corriente alterna?')">
+              〰️ U9: ¿Qué es Impedancia RLC y Resonancia?
             </button>
           </div>
 
@@ -1218,6 +1232,8 @@ export class ProfesorPage implements OnInit, OnDestroy {
 
   studentQuestionInput = '';
   professorReply: { speechText: string; formulaLatex?: string; calcTip?: string } | null = null;
+  lockedClassMessage = '';
+  highestUnlockedUnit = 1;
 
   masterclasses: ProfessorUnitMasterclass[] = [
     {
@@ -1701,10 +1717,19 @@ export class ProfesorPage implements OnInit, OnDestroy {
 
   constructor(
     private katex: KatexRenderService,
+    private api: Fisica2ApiService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    this.api.getUnits().subscribe();
+    this.api.units$.subscribe((units) => {
+      this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
+      if (this.selectedUnitNumber > this.highestUnlockedUnit) {
+        this.selectedUnitNumber = this.highestUnlockedUnit;
+      }
+    });
+
     this.route.queryParams.subscribe(params => {
       if (params['u']) {
         const uNum = parseInt(params['u'], 10);
@@ -1713,6 +1738,10 @@ export class ProfesorPage implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  isUnitUnlocked(unitNum: number): boolean {
+    return unitNum <= this.highestUnlockedUnit;
   }
 
   ngOnDestroy() {
@@ -1747,6 +1776,11 @@ export class ProfesorPage implements OnInit, OnDestroy {
   }
 
   selectUnitClass(unitNum: number) {
+    if (!this.isUnitUnlocked(unitNum)) {
+      this.lockedClassMessage = `🔒 La clase de la Unidad ${unitNum} está bloqueada. Primero completá la Unidad ${this.highestUnlockedUnit} al 100% para habilitarla.`;
+      return;
+    }
+    this.lockedClassMessage = '';
     this.stopSpeech();
     this.selectedUnitNumber = unitNum;
     this.currentSceneIndex = 0;
@@ -1863,6 +1897,24 @@ export class ProfesorPage implements OnInit, OnDestroy {
     const q = (this.studentQuestionInput || '').trim();
     if (!q) return;
     const lower = q.toLowerCase();
+
+    // Detectar a qué unidad pertenece la consulta para respetar el bloqueo secuencial
+    let targetUnit = 1;
+    if (lower.includes('impedancia') || lower.includes('rlc') || lower.includes('resonancia') || lower.includes('alterna')) targetUnit = 9;
+    else if (lower.includes('faraday') || lower.includes('lenz') || lower.includes('induc')) targetUnit = 8;
+    else if (lower.includes('solenoide') || lower.includes('bobina') || lower.includes('ampere')) targetUnit = 7;
+    else if (lower.includes('magnetico') || lower.includes('magnético') || lower.includes('lorentz') || lower.includes('ciclotron') || lower.includes('ciclotrón')) targetUnit = 6;
+    else if (lower.includes('capacitor') || lower.includes('pf') || lower.includes('nf') || lower.includes('dielectrico') || lower.includes('dieléctrico')) targetUnit = 4;
+    else if (lower.includes('gauss') || lower.includes('conductor') || lower.includes('flujo')) targetUnit = 2;
+
+    if (!this.isUnitUnlocked(targetUnit)) {
+      this.professorReply = {
+        speechText: `Ese tema pertenece a la Unidad ${targetUnit}, que todavía se encuentra bloqueada. Primero dominemos juntos al 100 por ciento la Unidad ${this.highestUnlockedUnit} para ir paso a paso y desbloquear la siguiente unidad.`,
+        calcTip: `Completá Teoría, Laboratorio, Práctico y Multiple Choice de la Unidad ${this.highestUnlockedUnit} al 100% para habilitar nuevas unidades.`
+      };
+      this.speakSingleText(this.professorReply.speechText);
+      return;
+    }
 
     if (lower.includes('solenoide') || lower.includes('bobina') || lower.includes('ampere')) {
       this.selectUnitClass(7);

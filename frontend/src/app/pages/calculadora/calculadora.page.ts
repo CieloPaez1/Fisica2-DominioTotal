@@ -11,6 +11,7 @@ import {
   IonContent,
 } from '@ionic/angular/standalone';
 import { KatexRenderService } from '../../services/katex-render.service';
+import { Fisica2ApiService } from '../../services/fisica2-api.service';
 import { CieloIllustrationComponent } from '../../components/cielo-illustration.component';
 
 export interface ConversionUnitOption {
@@ -201,13 +202,15 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
           <!-- SELECTOR DE TIPO DE PROBLEMA / FÓRMULA TRADICIONAL (UNIDADES 1 A 9) -->
           <div class="cielo-dark-panel solver-workspace">
             <div class="sw-header">
-              <span class="kicker-yellow">📚 ELEGÍ EL TIPO DE EJERCICIO O AJUSTÁ LOS DATOS DE TU PRÁCTICO</span>
-              <h3>Plantillas Dinámicas de Resolución de Física 2 (Unidades 1 a 9)</h3>
+              <span class="kicker-yellow">
+                🔓 UNIDADES HABILITADAS: UNIDAD 1{{ highestUnlockedUnit > 1 ? (' A UNIDAD ' + highestUnlockedUnit) : ' (LAS DEMÁS SE SUMAN AL DESBLOQUEARLAS AL 100%)' }}
+              </span>
+              <h3>Plantillas Dinámicas de Resolución de Tus Unidades Desbloqueadas</h3>
             </div>
 
             <div class="template-pills-grid">
               <button
-                *ngFor="let t of solverTemplates"
+                *ngFor="let t of unlockedSolverTemplates"
                 class="tpl-pill-btn"
                 [class.active]="selectedTemplate.id === t.id"
                 (click)="selectSolverTemplate(t)"
@@ -1615,6 +1618,79 @@ export class CalculadoraPage implements OnInit {
       }
     },
     {
+      id: 'campo_electrico_u1',
+      unitNumber: 1,
+      title: 'Campo Eléctrico E⃗ de Carga Puntual y Fuerza F = q₀·E',
+      shortDesc: 'Calcula la intensidad del campo eléctrico E = k·|Q|/r² creado por una carga fuente Q y la fuerza sobre una carga de prueba q₀.',
+      traditionalFormulaLatex: 'E = \\frac{k \\cdot |Q|}{r^2} \\quad ; \\quad F = |q_0| \\cdot E',
+      sampleStatement: 'Calcular el campo eléctrico a r = 12 cm de una carga fuente Q = 9 uC y la fuerza que siente una carga de prueba q0 = 2 nC.',
+      inputs: [
+        {
+          key: 'Q',
+          label: 'Carga Fuente Q',
+          symbol: 'Q',
+          value: 9,
+          selectedUnitIdx: 1,
+          unitOptions: [
+            { label: 'Coulomb (C)', factorToSI: 1, siSymbol: 'C' },
+            { label: 'microCoulomb (μC = 10⁻⁶ C)', factorToSI: 1e-6, siSymbol: 'C' },
+            { label: 'nanoCoulomb (nC = 10⁻⁹ C)', factorToSI: 1e-9, siSymbol: 'C' },
+          ]
+        },
+        {
+          key: 'r',
+          label: 'Distancia al punto P',
+          symbol: 'r',
+          value: 12,
+          selectedUnitIdx: 1,
+          unitOptions: [
+            { label: 'metros (m)', factorToSI: 1, siSymbol: 'm' },
+            { label: 'centímetros (cm = 10⁻² m)', factorToSI: 1e-2, siSymbol: 'm' },
+            { label: 'milímetros (mm = 10⁻³ m)', factorToSI: 1e-3, siSymbol: 'm' },
+          ]
+        },
+        {
+          key: 'q0',
+          label: 'Carga de prueba en P',
+          symbol: 'q₀',
+          value: 2,
+          selectedUnitIdx: 2,
+          unitOptions: [
+            { label: 'Coulomb (C)', factorToSI: 1, siSymbol: 'C' },
+            { label: 'microCoulomb (μC = 10⁻⁶ C)', factorToSI: 1e-6, siSymbol: 'C' },
+            { label: 'nanoCoulomb (nC = 10⁻⁹ C)', factorToSI: 1e-9, siSymbol: 'C' },
+          ]
+        }
+      ],
+      solve: (si, raw) => {
+        const k = 8.99e9;
+        const Q = Math.abs(si['Q']);
+        const r = Math.max(1e-9, si['r']);
+        const q0 = Math.abs(si['q0']);
+        const E = (k * Q) / (r * r);
+        const F = q0 * E;
+        return {
+          resultValue: E,
+          resultSIUnit: 'N/C (Campo Eléctrico E)',
+          secondaryResults: [
+            { label: 'Fuerza sobre q₀ (F = |q₀|·E)', valueStr: `${F.toExponential(3)} N` }
+          ],
+          conversionSteps: raw.map(inp => {
+            const u = inp.unitOptions[inp.selectedUnitIdx];
+            return `${inp.symbol} = ${inp.value} → ${(inp.value * u.factorToSI).toExponential(3)} ${u.siSymbol}`;
+          }),
+          substitutionLatex: `E = \\frac{8,99 \\times 10^9 \\cdot (${Q.toExponential(2)})}{(${r})^2} = ${E.toExponential(3)}\\text{ N/C}`,
+          stepByStepExplanation: [
+            `1. Convertimos la carga fuente Q a Coulombs y la distancia r a metros.`,
+            `2. Elevamos r al cuadrado en el denominador y dividimos k·|Q| por r².`
+          ],
+          calculatorKeys: ['8.99', '×10ˣ', '9', '×', `${Q.toExponential(2)}`, '÷', `${r}`, 'x²', '='],
+          calculatorWarning: 'Recordá que el campo E depende solo de la carga fuente Q, no de q₀.',
+          diagramType: 'coulomb'
+        };
+      }
+    },
+    {
       id: 'gauss_plano_hilo',
       unitNumber: 2,
       title: 'Ley de Gauss (Plano Infinito y Cable Cargado)',
@@ -2301,11 +2377,26 @@ export class CalculadoraPage implements OnInit {
   calcDisplayResult = '0';
   calcNumericResult: number | null = null;
   calcAngleMode: 'DEG' | 'RAD' = 'DEG';
+  highestUnlockedUnit = 1;
 
-  constructor(private katex: KatexRenderService) {}
+  constructor(
+    private katex: KatexRenderService,
+    private api: Fisica2ApiService
+  ) {}
 
   ngOnInit() {
     this.loadSavedCustomProblems();
+    this.api.getUnits().subscribe();
+    this.api.units$.subscribe((units) => {
+      this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
+      if (this.selectedTemplate.unitNumber > this.highestUnlockedUnit) {
+        this.selectedTemplate = this.unlockedSolverTemplates[0] || this.solverTemplates[0];
+      }
+    });
+  }
+
+  get unlockedSolverTemplates(): ProblemSolverTemplate[] {
+    return this.solverTemplates.filter(t => t.unitNumber <= this.highestUnlockedUnit);
   }
 
   renderMath(latex: string, displayMode = false): SafeHtml {
@@ -2365,6 +2456,10 @@ export class CalculadoraPage implements OnInit {
     }
 
     const foundTpl = this.solverTemplates.find(t => t.id === targetId) || this.solverTemplates[0];
+    if (foundTpl.unitNumber > this.highestUnlockedUnit) {
+      this.detectionMessage = `🔒 Ese enunciado corresponde a la Unidad ${foundTpl.unitNumber} (${foundTpl.title}), que todavía está bloqueada. Primero completá la Unidad ${this.highestUnlockedUnit} al 100% para habilitarla.`;
+      return;
+    }
     this.selectedTemplate = foundTpl;
 
     // 2. Extraer números con sus unidades del texto

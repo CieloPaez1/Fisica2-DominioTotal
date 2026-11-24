@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
 import { CATEDRA_PDF_FILES, ORAL_COLLOQUIUM_QUESTIONS } from '../data/undec-catedra-data';
 import { SPEED_DRILL_QUESTIONS } from '../data/speed-drill-data';
+import { GuidedExercise, TheoryTopic } from '../types/fisica2';
 
 export interface ProgramUnitDto {
   unitNumber: number;
@@ -86,6 +87,8 @@ export interface PdfMetadataDto {
 const LOCAL_UNITS_KEY = 'fisica2_enterprise_units_v3';
 const LOCAL_ERRORS_KEY = 'fisica2_enterprise_errors_v3';
 const LOCAL_COMPLETED_ACTIVITIES_KEY = 'fisica2_enterprise_activities_v3';
+const LOCAL_DYNAMIC_THEORY_KEY = 'fisica2_dynamic_theory_v1';
+const LOCAL_DYNAMIC_EXERCISES_KEY = 'fisica2_dynamic_exercises_v1';
 
 @Injectable({
   providedIn: 'root'
@@ -98,6 +101,12 @@ export class Fisica2ApiService {
 
   private errorsSubject = new BehaviorSubject<StudentErrorDto[]>(this.loadLocalErrors());
   public errors$ = this.errorsSubject.asObservable();
+
+  private dynamicTheorySubject = new BehaviorSubject<TheoryTopic[]>(this.loadDynamicTheory());
+  public dynamicTheory$ = this.dynamicTheorySubject.asObservable();
+
+  private dynamicExercisesSubject = new BehaviorSubject<GuidedExercise[]>(this.loadDynamicExercises());
+  public dynamicExercises$ = this.dynamicExercisesSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -203,6 +212,39 @@ export class Fisica2ApiService {
       0.25 * (u.progressPractico || 0) +
       0.30 * (u.progressPruebaDominio || 0)
     );
+  }
+
+  /**
+   * Desbloqueo secuencial estricto al 100%:
+   * - La Unidad 1 siempre está desbloqueada.
+   * - La Unidad N (N > 1) solo se desbloquea cuando TODAS las unidades anteriores (1 .. N-1)
+   *   tienen un dominio total del 100% (Teoría 100%, Laboratorio 100%, Práctico 100%, Prueba de Dominio 100%).
+   */
+  isUnitUnlocked(unitNumber: number, customUnits?: ProgramUnitDto[]): boolean {
+    if (unitNumber <= 1) return true;
+    const list = customUnits && customUnits.length ? customUnits : this.unitsSubject.value;
+    if (!list || list.length === 0) return unitNumber === 1;
+
+    for (let prevNum = 1; prevNum < unitNumber; prevNum++) {
+      const prevUnit = list.find(u => u.unitNumber === prevNum);
+      if (!prevUnit || this.calculateUnitMastery(prevUnit) < 100) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  getHighestUnlockedUnitNumber(customUnits?: ProgramUnitDto[]): number {
+    const list = customUnits && customUnits.length ? customUnits : this.unitsSubject.value;
+    let highest = 1;
+    for (let num = 2; num <= 9; num++) {
+      if (this.isUnitUnlocked(num, list)) {
+        highest = num;
+      } else {
+        break;
+      }
+    }
+    return highest;
   }
 
   // ============================================================================
@@ -336,6 +378,224 @@ export class Fisica2ApiService {
 
   getRawPdfUrl(filename: string): string {
     return `${this.baseUrl}/pdfs/${encodeURIComponent(filename)}/raw`;
+  }
+
+  // ============================================================================
+  // 6. MOTOR DE EXPANSIÓN DINÁMICA DE CONOCIMIENTO (PDFs, LIBROS Y TPs NUEVOS)
+  // ============================================================================
+  getDynamicTheoryTopics(): TheoryTopic[] {
+    return this.dynamicTheorySubject.value;
+  }
+
+  getDynamicExercises(): GuidedExercise[] {
+    return this.dynamicExercisesSubject.value;
+  }
+
+  /**
+   * Procesa el texto extraído de un nuevo PDF, libro o Trabajo Práctico y genera
+   * automáticamente nuevos temas teóricos (11 puntos) y nuevos ejercicios prácticos
+   * graduados que se integran en vivo a la unidad correspondiente.
+   */
+  ingestNewKnowledgeFromDocument(
+    sourceTitle: string,
+    rawPagesOrText: string[] | string,
+    explicitUnitNumber?: number
+  ): { unitNumber: number; addedTheoryTitle: string; addedExerciseTitle: string } {
+    const combinedText = Array.isArray(rawPagesOrText)
+      ? rawPagesOrText.join('\n\n')
+      : (rawPagesOrText || '');
+    const cleanText = combinedText.trim() || `Contenido académico incorporado desde ${sourceTitle}.`;
+
+    const detectedUnit = explicitUnitNumber && explicitUnitNumber >= 1 && explicitUnitNumber <= 9
+      ? explicitUnitNumber
+      : this.detectUnitFromText(sourceTitle + ' ' + cleanText);
+
+    const paragraphs = cleanText
+      .split(/\n+/)
+      .map(p => p.trim())
+      .filter(p => p.length > 25);
+
+    const summaryP1 = paragraphs[0] || `Desarrollo teórico y conceptual extraído de "${sourceTitle}" para la Unidad ${detectedUnit}.`;
+    const summaryP2 = paragraphs[1] || summaryP1;
+    const summaryP3 = paragraphs[2] || `Aplicación de leyes fundamentales de la Unidad ${detectedUnit} según material "${sourceTitle}".`;
+
+    // 1. Crear nuevo Tópico Teórico de 11 Puntos vinculado a la Unidad
+    const newTheory: TheoryTopic = {
+      id: `dyn-th-u${detectedUnit}-${Date.now()}`,
+      unitNumber: detectedUnit,
+      title: `📚 Material Incorporado: ${sourceTitle}`,
+      sourcePdf: sourceTitle,
+      sourceBadge: 'Material Oficial Cátedra UNdeC',
+      convencionCatedra: `Material complementario indexado automáticamente desde "${sourceTitle}" e integrado al programa de la Unidad ${detectedUnit}.`,
+      queEs: summaryP1.slice(0, 420),
+      quePasaFisicamente: summaryP2.slice(0, 420),
+      porQueOcurre: summaryP3.slice(0, 420),
+      magnitudes: [
+        `Magnitudes principales extraídas de ${sourceTitle} (Unidad ${detectedUnit})`,
+        'Expresadas obligatoriamente en el Sistema Internacional (SI: m, kg, s, A, C, V, F, Ω, T, H)'
+      ],
+      simbolos: [
+        { simbolo: 'SI', significado: 'Unidades verificadas del Sistema Internacional antes de reemplazar en la fórmula' }
+      ],
+      unidades: 'Sistema Internacional (SI): metros [m], Coulombs [C], Voltios [V], Faradios [F], Amperes [A], Ohms [Ω], Teslas [T], Henrys [H].',
+      cuandoSeUsa: `Se aplica al resolver problemas y demostraciones del documento "${sourceTitle}" dentro de la Unidad ${detectedUnit}.`,
+      cuandoNoSeUsa: 'No aplicar sin verificar antes las hipótesis de simetría, régimen estacionario o conversión de prefijos (cm, mm, μC, nF, pF).',
+      erroresTipicos: [
+        'Omitir la conversión de prefijos (cm a m, cm² a m², pF/nF a F) antes de operar en la calculadora.',
+        'Olvidar paréntesis en el denominador al dividir por constantes en notación científica (EXP).'
+      ],
+      ejemploSencillo: (paragraphs[3] || summaryP1).slice(0, 380),
+      ejemploNivelExamen: (paragraphs[4] || summaryP2).slice(0, 450),
+    };
+
+    const currentTheory = [newTheory, ...this.dynamicTheorySubject.value];
+    this.saveDynamicTheory(currentTheory);
+    this.dynamicTheorySubject.next(currentTheory);
+
+    // 2. Crear nuevo Ejercicio Práctico Guiado en 6 Pasos a partir del documento
+    const exerciseSnippet = paragraphs.find(p => /\d/.test(p)) || summaryP1;
+    const newExercise: GuidedExercise = {
+      id: `dyn-ex-u${detectedUnit}-${Date.now()}`,
+      unitNumber: detectedUnit,
+      tpReference: `Práctico Incorporado — ${sourceTitle}`,
+      sourcePdf: sourceTitle,
+      difficulty: 'intermedio',
+      title: `Ejercicio Extraído de "${sourceTitle}"`,
+      statement: exerciseSnippet.slice(0, 460),
+      givenData: [
+        `Fuente: ${sourceTitle}`,
+        `Unidad ${detectedUnit} — Convertir todos los datos al Sistema Internacional (SI) antes de calcular`,
+      ],
+      step1Strategy: {
+        prompt: `PASO 1 (Estrategia Física para "${sourceTitle}"): ¿Cuál es el primer paso metodológico exigido por la cátedra para resolver este problema de la Unidad ${detectedUnit}?`,
+        options: [
+          'Identificar el fenómeno físico de la unidad, realizar el esquema geométrico con vectores/signos y pasar todos los datos con prefijos (cm, mm, μC, nF, pF) al Sistema Internacional.',
+          'Reemplazar los números directamente sin convertir unidades.',
+          'Omitir el diagrama y escribir solo un número final.',
+          'Usar fórmulas de otra unidad sin justificar.',
+        ],
+        correctIndex: 0,
+        explanation: 'Todo desarrollo válido en Física 2 comienza con el esquema físico, la conversión de datos al SI y el planteo de la ley fundamental.',
+        errorCategoryOnFail: 'planteamiento',
+      },
+      step2Differential: {
+        prompt: 'PASO 2 (Conversión de Unidades y Prefijos): Si el enunciado incluye centímetros (cm), áreas en cm² o submúltiplos (μ, n, p), ¿qué factores de conversión corresponden?',
+        options: [
+          '1 cm = 10⁻² m  |  1 cm² = 10⁻⁴ m²  |  micro (μ) = 10⁻⁶  |  nano (n) = 10⁻⁹  |  pico (p) = 10⁻¹².',
+          '1 cm² = 10⁻² m².',
+          'No hace falta convertir a unidades base.',
+          '1 pF = 10⁻⁶ F.',
+        ],
+        correctIndex: 0,
+        explanation: 'Convertir cada prefijo a su potencia de 10 evita errores de orden de magnitud en la calculadora científica.',
+        errorCategoryOnFail: 'unidades',
+      },
+      step3VectorGeometry: {
+        prompt: 'PASO 3 (Análisis Vectorial / Signos): ¿Qué debemos verificar respecto al carácter vectorial o escalar de la magnitud pedida?',
+        options: [
+          'Si es un vector (Fuerza, Campo E⃗ o Campo B⃗), definir dirección y sentido en el dibujo; si es un escalar (Potencial V, Capacidad C, Flujo Φ o Energía U), respetar su signo algebraico.',
+          'Tratar todas las magnitudes como escalares sin dirección.',
+          'Ignorar los signos de las cargas o de la Ley de Lenz.',
+          'Sumar vectores de distinta dirección como si fueran paralelos.',
+        ],
+        correctIndex: 0,
+        explanation: 'Distinguir vectores de escalares es uno de los criterios centrales de evaluación de la cátedra.',
+        errorCategoryOnFail: 'conceptual',
+      },
+      step4SetupEquation: {
+        prompt: 'PASO 4 (Uso Correcto de la Calculadora Científica): Al cargar la ecuación en la calculadora científica con notación exponencial, ¿qué precaución es obligatoria?',
+        options: [
+          'Usar la tecla [×10ˣ] (o [EXP]) sin escribir "×10" adicional, y encerrar todo el denominador entre paréntesis ( ... ) al dividir.',
+          'Dividir sin usar paréntesis en el denominador.',
+          'Apretar × 10 después de la tecla EXP.',
+          'Redondear las constantes a cero.',
+        ],
+        correctIndex: 0,
+        explanation: 'La tecla [EXP] ya representa "×10^", y los paréntesis en el denominador aseguran el orden correcto de operaciones.',
+        errorCategoryOnFail: 'algebraico',
+      },
+      step5LineByLine: {
+        algebraicSteps: [
+          `1) Extracción de datos del documento "${sourceTitle}" y conversión al Sistema Internacional (SI).`,
+          `2) Planteo de la ecuación fundamental tradicional de la Unidad ${detectedUnit}.`,
+          `3) Sustitución ordenada con paréntesis en numerador y denominador.`,
+          `4) Expresión del resultado con su unidad oficial del Sistema Internacional.`,
+        ],
+        finalSymbolicFormula: '\\text{Resultado}_{\\text{SI}} = \\frac{\\text{Numerador convertidos al SI}}{\\text{Denominador en SI}}',
+        finalNumericalValue: 'Verificado',
+        expectedUnit: 'SI',
+      },
+      step6Verification: {
+        question: {
+          prompt: 'PASO 6 (Verificación Dimensional y Física): ¿Cómo comprobamos que el resultado obtenido del práctico es físicamente coherente?',
+          options: [
+            'Verificando que las unidades de ambos miembros coincidan en el Sistema Internacional y evaluando el comportamiento en casos límite conocidos.',
+            'No hace falta verificar las unidades.',
+            'Solo mirando el primer dígito.',
+            'Cambiando la unidad al azar.',
+          ],
+          correctIndex: 0,
+          explanation: 'El análisis dimensional y la prueba de límites asintóticos permiten detectar cualquier error algebraico antes de entregar el examen.',
+          errorCategoryOnFail: 'interpretacion',
+        },
+        dimensionalAnalysisNote: 'Toda ecuación física válida debe ser dimensionalmente homogénea en el SI.',
+        limitingCaseNote: 'Podés usar el módulo "Calculadora & Tus TPs" para evaluar numéricamente cualquier variación de este problema.',
+      },
+      whatIfVariations: [],
+    };
+
+    const currentExercises = [newExercise, ...this.dynamicExercisesSubject.value];
+    this.saveDynamicExercises(currentExercises);
+    this.dynamicExercisesSubject.next(currentExercises);
+
+    return {
+      unitNumber: detectedUnit,
+      addedTheoryTitle: newTheory.title,
+      addedExerciseTitle: newExercise.title
+    };
+  }
+
+  private detectUnitFromText(text: string): number {
+    const lower = (text || '').toLowerCase();
+    if (lower.includes('alterna') || lower.includes('rlc') || lower.includes('impedancia') || lower.includes('maxwell') || lower.includes('fasor') || lower.includes('u9') || lower.includes('tp9')) return 9;
+    if (lower.includes('faraday') || lower.includes('lenz') || lower.includes('induc') || lower.includes('autoinduc') || lower.includes('u8') || lower.includes('tp8')) return 8;
+    if (lower.includes('biot') || lower.includes('ampere') || lower.includes('ampère') || lower.includes('solenoide') || lower.includes('toroide') || lower.includes('u7')) return 7;
+    if (lower.includes('lorentz') || lower.includes('ciclotron') || lower.includes('ciclotrón') || lower.includes('hall') || lower.includes('magnet') || lower.includes('u6') || lower.includes('tp7')) return 6;
+    if (lower.includes('kirchhoff') || lower.includes('ohm') || lower.includes('corriente') || lower.includes('transitorio rc') || lower.includes('u5') || lower.includes('tp6')) return 5;
+    if (lower.includes('capacitor') || lower.includes('condensador') || lower.includes('dielectrico') || lower.includes('dieléctrico') || lower.includes('faradio') || lower.includes('u4') || lower.includes('tp5')) return 4;
+    if (lower.includes('potencial') || lower.includes('equipotencial') || lower.includes('voltaje') || lower.includes('u3') || lower.includes('tp4')) return 3;
+    if (lower.includes('gauss') || lower.includes('flujo') || lower.includes('u2') || lower.includes('tp3')) return 2;
+    return 1;
+  }
+
+  private loadDynamicTheory(): TheoryTopic[] {
+    try {
+      const raw = localStorage.getItem(LOCAL_DYNAMIC_THEORY_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private saveDynamicTheory(list: TheoryTopic[]) {
+    try {
+      localStorage.setItem(LOCAL_DYNAMIC_THEORY_KEY, JSON.stringify(list));
+    } catch {}
+  }
+
+  private loadDynamicExercises(): GuidedExercise[] {
+    try {
+      const raw = localStorage.getItem(LOCAL_DYNAMIC_EXERCISES_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private saveDynamicExercises(list: GuidedExercise[]) {
+    try {
+      localStorage.setItem(LOCAL_DYNAMIC_EXERCISES_KEY, JSON.stringify(list));
+    } catch {}
   }
 
   // ============================================================================

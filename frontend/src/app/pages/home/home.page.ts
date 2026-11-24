@@ -37,9 +37,10 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
           </div>
 
           <div class="cosmic-right">
+            <button class="quick-chip" routerLink="/profesor">👩‍🏫 Profesor Virtual</button>
+            <button class="quick-chip" routerLink="/calculadora">🧮 Calculadora & Tus TPs</button>
             <button class="quick-chip" routerLink="/pdfs">📂 Biblioteca 45 PDFs</button>
             <button class="quick-chip" routerLink="/mapa">🗺️ Mapa Conceptual</button>
-            <button class="quick-chip" routerLink="/podcasts">🔊 Podcasts 3m</button>
             <button class="quick-chip danger" (click)="showResetConfirm = true">🔄 Reiniciar 0%</button>
 
             <!-- Campana Ilustrada -->
@@ -83,11 +84,35 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
           <div class="reset-modal cielo-lavender-card">
             <h3>⚠️ ¿Reiniciar Progreso a 0%?</h3>
             <p>
-              Esta acción pondrá en <strong>0%</strong> las 4 etapas de todas las unidades para comenzar desde cero. Tu registro de <em>Mis Errores</em> se mantiene intacto.
+              Esta acción pondrá en <strong>0%</strong> las 4 etapas de todas las unidades para comenzar desde cero (solo la Unidad 1 quedará desbloqueada). Tu registro de <em>Mis Errores</em> se mantiene intacto.
             </p>
             <div class="rm-actions">
               <button class="rm-cancel" (click)="showResetConfirm = false">Cancelar</button>
               <button class="rm-confirm" (click)="executeResetProgress()">Sí, Reiniciar a 0%</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODAL DE UNIDAD BLOQUEADA (REGLA ESTRICTA 100%) -->
+        <div class="reset-overlay" *ngIf="lockedUnitAlert as alert">
+          <div class="reset-modal cielo-lavender-card" style="max-width: 520px;">
+            <h3>🔒 Unidad {{ alert.attemptedUnitNumber }} Bloqueada</h3>
+            <p>
+              Para desbloquear la <strong>Unidad {{ alert.attemptedUnitNumber }} ({{ getShortIllustratedTitle(alert.attemptedUnitNumber) }})</strong>,
+              primero tenés que completar la <strong>Unidad {{ alert.requiredUnit.unitNumber }} ({{ getShortIllustratedTitle(alert.requiredUnit.unitNumber) }})</strong> al <strong>100%</strong>.
+            </p>
+            <div style="background: #ffffff; border: 2.5px solid #191538; border-radius: 16px; padding: 12px 16px; margin: 12px 0; color: #191538; font-weight: 800; font-size: 0.88rem;">
+              <div style="margin-bottom: 6px; color: #7c5dfa;">ESTADO ACTUAL DE LA UNIDAD {{ alert.requiredUnit.unitNumber }} ({{ getUnitPct(alert.requiredUnit) }}% / 100%):</div>
+              <div>• 1. Teoría Visual: <strong>{{ alert.requiredUnit.progressTeoria }}%</strong> / 100%</div>
+              <div>• 2. Laboratorio Gráfico: <strong>{{ alert.requiredUnit.progressLaboratorio }}%</strong> / 100%</div>
+              <div>• 3. Práctico Guiado: <strong>{{ alert.requiredUnit.progressPractico }}%</strong> / 100%</div>
+              <div>• 4. Prueba de Dominio (Multiple Choice): <strong>{{ alert.requiredUnit.progressPruebaDominio }}%</strong> / 100%</div>
+            </div>
+            <div class="rm-actions">
+              <button class="rm-cancel" (click)="lockedUnitAlert = null">Cerrar</button>
+              <button class="rm-confirm" style="background: #7c5dfa;" (click)="goToRequiredUnlockedUnit(alert.requiredUnit.unitNumber)">
+                🚀 Ir a Completar Unidad {{ alert.requiredUnit.unitNumber }} →
+              </button>
             </div>
           </div>
         </div>
@@ -224,19 +249,19 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
                 </svg>
               </div>
 
-              <!-- Lista de Unidades con Iconos Vectoriales -->
+              <!-- Lista de Unidades con Iconos Vectoriales (Desbloqueo Secuencial 100%) -->
               <div class="psc-unit-list">
                 <div
                   *ngFor="let u of units.slice(0, 5)"
                   class="psc-unit-item"
                   (click)="goToUnit(u.unitNumber, 'teoria')"
                 >
-                  <!-- Icono estado -->
-                  <span class="status-dot green" *ngIf="getUnitPct(u) >= 80 || u.unitNumber === 1">✓</span>
-                  <span class="status-dot purple" *ngIf="getUnitPct(u) < 80 && u.unitNumber === 2">●</span>
-                  <span class="status-dot lock" *ngIf="getUnitPct(u) === 0 && u.unitNumber > 2">🔒</span>
-                  <span class="psc-u-txt" [class.bright]="u.unitNumber <= 2 || getUnitPct(u) > 0">
-                    Unidad {{ u.unitNumber }}
+                  <!-- Icono estado real -->
+                  <span class="status-dot green" *ngIf="getUnitPct(u) >= 100">✓</span>
+                  <span class="status-dot purple" *ngIf="isUnitUnlocked(u.unitNumber) && getUnitPct(u) < 100">●</span>
+                  <span class="status-dot lock" *ngIf="!isUnitUnlocked(u.unitNumber)">🔒</span>
+                  <span class="psc-u-txt" [class.bright]="isUnitUnlocked(u.unitNumber)">
+                    Unidad {{ u.unitNumber }} ({{ getUnitPct(u) }}%)
                   </span>
                 </div>
               </div>
@@ -296,7 +321,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
               <!-- Cabecera de la tarjeta -->
               <div class="usc-header">
                 <span class="usc-unit-pill">Unidad {{ u.unitNumber }}</span>
-                <span class="usc-corner-lock" *ngIf="!isUnitFeatured(u) && getUnitPct(u) === 0">🔒</span>
+                <span class="usc-corner-lock" *ngIf="!isUnitUnlocked(u.unitNumber)">🔒</span>
               </div>
 
               <h3 class="usc-title">{{ getShortIllustratedTitle(u.unitNumber) }}</h3>
@@ -305,28 +330,28 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
               <div class="usc-body">
                 <div class="usc-stages-list">
                   <div class="usc-stage-row" (click)="goToUnit(u.unitNumber, 'teoria'); $event.stopPropagation()">
-                    <span class="st-bullet" [class.done]="u.progressTeoria >= 50 || isUnitFeatured(u)">
-                      {{ (u.progressTeoria >= 50 || isUnitFeatured(u)) ? '✓' : '🔒' }}
+                    <span class="st-bullet" [class.done]="u.progressTeoria >= 100" [class.open-circle]="isUnitUnlocked(u.unitNumber) && u.progressTeoria < 100">
+                      {{ u.progressTeoria >= 100 ? '✓' : isUnitUnlocked(u.unitNumber) ? '○' : '🔒' }}
                     </span>
-                    <span>Teoría visual</span>
+                    <span>Teoría visual ({{ u.progressTeoria }}%)</span>
                   </div>
                   <div class="usc-stage-row" (click)="goToUnit(u.unitNumber, 'graficos'); $event.stopPropagation()">
-                    <span class="st-bullet" [class.done]="u.progressLaboratorio >= 50 || isUnitFeatured(u)">
-                      {{ (u.progressLaboratorio >= 50 || isUnitFeatured(u)) ? '✓' : '🔒' }}
+                    <span class="st-bullet" [class.done]="u.progressLaboratorio >= 100" [class.open-circle]="isUnitUnlocked(u.unitNumber) && u.progressLaboratorio < 100">
+                      {{ u.progressLaboratorio >= 100 ? '✓' : isUnitUnlocked(u.unitNumber) ? '○' : '🔒' }}
                     </span>
-                    <span>Laboratorio gráfico</span>
+                    <span>Laboratorio ({{ u.progressLaboratorio }}%)</span>
                   </div>
                   <div class="usc-stage-row" (click)="goToUnit(u.unitNumber, 'practica'); $event.stopPropagation()">
-                    <span class="st-bullet" [class.done]="u.progressPractico >= 50 || isUnitFeatured(u)">
-                      {{ (u.progressPractico >= 50 || isUnitFeatured(u)) ? '✓' : '🔒' }}
+                    <span class="st-bullet" [class.done]="u.progressPractico >= 100" [class.open-circle]="isUnitUnlocked(u.unitNumber) && u.progressPractico < 100">
+                      {{ u.progressPractico >= 100 ? '✓' : isUnitUnlocked(u.unitNumber) ? '○' : '🔒' }}
                     </span>
-                    <span>Práctico guiado</span>
+                    <span>Práctico guiado ({{ u.progressPractico }}%)</span>
                   </div>
                   <div class="usc-stage-row" (click)="goToUnit(u.unitNumber, 'mcq'); $event.stopPropagation()">
-                    <span class="st-bullet" [class.done]="u.progressPruebaDominio >= 50" [class.open-circle]="isUnitFeatured(u) && u.progressPruebaDominio < 50">
-                      {{ u.progressPruebaDominio >= 50 ? '✓' : isUnitFeatured(u) ? '○' : '🔒' }}
+                    <span class="st-bullet" [class.done]="u.progressPruebaDominio >= 100" [class.open-circle]="isUnitUnlocked(u.unitNumber) && u.progressPruebaDominio < 100">
+                      {{ u.progressPruebaDominio >= 100 ? '✓' : isUnitUnlocked(u.unitNumber) ? '○' : '🔒' }}
                     </span>
-                    <span>Prueba de dominio</span>
+                    <span>Prueba dominio ({{ u.progressPruebaDominio }}%)</span>
                   </div>
                 </div>
 
@@ -340,17 +365,17 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
                 </div>
               </div>
 
-              <!-- Pie de la tarjeta: Barra de progreso o Estado -->
+              <!-- Pie de la tarjeta: Barra de progreso real o Estado Bloqueada -->
               <div class="usc-footer">
-                <ng-container *ngIf="isUnitFeatured(u) || getUnitPct(u) > 0; else lockedCardFooter">
+                <ng-container *ngIf="isUnitUnlocked(u.unitNumber); else lockedCardFooter">
                   <div class="usc-bar-outer">
-                    <div class="usc-bar-inner" [style.width.%]="getUnitPct(u) > 0 ? getUnitPct(u) : 100"></div>
+                    <div class="usc-bar-inner" [style.width.%]="getUnitPct(u)"></div>
                   </div>
-                  <span class="usc-pct-badge">{{ getUnitPct(u) > 0 ? getUnitPct(u) : 100 }}%</span>
+                  <span class="usc-pct-badge">{{ getUnitPct(u) }}%</span>
                 </ng-container>
                 <ng-template #lockedCardFooter>
                   <div class="usc-locked-bar">
-                    <span>🔒 Bloqueada (Click para explorar)</span>
+                    <span>🔒 Bloqueada (Completá U{{ u.unitNumber - 1 }} al 100%)</span>
                   </div>
                 </ng-template>
               </div>
@@ -385,9 +410,9 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
                 <div class="tbc-label">Laboratorio<br>Virtual</div>
               </div>
 
-              <div class="tool-big-card" routerLink="/machete">
+              <div class="tool-big-card" routerLink="/calculadora">
                 <app-cielo-art name="tool-chalkboard" [width]="88" [height]="72"></app-cielo-art>
-                <div class="tbc-label">Traductor<br>de Fórmulas</div>
+                <div class="tbc-label">Calculadora &<br>Conversor</div>
               </div>
 
               <div class="tool-big-card" routerLink="/speed-drill">
@@ -395,9 +420,9 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
                 <div class="tbc-label">Flashcards</div>
               </div>
 
-              <div class="tool-big-card" (click)="goToUnit(featuredUnitNumber, 'teoria')">
-                <app-cielo-art name="tool-board-play" [width]="88" [height]="72"></app-cielo-art>
-                <div class="tbc-label">Resolución<br>en Pizarrón</div>
+              <div class="tool-big-card" routerLink="/profesor">
+                <app-cielo-art name="prof-titular" [width]="88" [height]="72"></app-cielo-art>
+                <div class="tbc-label">Profesor Virtual<br>en Pizarrón</div>
               </div>
 
               <div class="tool-big-card" routerLink="/tribunal">
@@ -1364,6 +1389,7 @@ export class HomePage implements OnInit {
   parcialView: '1er' | '2do' | 'all' = '1er';
   featuredUnitNumber = 1;
   showResetConfirm = false;
+  lockedUnitAlert: { attemptedUnitNumber: number; requiredUnit: ProgramUnitDto } | null = null;
 
   readonly donutCircumference = 2 * Math.PI * 52;
 
@@ -1372,6 +1398,7 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.api.units$.subscribe((data) => {
       this.units = data || [];
+      this.featuredUnitNumber = this.api.getHighestUnlockedUnitNumber(this.units);
     });
     this.api.errors$.subscribe((errs) => {
       this.activeErrors = (errs || []).filter(e => !e.resolved);
@@ -1387,14 +1414,13 @@ export class HomePage implements OnInit {
   }
 
   get globalMastery(): number {
-    if (!this.units.length) return 32;
+    if (!this.units.length) return 0;
     const sum = this.units.reduce((acc, u) => acc + this.getUnitPct(u), 0);
-    const avg = Math.round(sum / this.units.length);
-    return avg > 0 ? avg : 32;
+    return Math.round(sum / this.units.length);
   }
 
   get donutDashOffset(): number {
-    const pct = Math.max(8, Math.min(100, this.globalMastery));
+    const pct = Math.max(0, Math.min(100, this.globalMastery));
     return this.donutCircumference * (1 - pct / 100);
   }
 
@@ -1402,29 +1428,33 @@ export class HomePage implements OnInit {
     if (!this.units.length) {
       return { unitNumber: 1, title: 'Unidad 1', subtitle: '', parcialGroup: '1er Parcial', labId: 'gauss', progressTeoria: 0, progressLaboratorio: 0, progressPractico: 0, progressPruebaDominio: 0, certificationStatus: 'no_iniciada' };
     }
-    const incomplete = this.units.find(u => this.getUnitPct(u) < 100);
-    return incomplete || this.units[0];
+    const highestUnlockedNum = this.api.getHighestUnlockedUnitNumber(this.units);
+    return this.units.find(u => u.unitNumber === highestUnlockedNum) || this.units[0];
   }
 
   get nextRecommendedTab(): string {
     const u = this.nextRecommendedUnit;
-    if (u.progressTeoria < 70) return 'teoria';
-    if (u.progressLaboratorio < 70) return 'graficos';
-    if (u.progressPractico < 70) return 'practica';
+    if (u.progressTeoria < 100) return 'teoria';
+    if (u.progressLaboratorio < 100) return 'graficos';
+    if (u.progressPractico < 100) return 'practica';
     return 'mcq';
   }
 
+  isUnitUnlocked(unitNumber: number): boolean {
+    return this.api.isUnitUnlocked(unitNumber, this.units);
+  }
+
   isUnitFeatured(u: ProgramUnitDto): boolean {
-    return u.unitNumber === this.featuredUnitNumber;
+    return this.isUnitUnlocked(u.unitNumber) && u.unitNumber === this.featuredUnitNumber;
   }
 
   getShortIllustratedTitle(unitNumber: number): string {
     const map: Record<number, string> = {
       1: 'Electricidad',
-      2: 'Capacitores',
-      3: 'Corriente Eléctrica',
-      4: 'Magnetismo',
-      5: 'Inducción',
+      2: 'Ley de Gauss',
+      3: 'Potencial Eléctrico',
+      4: 'Capacitores',
+      5: 'Corriente & RC',
       6: 'Fuerza de Lorentz',
       7: 'Biot-Savart & Ampère',
       8: 'Faraday-Lenz',
@@ -1436,13 +1466,13 @@ export class HomePage implements OnInit {
   getIllustrationType(unitNumber: number): string {
     const map: Record<number, string> = {
       1: 'bulb',
-      2: 'capacitor',
-      3: 'resistor',
-      4: 'magnet',
-      5: 'coil',
-      6: 'gauss-sphere',
+      2: 'gauss-sphere',
+      3: 'equipotential',
+      4: 'capacitor',
+      5: 'resistor',
+      6: 'magnet',
       7: 'compass-ampere',
-      8: 'equipotential',
+      8: 'coil',
       9: 'maxwell-wave'
     };
     return map[unitNumber] || 'bulb';
@@ -1453,17 +1483,42 @@ export class HomePage implements OnInit {
   }
 
   selectAndOpenUnit(unitNum: number) {
+    if (!this.isUnitUnlocked(unitNum)) {
+      this.triggerLockedUnitAlert(unitNum);
+      return;
+    }
     this.featuredUnitNumber = unitNum;
     this.goToUnit(unitNum, 'teoria');
   }
 
   goToUnit(unitNum: number, tab: string = 'teoria') {
+    if (!this.isUnitUnlocked(unitNum)) {
+      this.triggerLockedUnitAlert(unitNum);
+      return;
+    }
     this.router.navigate(['/units'], { queryParams: { u: unitNum, tab } });
+  }
+
+  private triggerLockedUnitAlert(attemptedUnitNumber: number) {
+    const highestUnlocked = this.api.getHighestUnlockedUnitNumber(this.units);
+    const reqUnit = this.units.find(u => u.unitNumber === highestUnlocked) || this.units[0];
+    if (reqUnit) {
+      this.lockedUnitAlert = {
+        attemptedUnitNumber,
+        requiredUnit: reqUnit
+      };
+    }
+  }
+
+  goToRequiredUnlockedUnit(unitNum: number) {
+    this.lockedUnitAlert = null;
+    this.router.navigate(['/units'], { queryParams: { u: unitNum, tab: this.nextRecommendedTab } });
   }
 
   executeResetProgress() {
     this.api.resetAllProgress().subscribe(() => {
       this.showResetConfirm = false;
+      this.featuredUnitNumber = 1;
     });
   }
 }

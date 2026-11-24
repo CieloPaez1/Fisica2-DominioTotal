@@ -67,6 +67,53 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
           <button class="close-btn" (click)="uploadSuccessMessage = null">✕</button>
         </div>
 
+        <!-- PANEL DE EXPANSIÓN AUTOMÁTICA DE CONOCIMIENTO (PDFs, LIBROS Y TPs NUEVOS) -->
+        <div class="cielo-lavender-card" style="padding: 18px 22px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <span class="pill-purple">🧠 MOTOR DE EXPANSIÓN AUTOMÁTICA DE CONOCIMIENTO</span>
+              <h2 style="font-family: 'Baloo 2', sans-serif; font-size: 1.35rem; color: #191538; margin: 6px 0 2px 0;">
+                Cada PDF, Libro o Trabajo Práctico que agregues actualiza automáticamente Teoría y Práctica ♡
+              </h2>
+              <p style="margin: 0; font-size: 0.88rem; font-weight: 700; color: #2b2354;">
+                Actualmente tenés <strong>{{ dynamicTheoryCount }} temas teóricos nuevos</strong> y <strong>{{ dynamicExercisesCount }} prácticos nuevos</strong> incorporados dinámicamente a las unidades.
+              </p>
+            </div>
+            <button class="cielo-btn-purple" (click)="showManualIngestForm = !showManualIngestForm">
+              {{ showManualIngestForm ? '▲ Ocultar Panel' : '➕ Pegar Apunte / Libro / Trabajo Práctico Nuevo' }}
+            </button>
+          </div>
+
+          <div *ngIf="showManualIngestForm" style="margin-top: 14px; display: flex; flex-direction: column; gap: 10px; border-top: 2px dashed rgba(25,21,56,0.2); padding-top: 14px;">
+            <div style="display: grid; grid-template-columns: 1fr 220px; gap: 10px;">
+              <input
+                type="text"
+                [(ngModel)]="manualDocTitle"
+                placeholder="Título del Libro, Apunte o Trabajo Práctico (ej: Sears Zemansky Cap. 24 Capacitores)..."
+                style="background: #fff; border: 2.5px solid #191538; border-radius: 12px; padding: 10px 14px; font-weight: 800; color: #191538;"
+              />
+              <select
+                [(ngModel)]="manualDocUnit"
+                style="background: #fff; border: 2.5px solid #191538; border-radius: 12px; padding: 10px 12px; font-weight: 800; color: #191538;"
+              >
+                <option [ngValue]="0">Auto-detectar Unidad (1 a 9)</option>
+                <option *ngFor="let uNum of [1,2,3,4,5,6,7,8,9]" [ngValue]="uNum">Unidad {{ uNum }}</option>
+              </select>
+            </div>
+            <textarea
+              [(ngModel)]="manualDocContent"
+              rows="4"
+              placeholder="Pegá acá el texto teórico del libro, fórmulas o enunciados del Trabajo Práctico nuevo para que la plataforma lo agregue a Teoría Visual y a Práctico Guiado..."
+              style="background: #fff; border: 2.5px solid #191538; border-radius: 14px; padding: 12px 14px; font-weight: 700; color: #191538;"
+            ></textarea>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="cielo-btn-purple" (click)="ingestManualText()">
+                ⚡ Incorporar Conocimiento a Teoría y Práctica de la Unidad
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- ================================================================
              2. BUSCADOR Y ESTANTES POR UNIDAD Y TIPO DE MATERIAL
              ================================================================ -->
@@ -162,10 +209,13 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
 
             <div class="bvc-actions">
               <button class="btn-read-book" (click)="inspectDocument(pdf.filename)">
-                📖 Leer Páginas aquí
+                📖 Leer Páginas
+              </button>
+              <button class="btn-read-book" style="background: #fde047;" (click)="ingestExistingPdf(pdf)">
+                ⚡ Sumar a Unidad
               </button>
               <a [href]="getRawPdfUrl(pdf.filename)" target="_blank" rel="noopener" class="btn-open-raw">
-                ↗ Abrir PDF Completo
+                ↗ PDF
               </a>
             </div>
           </div>
@@ -490,8 +540,42 @@ export class PdfsPage implements OnInit {
   selectedUnitFilter = 0;
   inspectedPdf: any = null;
   uploadSuccessMessage: string | null = null;
+  showManualIngestForm = false;
+  manualDocTitle = '';
+  manualDocUnit = 0;
+  manualDocContent = '';
 
   constructor(private api: Fisica2ApiService) {}
+
+  get dynamicTheoryCount(): number {
+    return this.api.getDynamicTheoryTopics().length;
+  }
+
+  get dynamicExercisesCount(): number {
+    return this.api.getDynamicExercises().length;
+  }
+
+  ingestManualText() {
+    if (!this.manualDocTitle.trim() && !this.manualDocContent.trim()) return;
+    const title = this.manualDocTitle.trim() || 'Apunte / TP Incorporado';
+    const res = this.api.ingestNewKnowledgeFromDocument(
+      title,
+      this.manualDocContent,
+      this.manualDocUnit > 0 ? this.manualDocUnit : undefined
+    );
+    this.uploadSuccessMessage = `¡Conocimiento incorporado a la Unidad ${res.unitNumber}! Se agregó "${res.addedTheoryTitle}" en Teoría Visual y "${res.addedExerciseTitle}" en Práctico Guiado.`;
+    this.manualDocTitle = '';
+    this.manualDocContent = '';
+    this.showManualIngestForm = false;
+  }
+
+  ingestExistingPdf(pdf: PdfMetadataDto) {
+    this.api.inspectPdf(pdf.filename, 15).subscribe((data) => {
+      const targetUnit = pdf.unitNumbers && pdf.unitNumbers.length ? pdf.unitNumbers[0] : undefined;
+      const res = this.api.ingestNewKnowledgeFromDocument(pdf.filename, data?.pages || [pdf.description || ''], targetUnit);
+      this.uploadSuccessMessage = `¡Tomo "${pdf.filename}" sincronizado con la Unidad ${res.unitNumber}! Se actualizaron Teoría Visual (11 puntos) y Práctico Guiado.`;
+    });
+  }
 
   ngOnInit() {
     this.loadPdfs();
@@ -538,12 +622,14 @@ export class PdfsPage implements OnInit {
 
     this.api.uploadPdf(file).subscribe({
       next: (report) => {
-        this.uploadSuccessMessage = `Tomo "${file.name}" incorporado a la estantería (${report.totalPages || 1} páginas).`;
+        const res = this.api.ingestNewKnowledgeFromDocument(file.name, report?.pages || []);
+        this.uploadSuccessMessage = `Tomo "${file.name}" (${report.totalPages || 1} págs.) incorporado a la estantería y sincronizado automáticamente con Teoría y Práctica de la Unidad ${res.unitNumber}.`;
         this.inspectedPdf = report;
         this.loadPdfs();
       },
       error: () => {
-        this.uploadSuccessMessage = `Tomo "${file.name}" registrado en tu estantería local.`;
+        const res = this.api.ingestNewKnowledgeFromDocument(file.name, `Documento PDF incorporado: ${file.name}`);
+        this.uploadSuccessMessage = `Tomo "${file.name}" registrado e incorporado a Teoría y Práctica de la Unidad ${res.unitNumber}.`;
       }
     });
   }

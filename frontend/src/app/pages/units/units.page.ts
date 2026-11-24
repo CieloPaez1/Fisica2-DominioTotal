@@ -74,20 +74,45 @@ import {
       <div class="hub-container">
 
         <!-- ================================================================
-             1. SELECTOR ILUSTRADO DE LAS 9 UNIDADES + BANNER HERO LAVANDA
+             1. SELECTOR ILUSTRADO DE LAS 9 UNIDADES (DESBLOQUEO ESTRICTO AL 100%)
              ================================================================ -->
         <div class="unit-pills-bar">
           <button
             *ngFor="let u of units"
             class="u-pill-btn"
             [class.active]="u.unitNumber === selectedUnitNumber"
-            [class.certified]="getUnitPct(u) >= 80"
+            [class.certified]="getUnitPct(u) >= 100"
+            [style.opacity]="isUnitUnlocked(u.unitNumber) ? '1' : '0.62'"
             (click)="selectUnit(u.unitNumber)"
           >
             <app-cielo-art [name]="getUnitIllustration(u.unitNumber)" [width]="44" [height]="46"></app-cielo-art>
-            <span class="up-num">Unidad {{ u.unitNumber }}</span>
-            <span class="up-pct">{{ getShortUnitName(u.unitNumber) }} • {{ getUnitPct(u) }}%</span>
+            <span class="up-num">
+              {{ isUnitUnlocked(u.unitNumber) ? (getUnitPct(u) >= 100 ? '✅' : '🔓') : '🔒' }} Unidad {{ u.unitNumber }}
+            </span>
+            <span class="up-pct">
+              {{ getShortUnitName(u.unitNumber) }} • {{ isUnitUnlocked(u.unitNumber) ? (getUnitPct(u) + '%') : 'Bloqueada' }}
+            </span>
           </button>
+        </div>
+
+        <!-- AVISO / MODAL SI INTENTA ACCEDER A UNA UNIDAD BLOQUEADA -->
+        <div class="cielo-lavender-card" *ngIf="lockedUnitNotice as notice" style="padding: 18px 22px; border: 3px solid #f43f5e; background: #ffe4e6;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <strong style="color: #881337; font-size: 1.1rem; display: block;">
+                🔒 La Unidad {{ notice.attemptedUnit }} está bloqueada todavía
+              </strong>
+              <span style="color: #9f1239; font-weight: 700; font-size: 0.9rem;">
+                Para desbloquear la Unidad {{ notice.attemptedUnit }}, primero tenés que llegar al <strong>100%</strong> en la
+                <strong>Unidad {{ notice.requiredUnitNumber }}</strong> (actualmente en <strong>{{ currentMastery }}%</strong>:
+                Teoría {{ currentUnit?.progressTeoria }}%, Laboratorio {{ currentUnit?.progressLaboratorio }}%,
+                Práctico {{ currentUnit?.progressPractico }}%, Multiple Choice {{ currentUnit?.progressPruebaDominio }}%).
+              </span>
+            </div>
+            <button class="cielo-btn-purple" (click)="lockedUnitNotice = null">
+              ¡Entendido, completaré la Unidad {{ notice.requiredUnitNumber }} al 100%! ♡
+            </button>
+          </div>
         </div>
 
         <!-- BANNER LAVANDA ILUSTRADO PROTAGONISTA DE LA UNIDAD -->
@@ -161,9 +186,88 @@ import {
         </div>
 
         <!-- ================================================================
-             PESTAÑA 1: TEORÍA (LOS 11 PUNTOS + DEMOSTRACIONES DE PIZARRÓN + TRADUCTOR DE FÓRMULAS)
+             PESTAÑA 1: TEORÍA VISUAL (DIBUJOS EXPLICATIVOS + PROFESOR + 11 PUNTOS + PIZARRÓN)
              ================================================================ -->
         <div *ngIf="activeTab === 'teoria'" class="tab-pane">
+
+          <!-- NUEVO ÁLBUM VISUAL EXPLICATIVO CON DIBUJOS GRANDES ("¿QUÉ ES Y DE DÓNDE SALE?") -->
+          <div class="cielo-lavender-card" style="padding: 22px 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+              <div>
+                <span style="background: #191538; color: #fde047; font-weight: 900; font-size: 0.74rem; padding: 4px 12px; border-radius: 99px;">
+                  🎨 GUÍA VISUAL ILUSTRADA • UNIDAD {{ selectedUnitNumber }}
+                </span>
+                <h2 style="font-family: var(--font-display); font-size: 1.55rem; color: #191538; margin: 6px 0 2px 0;">
+                  Dibujos Explicativos: ¿Qué es físicamente, cómo se ve por dentro y de dónde sale?
+                </h2>
+                <p style="margin: 0; color: #362f63; font-weight: 700; font-size: 0.9rem;">
+                  Mirá los esquemas ilustrados antes de leer las fórmulas para entender exactamente qué ocurre en la realidad.
+                </p>
+              </div>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="cielo-btn-purple" (click)="openProfessorForCurrentUnit()">
+                  👩‍🏫 Ver Clase Animada con Voz del Profesor →
+                </button>
+                <button class="cielo-btn-purple" style="background: linear-gradient(180deg, #10b981, #059669);" (click)="openCalculatorPage()">
+                  🧮 Calculadora & Conversor de Unidades
+                </button>
+              </div>
+            </div>
+
+            <!-- GRILLA DE 2 GRANDES LÁMINAS ILUSTRADAS EXPLICATIVAS POR UNIDAD -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px;">
+              <div
+                *ngFor="let card of currentVisualExplanatoryCards"
+                style="background: #ffffff; border: 3px solid #191538; border-radius: 20px; padding: 16px 18px; box-shadow: 0 6px 0 #7c5dfa; display: flex; flex-direction: column; gap: 10px;"
+              >
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="background: #7c5dfa; color: #fff; font-weight: 900; font-size: 0.72rem; padding: 3px 10px; border-radius: 99px;">
+                    {{ card.badge }}
+                  </span>
+                  <span style="font-size: 1.3rem;">{{ card.emoji }}</span>
+                </div>
+                <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: #191538; margin: 0;">
+                  {{ card.questionTitle }}
+                </h3>
+
+                <!-- ESQUEMA GRÁFICO SVG EXPLICATIVO -->
+                <div style="background: #1b4332; border: 5px solid #d97706; border-radius: 16px; padding: 10px; color: #fff;">
+                  <div style="font-family: var(--font-mono); font-size: 0.82rem; color: #fde047; font-weight: 800; text-align: center; margin-bottom: 6px;">
+                    {{ card.diagramHeader }}
+                  </div>
+                  <div style="background: rgba(0,0,0,0.28); border-radius: 10px; padding: 10px 12px; font-size: 0.86rem; font-weight: 700; color: #ecfdf5; line-height: 1.5;">
+                    <div *ngFor="let stepLine of card.diagramLines" style="margin-bottom: 4px;">
+                      ✦ {{ stepLine }}
+                    </div>
+                  </div>
+                </div>
+
+                <p style="margin: 0; font-size: 0.9rem; font-weight: 700; color: #241d4d; line-height: 1.52;">
+                  {{ card.plainExplanation }}
+                </p>
+
+                <!-- FÓRMULA TRADICIONAL ORDENADA -->
+                <div style="background: #f8fafc; border: 2.5px solid #191538; border-radius: 14px; padding: 10px; text-align: center;">
+                  <div style="font-size: 0.68rem; font-weight: 900; color: #5b3ec8; margin-bottom: 4px;">FÓRMULA TRADICIONAL ORDENADA:</div>
+                  <div style="color: #191538; font-size: 1.15rem;" [innerHTML]="renderMath(card.traditionalFormulaLatex, true)"></div>
+                </div>
+
+                <div style="background: #fef9c3; border: 2px solid #eab308; border-radius: 12px; padding: 8px 12px; font-size: 0.82rem; font-weight: 800; color: #713f12;">
+                  💡 <strong>¿De dónde sale?:</strong> {{ card.whereItComesFrom }}
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px; display: flex; justify-content: flex-end;">
+              <button
+                class="cyber-btn-emerald"
+                [disabled]="isActivityDone('teoria', 'visual_guide_u' + selectedUnitNumber)"
+                (click)="completeVerifiedActivity('teoria', 'visual_guide_u' + selectedUnitNumber, 40)"
+              >
+                {{ isActivityDone('teoria', 'visual_guide_u' + selectedUnitNumber) ? '✓ Dibujos Explicativos Acreditados' : '✅ Comprendí los Dibujos Explicativos (+40% Teoría)' }}
+              </button>
+            </div>
+          </div>
 
           <!-- Sub-selector de Tópicos Teóricos de la Unidad -->
           <div class="cyber-glass-card inner-card" *ngIf="unitTheoryTopics.length > 0">
@@ -817,23 +921,47 @@ import {
         </div>
 
         <!-- ================================================================
-             PESTAÑA 3: PRÁCTICA GUIADA DE TPs EN 6 PASOS + CAZATRAMPAS
+             PESTAÑA 3: PRÁCTICA GUIADA DE TPs EN 6 PASOS (DE MENOR A MAYOR DIFICULTAD)
              ================================================================ -->
         <div *ngIf="activeTab === 'practica'" class="tab-pane">
+
+          <!-- BANNER PARA INGRESAR TUS PROPIOS PRÁCTICOS O USAR LA CALCULADORA CIENTÍFICA -->
+          <div class="cielo-lavender-card" style="padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+            <div>
+              <span style="background: #191538; color: #fde047; font-weight: 900; font-size: 0.72rem; padding: 3px 10px; border-radius: 99px;">
+                ✨ RESOLVÉ TUS PROPIOS EJERCICIOS Y USÁ LA CALCULADORA CIENTÍFICA
+              </span>
+              <h3 style="font-family: var(--font-display); font-size: 1.3rem; color: #191538; margin: 4px 0 2px 0;">
+                ¿Tenés un ejercicio propio de tu guía o querés convertir unidades (cm a m, pF a nF)?
+              </h3>
+              <p style="margin: 0; font-size: 0.86rem; font-weight: 700; color: #362f63;">
+                Los trabajos prácticos de abajo están ordenados de <strong>Menor Dificultad a Mayor Dificultad</strong>. También podés ingresar cualquier práctico propio:
+              </p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="cielo-btn-purple" (click)="openCalculatorPage()">
+                📝 Ingresar Mi Propio Ejercicio / Abrir Calculadora →
+              </button>
+              <button class="cielo-btn-purple" style="background: linear-gradient(180deg, #10b981, #059669);" (click)="openProfessorForCurrentUnit()">
+                👩‍🏫 Ver al Profesor Resolver con Voz
+              </button>
+            </div>
+          </div>
+
           <div class="cyber-glass-card inner-card">
             <div class="section-head-flex">
               <div>
-                <span class="kicker-cyan">ETAPA C • TRABAJOS PRÁCTICOS OFICIALES UNdeC</span>
+                <span class="kicker-cyan">ETAPA C • TRABAJOS PRÁCTICOS GRADUADOS DE MENOR A MAYOR DIFICULTAD</span>
                 <h2 class="pane-title">Resolución Guiada en 6 Pasos — Unidad {{ selectedUnitNumber }}</h2>
               </div>
-              <div class="topic-selector-pills" *ngIf="unitExercises.length > 1">
+              <div class="topic-selector-pills" *ngIf="unitExercises.length > 0">
                 <button
                   *ngFor="let ex of unitExercises; let idx = index"
                   class="sub-pill"
                   [class.active]="selectedExerciseIndex === idx"
                   (click)="selectExercise(idx)"
                 >
-                  {{ ex.tpReference }}
+                  {{ getDifficultyOrderLabel(ex.difficulty, idx) }} • {{ ex.tpReference }}
                 </button>
               </div>
             </div>
@@ -2538,6 +2666,7 @@ export class UnitsPage implements OnInit {
   // Estado Pestaña 5: Oral
   oralDrafts: Record<string, string> = {};
   oralRevealed: Record<string, boolean> = {};
+  lockedUnitNotice: { attemptedUnit: number; requiredUnitNumber: number } | null = null;
 
   constructor(
     private api: Fisica2ApiService,
@@ -2549,6 +2678,9 @@ export class UnitsPage implements OnInit {
   ngOnInit() {
     this.api.units$.subscribe((data) => {
       this.units = data || [];
+      if (!this.isUnitUnlocked(this.selectedUnitNumber)) {
+        this.selectedUnitNumber = this.api.getHighestUnlockedUnitNumber(this.units);
+      }
     });
     this.api.getUnits().subscribe();
 
@@ -2568,7 +2700,21 @@ export class UnitsPage implements OnInit {
     });
   }
 
+  isUnitUnlocked(unitNum: number): boolean {
+    return this.api.isUnitUnlocked(unitNum, this.units);
+  }
+
   selectUnit(unitNum: number) {
+    if (!this.isUnitUnlocked(unitNum)) {
+      const highest = this.api.getHighestUnlockedUnitNumber(this.units);
+      this.lockedUnitNotice = {
+        attemptedUnit: unitNum,
+        requiredUnitNumber: highest
+      };
+      this.selectedUnitNumber = highest;
+      return;
+    }
+    this.lockedUnitNotice = null;
     this.selectedUnitNumber = unitNum;
     this.selectedTheoryIndex = 0;
     this.selectedExerciseIndex = 0;
@@ -2579,6 +2725,299 @@ export class UnitsPage implements OnInit {
     this.labChallengeSelected = null;
     this.labChallengeFeedback = null;
     this.resetCurrentMcq();
+  }
+
+  openProfessorForCurrentUnit() {
+    this.router.navigate(['/profesor'], { queryParams: { u: this.selectedUnitNumber } });
+  }
+
+  openCalculatorPage() {
+    this.router.navigate(['/calculadora']);
+  }
+
+  get currentVisualExplanatoryCards() {
+    const cardsByUnit: Record<number, {
+      badge: string;
+      emoji: string;
+      questionTitle: string;
+      diagramHeader: string;
+      diagramLines: string[];
+      plainExplanation: string;
+      traditionalFormulaLatex: string;
+      whereItComesFrom: string;
+    }[]> = {
+      1: [
+        {
+          badge: 'CONCEPTO 1 • ORIGEN ATÓMICO',
+          emoji: '⚛️',
+          questionTitle: '¿Qué es una Carga Eléctrica y de dónde sale la Ley de Coulomb?',
+          diagramHeader: '[ ÁTOMO: Protones (+) en el núcleo | Electrones (−) libres ]',
+          diagramLines: [
+            'Cuerpo que PIERDE electrones (−) → Queda con carga POSITIVA (+q)',
+            'Cuerpo que GANA electrones (−) → Queda con carga NEGATIVA (−q)',
+            '(+q₁) <─── F⃗ ─── [ Distancia r en metros ] ─── F⃗ ───> (+q₂)'
+          ],
+          plainExplanation: 'La carga eléctrica nace del desbalance entre protones y electrones. Dos cargas del mismo signo se repelen y de distinto signo se atraen con una fuerza que cae con el cuadrado de la distancia r.',
+          traditionalFormulaLatex: 'F = \\frac{k \\cdot |q_1| \\cdot |q_2|}{r^2}',
+          whereItComesFrom: 'Sale de medir que al duplicar la distancia r (2r), la fuerza se divide por 4 (2² = 4).'
+        },
+        {
+          badge: 'CONCEPTO 2 • CAMPO EN EL ESPACIO',
+          emoji: '⚡',
+          questionTitle: '¿Qué es el Campo Eléctrico E⃗ y un Diferencial de Carga dq?',
+          diagramHeader: '[ Carga Fuente (+Q) ──► Líneas de Campo E⃗ ──► Punto P ]',
+          diagramLines: [
+            'De las cargas POSITIVAS (+) nacen y salen las flechas de campo E⃗',
+            'Hacia las cargas NEGATIVAS (−) entran y mueren las flechas de campo E⃗',
+            'Cuerpo extenso (barra/anillo) → Se corta en pedacitos dq y se integra ∫ dE'
+          ],
+          plainExplanation: 'El campo eléctrico E⃗ es la fuerza por unidad de carga que la carga fuente Q crea en un punto del espacio, aunque todavía no pongas ninguna otra carga ahí.',
+          traditionalFormulaLatex: 'E = \\frac{F}{q_0} = \\frac{k \\cdot |Q|}{r^2}',
+          whereItComesFrom: 'Sale de dividir la Fuerza de Coulomb por la carga de prueba q₀ (se cancela q₀ y solo queda Q).'
+        }
+      ],
+      2: [
+        {
+          badge: 'CONCEPTO 1 • FLUJO Y CAJA IMAGINARIA',
+          emoji: '🌐',
+          questionTitle: '¿Qué es el Flujo Eléctrico y una Superficie Gaussiana?',
+          diagramHeader: '[ Carga +Q encerrada dentro de una Esfera/Cilindro Imaginario ]',
+          diagramLines: [
+            'Flujo Φ_E = Cuántas líneas de campo E⃗ atraviesan un área A',
+            'Superficie Gaussiana = Caja cerrada imaginaria que elegimos por simetría',
+            'Las cargas que están AFUERA de la caja dan flujo neto CERO'
+          ],
+          plainExplanation: 'La Ley de Gauss dice que todo el flujo eléctrico que sale de una superficie cerrada depende únicamente de la carga neta encerrada adentro dividida por ε₀.',
+          traditionalFormulaLatex: '\\Phi_E = \\oint \\vec{E} \\cdot d\\vec{A} = \\frac{Q_{\\text{encerrada}}}{\\varepsilon_0}',
+          whereItComesFrom: 'Como el área de una esfera crece con r² y el campo de Coulomb baja con 1/r², al multiplicarlos r² se cancela y queda Q/ε₀.'
+        },
+        {
+          badge: 'CONCEPTO 2 • JAULA DE FARADAY',
+          emoji: '🛡️',
+          questionTitle: '¿Por qué adentro de un Conductor en Equilibrio el Campo es Cero?',
+          diagramHeader: '[ Metal Conductor: Cargas libres en el borde exterior | Interior E⃗ = 0 ]',
+          diagramLines: [
+            'En un metal los electrones se mueven libremente y se repelen entre sí',
+            'Viajan hasta quedarse todos en la superficie exterior del conductor',
+            'Adentro del metal no queda carga encerrada → E⃗_interior = 0'
+          ],
+          plainExplanation: 'Si hubiera campo eléctrico adentro de un metal, los electrones seguirían moviéndose. El equilibrio se alcanza recién cuando las cargas anulan el campo interno a cero.',
+          traditionalFormulaLatex: 'E_{\\text{interior}} = 0 \\quad ; \\quad E_{\\text{superficie}} = \\frac{\\sigma}{\\varepsilon_0}',
+          whereItComesFrom: 'Sale de trazar una superficie gaussiana justo por adentro del borde del conductor.'
+        }
+      ],
+      3: [
+        {
+          badge: 'CONCEPTO 1 • ALTURA ELÉCTRICA',
+          emoji: '🏔️',
+          questionTitle: '¿Qué es el Potencial Eléctrico (Voltaje V)?',
+          diagramHeader: '[ Carga (+) = Cima Alta (+V) ──► Campo E⃗ baja ──► Carga (−) = Pozo (−V) ]',
+          diagramLines: [
+            'El Potencial V (Voltios) es un ESCALAR (un número sin flecha ni componentes)',
+            'Representa la energía potencial en Joules por cada Coulomb de carga',
+            'El vector Campo Eléctrico E⃗ siempre apunta hacia donde BAJA el voltaje'
+          ],
+          plainExplanation: 'Pensá en el potencial V como la altura de una montaña: las cargas positivas están en lo alto y el campo eléctrico es la pendiente cuesta abajo.',
+          traditionalFormulaLatex: 'V = \\frac{k \\cdot Q}{r} \\quad ; \\quad W_{A \\to B} = -q \\cdot (V_B - V_A)',
+          whereItComesFrom: 'Sale de integrar el campo eléctrico kQ/r² respecto de la distancia r (la integral de 1/r² da 1/r a la primera potencia).'
+        },
+        {
+          badge: 'CONCEPTO 2 • LÍNEAS DE IGUAL VOLTAJE',
+          emoji: '🎯',
+          questionTitle: '¿Qué es una Superficie Equipotencial?',
+          diagramHeader: '[ Círculos concéntricos de igual Voltaje V ⊥ Flechas de Campo E⃗ ]',
+          diagramLines: [
+            'Todos los puntos de una misma equipotencial tienen el mismo voltaje (V_A = V_B)',
+            'Mover una carga sobre una equipotencial cuesta Trabajo W = 0 Joules',
+            'Las líneas de campo E⃗ siempre cortan a 90° a las equipotenciales'
+          ],
+          plainExplanation: 'Caminar por una superficie equipotencial es como caminar por un piso horizontal a la misma altura: no subís ni bajás, por eso no cuesta trabajo.',
+          traditionalFormulaLatex: '\\Delta V = 0 \\implies W = 0\\text{ J} \\quad (\\vec{E} \\perp \\text{Equipotencial})',
+          whereItComesFrom: 'Como W = -q·(V_B - V_A), si V_B = V_A la resta da cero.'
+        }
+      ],
+      4: [
+        {
+          badge: 'CONCEPTO 1 • GEOMETRÍA DEL CAPACITOR',
+          emoji: '🔋',
+          questionTitle: '¿Qué es un Capacitor por dentro y de qué depende su Capacidad?',
+          diagramHeader: '[ Placa Superior (+Q, Área A) ══ Separación d ══ Placa Inferior (−Q) ]',
+          diagramLines: [
+            'Son dos placas metálicas frente a frente separadas por un aislante',
+            'Cuanto más grandes son las placas (mayor Área A) → Mayor Capacidad C',
+            'Cuanto más cerca están las placas (menor distancia d) → Mayor Capacidad C'
+          ],
+          plainExplanation: 'Un capacitor almacena carga y energía en el campo eléctrico entre sus placas. Su capacidad C en Faradios solo depende de sus medidas geométricas A y d y del material aislante.',
+          traditionalFormulaLatex: 'C = \\frac{\\kappa \\cdot \\varepsilon_0 \\cdot A}{d} \\quad ; \\quad Q = C \\cdot V',
+          whereItComesFrom: 'Sale de dividir la carga Q por el voltaje V = E·d = (Q / ε₀A)·d. Se simplifica Q y queda ε₀A/d.'
+        },
+        {
+          badge: 'CONCEPTO 2 • EL DIELÉCTRICO Y PREFIJOS',
+          emoji: '🧱',
+          questionTitle: '¿Qué hace un Dieléctrico (κ) y cómo convierto pF, nF y μF?',
+          diagramHeader: '[ Dipolos del aislante (− +) se alinean y debilitan el campo interno ]',
+          diagramLines: [
+            'El aislante (dieléctrico) multiplica la capacidad original por κ (C = κ · C₀)',
+            '1 microFaradio (μF) = 10⁻⁶ F  |  1 nanoFaradio (nF) = 10⁻⁹ F',
+            '1 picoFaradio (pF) = 10⁻¹² F  (1 nF = 1000 pF)'
+          ],
+          plainExplanation: 'Las moléculas del dieléctrico crean un campito opuesto que reduce la tensión necesaria para guardar la misma carga, aumentando la capacidad.',
+          traditionalFormulaLatex: 'C_{\\text{con dieléctrico}} = \\kappa \\cdot C_0 \\quad ; \\quad U = \\frac{1}{2} \\cdot C \\cdot V^2',
+          whereItComesFrom: 'Al reducirse el campo E a E₀/κ, el voltaje baja a V₀/κ y la capacidad C = Q/V sube a κ·C₀.'
+        }
+      ],
+      5: [
+        {
+          badge: 'CONCEPTO 1 • ELECTRONES EN EL CABLE',
+          emoji: '💡',
+          questionTitle: '¿Qué es la Corriente Eléctrica I y la Resistencia R de un cable?',
+          diagramHeader: '[ Cable de longitud L y sección A: Electrones e⁻ avanzando ]',
+          diagramLines: [
+            'Corriente I (Amperes) = Cuántos Coulombs pasan por segundo (I = dQ/dt)',
+            'Cable más LARGO (mayor L) → Más choques → Mayor Resistencia R',
+            'Cable más GRUESO (mayor Área A) → Más ancho de paso → Menor Resistencia R'
+          ],
+          plainExplanation: 'La resistencia eléctrica funciona igual que un pasillo: si el pasillo es muy largo cuesta más pasar, y si es muy ancho pasan todos más fácil.',
+          traditionalFormulaLatex: 'R = \\rho \\cdot \\frac{L}{A} \\quad ; \\quad V = I \\cdot R \\quad ; \\quad P = I^2 \\cdot R',
+          whereItComesFrom: 'De la Ley de Ohm microscópica y la geometría cilíndrica del conductor.'
+        },
+        {
+          badge: 'CONCEPTO 2 • CARGA DEL CAPACITOR RC',
+          emoji: '⏱️',
+          questionTitle: '¿Cómo funciona un Circuito RC y la Constante de Tiempo τ = R·C?',
+          diagramHeader: '[ t = 0⁺: Capacitor vacío = Cable | t = τ: 63,2% | t → ∞: Llave abierta ]',
+          diagramLines: [
+            'Al cerrar la llave (t = 0⁺): el capacitor está vacío (V_C = 0) y la corriente es máxima',
+            'En t = τ = R·C: el voltaje del capacitor llega al 63,2% de la batería',
+            'En t ≥ 5·τ (t → ∞): el capacitor está lleno (V_C = ε) y la corriente se detiene (I = 0)'
+          ],
+          plainExplanation: 'El resistor R limita qué tan rápido pueden entrar las cargas al capacitor C. El producto τ = R·C en segundos mide la duración de esa carga.',
+          traditionalFormulaLatex: 'v_C(t) = \\mathcal{E} \\cdot \\left(1 - e^{-\\frac{t}{R \\cdot C}}\\right) \\quad ; \\quad \\tau = R \\cdot C',
+          whereItComesFrom: 'Sale de resolver la ecuación diferencial de la malla de Kirchhoff: ε - i·R - q/C = 0.'
+        }
+      ],
+      6: [
+        {
+          badge: 'CONCEPTO 1 • IMANES Y FUERZA DE LORENTZ',
+          emoji: '🧲',
+          questionTitle: '¿Qué es un Campo Magnético B⃗ y cuándo hace fuerza sobre una carga?',
+          diagramHeader: '[ Imán Norte ──► Líneas cerradas de B⃗ ──► Sur | Carga móvil con velocidad v⃗ ]',
+          diagramLines: [
+            'Si la carga está QUIETA (v = 0) → El campo magnético NO le hace fuerza (F_B = 0)',
+            'Si se mueve paralela a B⃗ (θ = 0°) → Tampoco siente fuerza magnética (F_B = 0)',
+            'La fuerza F⃗_B es siempre PERPENDICULAR (90°) tanto a la velocidad v⃗ como a B⃗'
+          ],
+          plainExplanation: 'El campo magnético solo desvía cargas en movimiento. Usamos la Regla de la Mano Derecha: dedos desde v⃗ hacia B⃗ y el pulgar da la fuerza F⃗_B.',
+          traditionalFormulaLatex: 'F_B = |q| \\cdot v \\cdot B \\cdot \\sin(\\theta)',
+          whereItComesFrom: 'Del producto vectorial F⃗ = q · (v⃗ × B⃗) medido experimentalmente en Teslas (1 T = 10⁴ Gauss).'
+        },
+        {
+          badge: 'CONCEPTO 2 • ÓRBITA DE CICLOTRÓN',
+          emoji: '🌀',
+          questionTitle: '¿Por qué la carga gira en círculos sin cambiar su rapidez?',
+          diagramHeader: '[ Órbita circular de radio R: Velocidad v⃗ tangente ⊥ Fuerza F⃗_B al centro ]',
+          diagramLines: [
+            'Como F⃗_B apunta siempre a 90° de la velocidad, actúa como fuerza centrípeta',
+            'Trabajo magnético W_B = 0 Joules → La rapidez v y la energía cinética NO cambian',
+            'Si la partícula es negativa (electrón), gira en sentido contrario al protón'
+          ],
+          plainExplanation: 'Al tirar siempre hacia el centro del círculo sin empujar a favor ni en contra de la marcha, la fuerza magnética curva el camino manteniendo constante la rapidez.',
+          traditionalFormulaLatex: 'R = \\frac{m \\cdot v}{|q| \\cdot B}',
+          whereItComesFrom: 'Sale de igualar la fuerza magnética |q|·v·B con la fuerza centrípeta m·v²/R y despejar R.'
+        }
+      ],
+      7: [
+        {
+          badge: 'CONCEPTO 1 • CORRIENTE QUE CREA MAGNETISMO',
+          emoji: '🧭',
+          questionTitle: '¿Cómo crea campo magnético un cable con corriente (Biot-Savart y Ampère)?',
+          diagramHeader: '[ Cable con corriente I ↑ ──► Anillos concéntricos de Campo Magnético B⃗ ]',
+          diagramLines: [
+            'Pulgar de la mano derecha en sentido de la corriente I → Dedos dan el giro de B⃗',
+            'Dos cables paralelos con corrientes de IGUAL sentido → Se ATRAEN',
+            'Dos cables paralelos con corrientes de DISTINTO sentido → Se REPELEN'
+          ],
+          plainExplanation: 'Toda corriente eléctrica genera anillos de campo magnético a su alrededor cuya intensidad disminuye con la distancia r al cable.',
+          traditionalFormulaLatex: 'B_{\\text{cable recto}} = \\frac{\\mu_0 \\cdot I}{2 \\cdot \\pi \\cdot r}',
+          whereItComesFrom: 'Sale de la Ley de Ampère ∮ B⃗·dl⃗ = μ₀·I dividida por el perímetro de la circunferencia 2·π·r.'
+        },
+        {
+          badge: 'CONCEPTO 2 • EL SOLENOIDE (BOBINA)',
+          emoji: 'コイル',
+          questionTitle: '¿Qué es un Solenoide por dentro y cómo es su campo magnético?',
+          diagramHeader: '[ Alambre enrollado en N espiras (vueltas) a lo largo de un tubo de largo L ]',
+          diagramLines: [
+            'Un solenoide es una bobina cilíndrica de N vueltas de alambre apretadas',
+            'Adentro del tubo los campos de todas las espiras se suman → Campo B⃗ uniforme',
+            'Afuera del solenoide los campos de ida y vuelta se cancelan (B_afuera ≈ 0)'
+          ],
+          plainExplanation: 'Enrollar un cable en forma de resorte concentra todo el campo magnético por adentro del cilindro como un imán recto perfecto cuyo valor podés controlar con la corriente I.',
+          traditionalFormulaLatex: 'B_{\\text{solenoide}} = \\frac{\\mu_0 \\cdot N \\cdot I}{L} = \\mu_0 \\cdot n \\cdot I',
+          whereItComesFrom: 'Sale de aplicar la Ley de Ampère a un rectángulo que pasa por adentro del solenoide encerrando N·I.'
+        }
+      ],
+      8: [
+        {
+          badge: 'CONCEPTO 1 • IMÁN EN MOVIMIENTO',
+          emoji: '⚡',
+          questionTitle: '¿Qué descubrió Faraday y de dónde nace el voltaje inducido?',
+          diagramHeader: '[ Imán MOVIÉNDOSE hacia una bobina ──► Cambia el flujo Φ_B(t) ──► Nace Voltaje ε ]',
+          diagramLines: [
+            'Si el imán está QUIETO → El flujo magnético no cambia → Voltaje inducido = 0 V',
+            'Si el imán se MUEVE (o cambia B o el área A) → Nace corriente y voltaje inducido',
+            'Cuanto más rápido cambia el flujo (menor tiempo dt) y más espiras N hay → Mayor voltaje'
+          ],
+          plainExplanation: 'Así funcionan todos los generadores eléctricos del mundo: moviendo imanes frente a bobinas para que el flujo magnético cambie continuamente en el tiempo.',
+          traditionalFormulaLatex: '\\mathcal{E} = -N \\cdot \\frac{d\\Phi_B}{dt} \\quad ; \\quad \\Phi_B = B \\cdot A \\cdot \\cos(\\theta)',
+          whereItComesFrom: 'De medir que la fuerza electromotriz inducida es proporcional a la rapidez de variación del flujo magnético.'
+        },
+        {
+          badge: 'CONCEPTO 2 • EL SIGNO MENOS DE LENZ',
+          emoji: '🛑',
+          questionTitle: '¿Qué significa el signo menos (−) de la Ley de Lenz y qué hace una bobina L?',
+          diagramHeader: '[ Si el flujo externo AUMENTA ──► La espira crea un campo B⃗_ind OPUESTO ]',
+          diagramLines: [
+            'La corriente inducida siempre se opone al cambio de flujo que la produce',
+            'Si acercás el polo Norte del imán, la espira te enfrenta otro polo Norte para frenarte',
+            'En un circuito RL, la bobina L evita que la corriente salte de golpe en t = 0⁺'
+          ],
+          plainExplanation: 'El signo menos de Lenz garantiza la Conservación de la Energía: tenés que hacer trabajo mecánico empujando el imán para generar energía eléctrica.',
+          traditionalFormulaLatex: '\\mathcal{E}_L = -L \\cdot \\frac{di}{dt} \\quad ; \\quad \\tau_L = \\frac{L}{R}',
+          whereItComesFrom: 'Si la corriente inducida ayudara al cambio en vez de oponerse, crecería al infinito violando la conservación de la energía.'
+        }
+      ],
+      9: [
+        {
+          badge: 'CONCEPTO 1 • IMPEDANCIA Y RESONANCIA RLC',
+          emoji: '〰️',
+          questionTitle: '¿Qué es la Impedancia Z y cuándo entra en Resonancia un circuito RLC?',
+          diagramHeader: '[ Triángulo Rectángulo: Base = R | Altura = X_L − X_C | Hipotenusa = Z ]',
+          diagramLines: [
+            'En la Bobina L el voltaje adelanta 90° a la corriente (X_L = 2·π·f·L)',
+            'En el Capacitor C el voltaje atrasa 90° a la corriente (X_C = 1 / 2·π·f·C)',
+            'En RESONANCIA (X_L = X_C): se anulan entre sí → Z_mínima = R y Corriente MÁXIMA'
+          ],
+          plainExplanation: 'Como la bobina y el capacitor están desfasados 180° entre sí, tiran en sentidos opuestos. Cuando sus reactancias son iguales, se cancelan y el circuito queda puramente resistivo.',
+          traditionalFormulaLatex: 'Z = \\sqrt{R^2 + (X_L - X_C)^2} \\quad ; \\quad f_0 = \\frac{1}{2\\pi\\sqrt{L \\cdot C}}',
+          whereItComesFrom: 'Sale de aplicar el Teorema de Pitágoras a los fasores de tensión V_R y (V_L − V_C).'
+        },
+        {
+          badge: 'CONCEPTO 2 • ONDAS DE MAXWELL (LA LUZ)',
+          emoji: '🚀',
+          questionTitle: '¿Qué descubrió Maxwell para unir la Electricidad, el Magnetismo y la Luz?',
+          diagramHeader: '[ Campo E⃗(t) variable ⇄ Campo B⃗(t) variable ──► Onda viajando a c = 3×10⁸ m/s ]',
+          diagramLines: [
+            'Faraday mostró que un campo magnético variable crea un campo eléctrico',
+            'Maxwell descubrió que un campo eléctrico variable también crea un campo magnético',
+            'Ambos campos se regeneran mutuamente formando las Ondas Electromagnéticas (la luz)'
+          ],
+          plainExplanation: 'Entre las placas de un capacitor que se está cargando no pasan electrones, pero cambia el campo eléctrico: Maxwell llamó a eso Corriente de Desplazamiento y cerró las 4 ecuaciones del electromagnetismo.',
+          traditionalFormulaLatex: 'c = \\frac{1}{\\sqrt{\\mu_0 \\cdot \\varepsilon_0}} = 3 \\times 10^8\\text{ m/s}',
+          whereItComesFrom: 'Al combinar las ecuaciones de Faraday y Ampère-Maxwell en el vacío aparece la ecuación de onda con velocidad 1/√(μ₀ε₀).'
+        }
+      ]
+    };
+    return cardsByUnit[this.selectedUnitNumber] || cardsByUnit[1];
   }
 
   get currentUnit(): ProgramUnitDto | undefined {
@@ -2628,10 +3067,12 @@ export class UnitsPage implements OnInit {
   }
 
   // ============================================================================
-  // PESTAÑA 1: TEORÍA, PIZARRÓN Y FÓRMULAS
+  // PESTAÑA 1: TEORÍA, PIZARRÓN Y FÓRMULAS (INCLUYE CONOCIMIENTO DINÁMICO DE PDFs)
   // ============================================================================
   get unitTheoryTopics(): TheoryTopic[] {
-    return THEORY_TOPICS.filter((t) => t.unitNumber === this.selectedUnitNumber);
+    const base = THEORY_TOPICS.filter((t) => t.unitNumber === this.selectedUnitNumber);
+    const dyn = this.api.getDynamicTheoryTopics().filter((t) => t.unitNumber === this.selectedUnitNumber);
+    return [...base, ...dyn];
   }
 
   get currentTheoryTopic(): TheoryTopic | undefined {
@@ -2830,8 +3271,8 @@ export class UnitsPage implements OnInit {
     const ch = this.currentLabChallenge;
     if (idx === ch.correctIndex) {
       this.labChallengeSuccess = true;
-      this.labChallengeFeedback = `✅ ${ch.explanation} (+50% Laboratorio acreditado)`;
-      this.completeVerifiedActivity('laboratorio', `lab_mission_u${this.selectedUnitNumber}`, 50);
+      this.labChallengeFeedback = `✅ ${ch.explanation} (+100% Laboratorio acreditado)`;
+      this.completeVerifiedActivity('laboratorio', `lab_mission_u${this.selectedUnitNumber}`, 100);
     } else {
       this.labChallengeSuccess = false;
       this.labChallengeFeedback = `❌ Respuesta incorrecta. Analizá el gráfico del simulador e intentá de nuevo.`;
@@ -2847,10 +3288,38 @@ export class UnitsPage implements OnInit {
   }
 
   // ============================================================================
-  // PESTAÑA 3: PRÁCTICA GUIADA DE TPs EN 6 PASOS
+  // PESTAÑA 3: PRÁCTICA GUIADA DE TPs EN 6 PASOS (ORDENADOS DE MENOR A MAYOR DIFICULTAD)
   // ============================================================================
   get unitExercises(): GuidedExercise[] {
-    return GUIDED_EXERCISES.filter((e) => e.unitNumber === this.selectedUnitNumber);
+    const rankMap: Record<string, number> = {
+      facil: 1,
+      inicial: 1,
+      medio: 2,
+      intermedio: 3,
+      avanzado: 4,
+      parcial: 5,
+      dificil: 6,
+      final: 7,
+      coloquio: 8
+    };
+    const combined = [
+      ...GUIDED_EXERCISES.filter((e) => e.unitNumber === this.selectedUnitNumber),
+      ...this.api.getDynamicExercises().filter((e) => e.unitNumber === this.selectedUnitNumber)
+    ];
+    return combined
+      .slice()
+      .sort((a, b) => (rankMap[(a.difficulty || '').toLowerCase()] || 3) - (rankMap[(b.difficulty || '').toLowerCase()] || 3));
+  }
+
+  getDifficultyOrderLabel(diff: string, idx: number): string {
+    const d = (diff || '').toLowerCase();
+    if (idx === 0 || d === 'facil' || d === 'inicial' || d === 'medio') {
+      return `🟢 ${idx + 1}° Menor Dificultad`;
+    }
+    if (d === 'intermedio' || d === 'avanzado') {
+      return `🟡 ${idx + 1}° Dificultad Media`;
+    }
+    return `🔴 ${idx + 1}° Mayor Dificultad`;
   }
 
   get currentExercise(): GuidedExercise | undefined {

@@ -45,5 +45,13 @@ export const routes: Routes = [
   {
     path: 'errors',
     loadComponent: () => import('./pages/errors/errors.page').then(m => m.ErrorsPage)
+  },
+  {
+    path: 'calculadora',
+    loadComponent: () => import('./pages/calculadora/calculadora.page').then(m => m.CalculadoraPage)
+  },
+  {
+    path: 'profesor',
+    loadComponent: () => import('./pages/profesor/profesor.page').then(m => m.ProfesorPage)
   }
 ];

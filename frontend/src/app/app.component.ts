@@ -332,6 +332,8 @@ export class AppComponent implements OnInit {
   public menuItems = [
     { title: 'Inicio', url: '/home', tab: null, iconKey: 'home' },
     { title: 'Unidades', url: '/units', tab: 'teoria', iconKey: 'units' },
+    { title: 'Profesor Virtual', url: '/profesor', tab: null, iconKey: 'oral' },
+    { title: 'Calculadora & TPs', url: '/calculadora', tab: null, iconKey: 'exercises' },
     { title: 'Laboratorio', url: '/units', tab: 'graficos', iconKey: 'lab' },
     { title: 'Ejercicios', url: '/units', tab: 'practica', iconKey: 'exercises' },
     { title: 'Simulacros', url: '/speed-drill', tab: null, iconKey: 'sim' },

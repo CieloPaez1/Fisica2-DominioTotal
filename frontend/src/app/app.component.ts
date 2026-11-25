@@ -225,14 +225,14 @@ import { Fisica2ApiService } from './services/fisica2-api.service';
     .nav-items-stack {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 4px;
     }
     .nav-pill-btn {
       width: 100%;
       background: transparent;
       border: 2px solid transparent;
-      border-radius: 18px;
-      padding: 9px 14px;
+      border-radius: 14px;
+      padding: 6px 12px;
       display: flex;
       align-items: center;
       gap: 13px;
@@ -341,13 +341,14 @@ export class AppComponent implements OnInit {
     { title: 'Profesor Virtual', url: '/profesor', tab: null, iconKey: 'oral' },
     { title: 'Demostraciones', url: '/demostraciones', tab: null, iconKey: 'derivations' },
     { title: 'Calculadora & TPs', url: '/calculadora', tab: null, iconKey: 'exercises' },
-    { title: 'Laboratorio', url: '/units', tab: 'graficos', iconKey: 'lab' },
-    { title: 'Ejercicios', url: '/units', tab: 'practica', iconKey: 'exercises' },
     { title: 'Simulacros', url: '/speed-drill', tab: null, iconKey: 'sim' },
-    { title: 'Memorización', url: '/machete', tab: null, iconKey: 'memo' },
     { title: 'Entrenamiento Oral', url: '/tribunal', tab: null, iconKey: 'oral' },
+    { title: 'Memorización', url: '/machete', tab: null, iconKey: 'memo' },
+    { title: 'Simuladores y Límites', url: '/limits', tab: null, iconKey: 'lab' },
     { title: 'Mi Progreso', url: '/errors', tab: null, iconKey: 'progress' },
     { title: 'Biblioteca PDFs', url: '/pdfs', tab: null, iconKey: 'pdfs' },
+    { title: 'Constelación Conceptual', url: '/mapa', tab: null, iconKey: 'units' },
+    { title: 'Podcasts de Repaso', url: '/podcasts', tab: null, iconKey: 'oral' },
   ];
 
   constructor(private api: Fisica2ApiService, private router: Router) {}

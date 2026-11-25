@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Física 2 Dominio Total</string>
+    <string name="title_activity_main">Física 2 Dominio Total</string>
+    <string name="package_name">com.undec.fisica2</string>
+    <string name="custom_url_scheme">com.undec.fisica2</string>
+</resources>

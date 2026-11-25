@@ -8,7 +8,10 @@ import {
   IonContent,
   IonMenuToggle,
   IonRouterOutlet,
+  MenuController,
 } from '@ionic/angular/standalone';
+import { Capacitor } from '@capacitor/core';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { Fisica2ApiService } from './services/fisica2-api.service';
 
 @Component({
@@ -166,6 +169,30 @@ import { Fisica2ApiService } from './services/fisica2-api.service';
 
         <ion-router-outlet id="main-content"></ion-router-outlet>
       </ion-split-pane>
+
+      <!-- BARRA INFERIOR MÓVIL ESTILO APP NATIVA (< 992px) -->
+      <nav class="mobile-bottom-tabs">
+        <button class="mbt-btn" [class.active]="router.url.startsWith('/home')" (click)="navigateItem({ url: '/home', tab: null })">
+          <span class="mbt-ico">🏠</span>
+          <span class="mbt-lbl">Inicio</span>
+        </button>
+        <button class="mbt-btn" [class.active]="router.url.startsWith('/units')" (click)="navigateItem({ url: '/units', tab: 'teoria' })">
+          <span class="mbt-ico">📖</span>
+          <span class="mbt-lbl">Unidades</span>
+        </button>
+        <button class="mbt-btn" [class.active]="router.url.startsWith('/profesor')" (click)="navigateItem({ url: '/profesor', tab: null })">
+          <span class="mbt-ico">👨‍🏫</span>
+          <span class="mbt-lbl">Profesor</span>
+        </button>
+        <button class="mbt-btn" [class.active]="router.url.startsWith('/demostraciones')" (click)="navigateItem({ url: '/demostraciones', tab: null })">
+          <span class="mbt-ico">📐</span>
+          <span class="mbt-lbl">Demos</span>
+        </button>
+        <button class="mbt-btn" (click)="openMobileMenu()">
+          <span class="mbt-ico">☰</span>
+          <span class="mbt-lbl">Más</span>
+        </button>
+      </nav>
     </ion-app>
   `,
   styles: [`
@@ -330,6 +357,47 @@ import { Fisica2ApiService } from './services/fisica2-api.service';
       margin-top: -18px;
       pointer-events: none;
     }
+
+    /* BARRA INFERIOR MÓVIL (< 992px) */
+    .mobile-bottom-tabs {
+      display: none;
+    }
+    @media (max-width: 991px) {
+      .mobile-bottom-tabs {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        background: rgba(11, 13, 32, 0.96);
+        border-top: 1px solid rgba(137, 87, 255, 0.35);
+        backdrop-filter: blur(14px);
+        padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)) 4px;
+      }
+      .mbt-btn {
+        background: transparent;
+        border: none;
+        color: #c4b5fd;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 4px 2px;
+        cursor: pointer;
+      }
+      .mbt-btn.active {
+        color: #ffffff;
+      }
+      .mbt-btn.active .mbt-ico {
+        background: rgba(137, 87, 255, 0.35);
+        border-radius: 10px;
+        padding: 2px 10px;
+      }
+      .mbt-ico { font-size: 1.15rem; line-height: 1.2; }
+      .mbt-lbl { font-size: 0.7rem; font-weight: 800; font-family: 'Baloo 2', sans-serif; }
+    }
   `]
 })
 export class AppComponent implements OnInit {
@@ -351,9 +419,17 @@ export class AppComponent implements OnInit {
     { title: 'Podcasts de Repaso', url: '/podcasts', tab: null, iconKey: 'oral' },
   ];
 
-  constructor(private api: Fisica2ApiService, private router: Router) {}
+  constructor(
+    private api: Fisica2ApiService,
+    public router: Router,
+    private menuCtrl: MenuController
+  ) {}
 
   ngOnInit() {
+    if (Capacitor.isNativePlatform()) {
+      StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
+      StatusBar.setBackgroundColor({ color: '#0B0D20' }).catch(() => {});
+    }
     this.api.errors$.subscribe((errs) => {
       this.activeErrorsCount = (errs || []).filter(e => !e.resolved).length;
     });
@@ -376,5 +452,9 @@ export class AppComponent implements OnInit {
     } else {
       this.router.navigate([item.url]);
     }
+  }
+
+  openMobileMenu() {
+    this.menuCtrl.open();
   }
 }

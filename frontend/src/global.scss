@@ -201,3 +201,12 @@ ion-toolbar {
 ::-webkit-scrollbar-thumb:hover {
   background: #a682ff;
 }
+
+/* ============================================================================
+   ADAPTACIÓN MÓVIL (IONIC + CAPACITOR)
+   ============================================================================ */
+@media (max-width: 991px) {
+  ion-content::part(scroll) {
+    padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}

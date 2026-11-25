@@ -43,7 +43,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
         <!-- COMPACT HEADER (REFERENCIA PANEL 13) -->
         <div class="pod-top-bar">
           <span class="pod-bar-title">🎧 Podcasts de Repaso — Cápsulas de Audio (3 min)</span>
-          <span class="pill-gold">⏱️ 9 Episodios • U1–U9</span>
+          <span class="pill-gold">⏱️ {{ episodes.length }} Episodios • 3 min c/u</span>
         </div>
 
         <div class="cielo-lavender-card" *ngIf="lockedPodcastMsg" style="padding: 12px 18px; background: #ffe4e6; border: 1.5px solid #f43f5e; color: #881337; font-weight: 800;">

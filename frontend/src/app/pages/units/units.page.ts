@@ -1381,7 +1381,7 @@ import {
     .uib-sub {
       font-size: 0.96rem;
       font-weight: 700;
-      color: #2d2459;
+      color: #d7c6ff !important;
       margin: 0;
     }
     .uib-pct-circle {
@@ -1413,20 +1413,22 @@ import {
     /* LAS 5 TARJETAS ILUSTRADAS DE SECCIÓN */
     .five-illustrated-tabs {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
     }
     @media (max-width: 980px) {
-      .five-illustrated-tabs { grid-template-columns: repeat(2, 1fr); }
+      .five-illustrated-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     .illo-tab-card {
       background: linear-gradient(180deg, #15193B 0%, #141a3b 100%);
-      border: 2.5px solid rgba(167, 142, 252, 0.36);
-      border-radius: 22px;
-      padding: 12px 10px;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
+      border-radius: 18px;
+      padding: 10px 8px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      min-width: 0;
+      overflow: hidden;
       cursor: pointer;
       transition: all 0.2s ease;
     }

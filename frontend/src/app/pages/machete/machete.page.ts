@@ -265,9 +265,12 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
       transform: rotate(-1.2deg);
       box-shadow: 0 20px 44px rgba(4, 5, 16, 0.65);
     }
-    .sticky-note-card .katex {
+    .sticky-note-card .snc-katex,
+    .sticky-note-card .snc-katex *,
+    .sticky-note-card .katex,
+    .sticky-note-card .katex * {
       color: #161332 !important;
-      font-size: 1.35em !important;
+      font-size: 1.25em !important;
     }
     .sticky-tape {
       position: absolute;
@@ -368,20 +371,22 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
     /* TIRA DE 9 UNIDADES ILUSTRADAS */
     .unit-selector-strip {
       display: grid;
-      grid-template-columns: repeat(9, 1fr);
+      grid-template-columns: repeat(9, minmax(0, 1fr));
       gap: 8px;
     }
     @media (max-width: 1120px) {
-      .unit-selector-strip { grid-template-columns: repeat(3, 1fr); }
+      .unit-selector-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
     @media (max-width: 620px) {
-      .unit-selector-strip { grid-template-columns: repeat(2, 1fr); }
+      .unit-selector-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     .u-btn {
       background: linear-gradient(180deg, #252b5c 0%, #191e45 100%);
-      border: 2.5px solid #48508a;
-      border-radius: 16px;
-      padding: 8px 10px;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
+      border-radius: 14px;
+      padding: 7px 8px;
+      min-width: 0;
+      overflow: hidden;
       color: #e4ddff;
       cursor: pointer;
       display: flex;

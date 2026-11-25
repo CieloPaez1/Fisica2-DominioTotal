@@ -173,7 +173,8 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
                       <line x1="94" y1="131" x2="48" y2="177" stroke="#5ce1e6" stroke-width="1.8" class="flow-dash" marker-end="url(#arrCyan1)"/>
                       <!-- Carga fuente -->
                       <circle cx="115" cy="110" [attr.r]="18 + simParam2 * 0.14" fill="url(#gPos1)" stroke="#ffffff" stroke-width="2.5"/>
-                      <text x="115" y="115" text-anchor="middle" fill="#ffffff" font-weight="900" font-size="14">+q ({{ (simParam2 / 10).toFixed(1) }} μC)</text>
+                      <text x="115" y="115" text-anchor="middle" fill="#ffffff" font-weight="900" font-size="14">+q</text>
+                      <text x="115" y="156" text-anchor="middle" fill="#ffd166" font-weight="800" font-size="11.5">q = {{ (simParam2 / 10).toFixed(1) }} μC</text>
                       <!-- Línea distancia r -->
                       <line x1="142" y1="110" [attr.x2]="190 + simParam1 * 1.9" y2="110" stroke="#c4b5fd" stroke-width="2" stroke-dasharray="6,4"/>
                       <text [attr.x]="165 + simParam1 * 0.95" y="97" text-anchor="middle" fill="#d7c6ff" font-size="12" font-weight="800">r = {{ (1 + simParam1 / 25).toFixed(1) }} m</text>
@@ -685,10 +686,6 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-    }
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
     }
     .demo-hero {
       padding: 20px 26px;

@@ -182,24 +182,24 @@ import { Fisica2ApiService } from './services/fisica2-api.service';
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 16px 14px 10px 14px;
+      padding: 10px 12px 8px 12px;
     }
 
     /* LOGO FÍSICA 2 DOMINIO TOTAL */
     .logo-crest {
       text-align: center;
       cursor: pointer;
-      padding-bottom: 14px;
+      padding-bottom: 8px;
     }
     .crest-top-svg {
-      width: 165px;
-      height: 56px;
+      width: 140px;
+      height: 44px;
       display: block;
       margin: 0 auto -6px auto;
     }
     .crest-title {
       font-family: 'Baloo 2', sans-serif;
-      font-size: 2.3rem;
+      font-size: 1.95rem;
       font-weight: 800;
       color: #ffffff;
       line-height: 0.95;
@@ -225,20 +225,20 @@ import { Fisica2ApiService } from './services/fisica2-api.service';
     .nav-items-stack {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
     .nav-pill-btn {
       width: 100%;
       background: transparent;
-      border: 2px solid transparent;
-      border-radius: 14px;
-      padding: 6px 12px;
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      padding: 4px 10px;
       display: flex;
       align-items: center;
-      gap: 13px;
+      gap: 10px;
       color: #d8def8;
       font-family: 'Baloo 2', sans-serif;
-      font-size: 1.04rem;
+      font-size: 0.94rem;
       font-weight: 700;
       cursor: pointer;
       text-align: left;

@@ -279,7 +279,7 @@ interface LimitModel {
   `,
   styles: [`
     .limits-wrapper {
-      max-width: 1320px;
+      max-width: 1440px;
       margin: 0 auto 44px auto;
       display: flex;
       flex-direction: column;
@@ -299,7 +299,7 @@ interface LimitModel {
     }
     .lh-pill {
       display: inline-block;
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       font-weight: 800;
       font-size: 0.75rem;
@@ -391,7 +391,7 @@ interface LimitModel {
     }
     .kicker-purple {
       display: inline-block;
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       font-size: 0.7rem;
       font-weight: 900;
@@ -409,7 +409,7 @@ interface LimitModel {
     .formula-stage {
       background: #191538;
       color: #ffffff;
-      border: 2.5px solid #7c5dfa;
+      border: 2.5px solid #8957FF;
       border-radius: 18px;
       padding: 14px 10px;
       text-align: center;
@@ -445,7 +445,7 @@ interface LimitModel {
     }
     .cielo-slider {
       width: 100%;
-      accent-color: #7c5dfa;
+      accent-color: #8957FF;
       cursor: pointer;
     }
     .quick-limit-btns {
@@ -466,8 +466,8 @@ interface LimitModel {
       transition: all 0.15s;
     }
     .q-limit-btn.highlight {
-      background: #7c5dfa;
-      border-color: #191538;
+      background: #8957FF;
+      border-color: rgba(166, 130, 255, 0.55);
       color: #ffffff;
     }
     .q-limit-btn:hover {
@@ -477,7 +477,7 @@ interface LimitModel {
 
     .live-result-readout {
       background: #191538;
-      border: 3px solid #7c5dfa;
+      border: 3px solid #8957FF;
       border-radius: 18px;
       padding: 16px;
       text-align: center;
@@ -538,7 +538,7 @@ interface LimitModel {
       font-weight: 900;
       padding: 6px 14px;
       border-radius: 99px;
-      border: 2px solid #191538;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
     }
     .chalkboard-chart-stage {
       background: linear-gradient(180deg, #1b4332 0%, #122d22 100%);

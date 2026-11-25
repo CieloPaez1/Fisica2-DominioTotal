@@ -226,7 +226,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
   `,
   styles: [`
     .tribunal-hall-wrapper {
-      max-width: 1140px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -247,8 +247,8 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     }
     .pill-purple {
       display: inline-block;
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -297,8 +297,8 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
       background: #2b3570;
     }
     .u-illo-btn.active {
-      background: #7c5dfa;
-      border-color: #1b1438;
+      background: #8957FF;
+      border-color: rgba(166, 130, 255, 0.55);
       box-shadow: 0 5px 0 #1b1438;
     }
     .uib-num { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 0.92rem; line-height: 1; }
@@ -330,7 +330,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
       font-weight: 800;
       padding: 2px 14px;
       border-radius: 99px;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
     }
     .prof-role-tag.titular { background: #9d7eff; color: #ffffff; }
     .prof-role-tag.jtp { background: #ff5d73; color: #ffffff; }
@@ -406,7 +406,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     }
     .voice-chalk-btn {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       padding: 6px 14px;
       border-radius: 99px;

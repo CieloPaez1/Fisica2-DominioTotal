@@ -307,7 +307,7 @@ interface RadarVertex {
   `,
   styles: [`
     .progreso-center-wrapper {
-      max-width: 1280px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -327,8 +327,8 @@ interface RadarVertex {
     }
     .hp-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
     .pill-purple {
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -338,7 +338,7 @@ interface RadarVertex {
     }
     .pill-gold {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -509,7 +509,7 @@ interface RadarVertex {
     }
     .cyber-date-input {
       background: #ffffff;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       border-radius: 10px;
       padding: 6px 10px;
       font-family: 'Baloo 2', sans-serif;
@@ -517,8 +517,8 @@ interface RadarVertex {
       color: #191538;
     }
     .countdown-badge {
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       padding: 8px 16px;
       border-radius: 16px;
@@ -643,7 +643,7 @@ interface RadarVertex {
     }
     .ec-badges { display: flex; flex-wrap: wrap; gap: 6px; }
     .chip-purple {
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.75rem;
@@ -678,7 +678,7 @@ interface RadarVertex {
     }
     .ec-actions { display: flex; gap: 8px; align-items: center; }
     .btn-practice {
-      background: linear-gradient(90deg, #9d7eff, #7c5dfa);
+      background: linear-gradient(90deg, #9d7eff, #8957FF);
       border: 2px solid #e2d6ff;
       color: #ffffff;
       padding: 7px 14px;
@@ -690,7 +690,7 @@ interface RadarVertex {
     }
     .btn-resolve {
       background: #38e595;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       padding: 7px 14px;
       border-radius: 12px;

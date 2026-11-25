@@ -131,7 +131,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
   `,
   styles: [`
     .podcasts-wrapper {
-      max-width: 1120px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -149,8 +149,8 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     }
     .sh-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
     .pill-purple {
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -160,7 +160,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     }
     .pill-gold {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -186,7 +186,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
       .unit-episodes-bar { grid-template-columns: repeat(3, 1fr); }
     }
     .ep-btn {
-      background: linear-gradient(180deg, #1d2552 0%, #141a3b 100%);
+      background: linear-gradient(180deg, #15193B 0%, #141a3b 100%);
       border: 2.5px solid rgba(167, 142, 252, 0.36);
       border-radius: 20px;
       padding: 10px 6px;
@@ -234,7 +234,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     }
     .btn-pause {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       padding: 10px 18px;
       border-radius: 14px;
@@ -244,7 +244,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     }
     .btn-stop {
       background: #ff4d6d;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       padding: 10px 18px;
       border-radius: 14px;
@@ -262,7 +262,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
       font-weight: 700;
     }
     .rate-pill {
-      background: #1b224b;
+      background: #15193B;
       border: 1.5px solid rgba(183, 158, 255, 0.4);
       color: #ffffff;
       padding: 5px 10px;
@@ -273,7 +273,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     .rate-pill.active {
       background: #ffd166;
       color: #191538;
-      border-color: #1b1438;
+      border-color: rgba(166, 130, 255, 0.55);
     }
 
     .blocks-stack {
@@ -298,8 +298,8 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     }
     .mini-play-btn {
       margin-left: auto;
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       padding: 5px 14px;
       border-radius: 99px;

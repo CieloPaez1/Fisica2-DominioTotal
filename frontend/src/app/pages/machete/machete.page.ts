@@ -161,7 +161,7 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
   `,
   styles: [`
     .machete-wrapper {
-      max-width: 1280px;
+      max-width: 1440px;
       margin: 0 auto 44px auto;
       display: flex;
       flex-direction: column;
@@ -186,7 +186,7 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
     }
     .mh-pill {
       display: inline-block;
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       font-weight: 800;
       font-size: 0.75rem;
@@ -303,7 +303,7 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
       gap: 6px;
     }
     .a4-badge {
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       font-size: 0.72rem;
       font-weight: 900;
@@ -373,7 +373,7 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
     .formula-katex-stage {
       background: #191538;
       color: #ffffff;
-      border: 2.5px solid #7c5dfa;
+      border: 2.5px solid #8957FF;
       border-radius: 16px;
       padding: 14px 12px;
       text-align: center;

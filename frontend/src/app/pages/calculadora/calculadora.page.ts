@@ -724,7 +724,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
   `,
   styles: [`
     .calc-studio-wrapper {
-      max-width: 1340px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -744,7 +744,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
     }
     .ch-pill {
       display: inline-block;
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       font-weight: 800;
       font-size: 0.75rem;
@@ -868,7 +868,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
       padding: 10px 18px;
       border-radius: 99px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #191538;
+      box-shadow: 0 6px 18px rgba(137, 87, 255, 0.38);
     }
     .detected-banner {
       background: #d1fae5;
@@ -922,10 +922,10 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
       background: #efeaff;
       border-color: #ffffff;
       color: #191538;
-      box-shadow: 0 4px 0 #7c5dfa;
+      box-shadow: 0 4px 0 #8957FF;
     }
     .tp-unit {
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       font-weight: 900;
       font-size: 0.72rem;
@@ -975,7 +975,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
       border-radius: 18px;
       padding: 14px 16px;
       text-align: center;
-      box-shadow: 0 5px 0 #7c5dfa;
+      box-shadow: 0 5px 0 #8957FF;
       overflow-x: auto;
     }
     .tfn-tag {
@@ -1016,7 +1016,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
     }
     .num-input, .unit-select {
       background: #ffffff;
-      border: 2px solid #191538;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       border-radius: 10px;
       padding: 7px 10px;
       font-weight: 800;
@@ -1045,7 +1045,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
     }
     .src-badge {
       display: inline-block;
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       font-weight: 900;
       font-size: 0.74rem;
@@ -1105,7 +1105,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
     }
     .sec-pill {
       background: #ffffff;
-      border: 2px solid #191538;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       border-radius: 12px;
       padding: 6px 12px;
       font-size: 0.84rem;
@@ -1120,7 +1120,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
     }
     .eb-item {
       background: rgba(255, 255, 255, 0.7);
-      border-left: 4px solid #7c5dfa;
+      border-left: 4px solid #8957FF;
       padding: 8px 12px;
       border-radius: 8px;
       font-size: 0.86rem;
@@ -1134,7 +1134,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
       border: 7px solid #d97706;
       border-radius: 22px;
       padding: 18px 20px;
-      box-shadow: inset 0 0 24px rgba(0,0,0,0.45), 0 7px 0 #0f132e;
+      box-shadow: inset 0 0 24px rgba(0,0,0,0.45), 0 7px 0 #0B0D20;
     }
     .ccg-badge {
       display: inline-block;
@@ -1237,7 +1237,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
       display: flex;
       flex-direction: column;
       gap: 2px;
-      box-shadow: 0 4px 0 #191538;
+      box-shadow: 0 6px 18px rgba(137, 87, 255, 0.38);
     }
     .pf-tile.base {
       background: #fde047;
@@ -1269,7 +1269,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
       background: #efeaff;
       border-color: #ffffff;
       color: #191538;
-      box-shadow: 0 4px 0 #7c5dfa;
+      box-shadow: 0 4px 0 #8957FF;
     }
     .cp-ico { font-size: 1.35rem; }
 
@@ -1288,7 +1288,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
       font-weight: 800;
     }
     .qp-chip {
-      background: #7c5dfa;
+      background: #8957FF;
       border: 2px solid #ffffff;
       color: #ffffff;
       font-weight: 800;
@@ -1351,7 +1351,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
     }
     .conv-big-result-box {
       background: #191538;
-      border: 3px solid #7c5dfa;
+      border: 3px solid #8957FF;
       border-radius: 18px;
       padding: 16px;
       text-align: center;
@@ -1398,7 +1398,7 @@ const SAVED_CUSTOM_PROBLEMS_KEY = 'fisica2_cielo_custom_problems_v1';
     .ctb-left strong { font-family: var(--font-mono); font-size: 0.95rem; color: #fde047; }
     .ctb-left span { font-size: 0.68rem; color: #94a3b8; font-weight: 800; }
     .deg-rad-pill {
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       border: 2px solid #ffffff;
       border-radius: 99px;

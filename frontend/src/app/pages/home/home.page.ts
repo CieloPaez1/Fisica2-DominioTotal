@@ -276,12 +276,12 @@ interface ShortcutCard {
   `,
   styles: [`
     .cielo-home-content {
-      --background: radial-gradient(circle at 80% 10%, #2a1d62 0%, #121536 48%, #0b0e24 100%);
+      --background: radial-gradient(circle at 82% 8%, rgba(137, 87, 255, 0.22) 0%, #0B0D20 55%);
     }
     .cielo-stage {
-      max-width: 1320px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 14px 22px 36px 22px;
+      padding: 16px 26px 40px 26px;
       display: flex;
       flex-direction: column;
       gap: 16px;

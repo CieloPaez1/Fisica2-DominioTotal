@@ -1306,7 +1306,7 @@ import {
   `,
   styles: [`
     .hub-container {
-      max-width: 1240px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -1351,8 +1351,8 @@ import {
       margin-bottom: 6px;
     }
     .uib-pill-purple {
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.84rem;
@@ -1362,7 +1362,7 @@ import {
     }
     .uib-pill-status {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.84rem;
@@ -1388,8 +1388,8 @@ import {
       width: 108px;
       height: 108px;
       border-radius: 50%;
-      background: #1b224b;
-      border: 4px solid #7c5dfa;
+      background: #15193B;
+      border: 4px solid #8957FF;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1420,7 +1420,7 @@ import {
       .five-illustrated-tabs { grid-template-columns: repeat(2, 1fr); }
     }
     .illo-tab-card {
-      background: linear-gradient(180deg, #1d2552 0%, #141a3b 100%);
+      background: linear-gradient(180deg, #15193B 0%, #141a3b 100%);
       border: 2.5px solid rgba(167, 142, 252, 0.36);
       border-radius: 22px;
       padding: 12px 10px;
@@ -1474,7 +1474,7 @@ import {
       }
     }
     .u-pill-btn {
-      background: linear-gradient(180deg, #1d2552 0%, #141a3b 100%);
+      background: linear-gradient(180deg, #15193B 0%, #141a3b 100%);
       border: 2.5px solid rgba(167, 142, 252, 0.36);
       border-radius: 22px;
       padding: 10px 6px;
@@ -1742,8 +1742,8 @@ import {
       margin-bottom: 8px;
     }
     .badge-official {
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -1753,7 +1753,7 @@ import {
     }
     .badge-pdf {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -1927,7 +1927,7 @@ import {
     }
     .mini-step-btn {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       padding: 7px 14px;
       border-radius: 12px;
@@ -1957,7 +1957,7 @@ import {
       border-radius: 14px;
     }
     .bb-step-badge {
-      background: #7c5dfa;
+      background: #8957FF;
       border: 1.5px solid #ffffff;
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
@@ -2266,8 +2266,8 @@ import {
       margin-top: 12px;
     }
     .gd-pill {
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: var(--font-mono);
       font-size: 0.78rem;
@@ -2362,7 +2362,7 @@ import {
       height: 34px;
       border-radius: 12px;
       background: #8c6df7;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 1rem;

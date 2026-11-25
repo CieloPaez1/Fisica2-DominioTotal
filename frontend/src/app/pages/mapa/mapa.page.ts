@@ -141,7 +141,7 @@ interface ConceptNode {
   `,
   styles: [`
     .mapa-container {
-      max-width: 1140px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -159,8 +159,8 @@ interface ConceptNode {
     }
     .pill-purple {
       display: inline-block;
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -230,8 +230,8 @@ interface ConceptNode {
       font-size: 0.85rem;
       font-weight: 800;
       color: #ffd166;
-      background: #1b224b;
-      border: 2px solid #1b1438;
+      background: #15193B;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       padding: 4px 12px;
       border-radius: 10px;
     }

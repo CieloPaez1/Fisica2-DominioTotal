@@ -229,7 +229,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
   `,
   styles: [`
     .library-wrapper {
-      max-width: 1280px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -247,8 +247,8 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     }
     .sh-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
     .pill-purple {
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -258,7 +258,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     }
     .pill-gold {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -350,7 +350,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     .rm-actions { display: flex; gap: 10px; align-items: center; }
     .close-btn {
       background: #ff4d6d;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       padding: 8px 14px;
       border-radius: 14px;
@@ -522,7 +522,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
       cursor: pointer;
     }
     .btn-open-raw {
-      background: #7c5dfa;
+      background: #8957FF;
       border: 2px solid #e2d6ff;
       color: #ffffff;
       padding: 8px 14px;

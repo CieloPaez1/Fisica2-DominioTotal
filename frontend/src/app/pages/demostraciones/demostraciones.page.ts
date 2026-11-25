@@ -523,7 +523,7 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
   `,
   styles: [`
     .demo-wrapper {
-      max-width: 1320px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -539,8 +539,8 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       margin-bottom: 6px;
     }
     .pill-purple {
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -551,7 +551,7 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
     }
     .pill-gold {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -579,7 +579,7 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       gap: 8px;
     }
     .unit-tab-btn {
-      background: #1a1f47;
+      background: #15193B;
       color: #d7c6ff;
       border: 2px solid rgba(167, 139, 250, 0.35);
       border-radius: 14px;
@@ -592,8 +592,8 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
     .unit-tab-btn.active {
       background: #ffd166;
       color: #191538;
-      border-color: #191538;
-      box-shadow: 0 4px 0 #191538;
+      border-color: rgba(166, 130, 255, 0.55);
+      box-shadow: 0 6px 18px rgba(137, 87, 255, 0.38);
     }
     .unit-tab-btn.locked {
       opacity: 0.55;
@@ -683,8 +683,8 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       font-size: 0.92rem;
     }
     .target-formula-box {
-      background: #101432;
-      border: 2px solid #7c5dfa;
+      background: #10132D;
+      border: 2px solid #8957FF;
       border-radius: 16px;
       padding: 14px 18px;
     }
@@ -706,7 +706,7 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       color: #d7c6ff;
     }
     .drawing-section {
-      background: #0d112b;
+      background: #0B0D20;
       border: 2px solid rgba(92, 225, 230, 0.35);
       border-radius: 16px;
       padding: 14px;
@@ -729,7 +729,7 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       gap: 6px;
     }
     .toggle-chip {
-      background: #1a1f47;
+      background: #15193B;
       color: #d7c6ff;
       border: 1.5px solid rgba(167, 139, 250, 0.4);
       border-radius: 99px;
@@ -740,8 +740,8 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
     }
     .toggle-chip.active {
       background: #5ce1e6;
-      color: #101432;
-      border-color: #101432;
+      color: #10132D;
+      border-color: #10132D;
     }
     .svg-stage-box {
       background: radial-gradient(circle at 50% 45%, #161d4a 0%, #090d24 100%);
@@ -821,7 +821,7 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       cursor: pointer;
     }
     .anim-toggle-btn {
-      background: #1a1f47;
+      background: #15193B;
       color: #5ce1e6;
       border: 1.5px solid #5ce1e6;
       border-radius: 10px;
@@ -864,9 +864,9 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       flex-wrap: wrap;
     }
     .st-btn {
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
-      border: 2px solid #191538;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       border-radius: 12px;
       padding: 6px 14px;
       font-weight: 800;
@@ -900,7 +900,7 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       text-align: center;
       padding: 4px 8px;
       border-radius: 10px;
-      border: 2px solid #191538;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
     }
     .step-body h4 {
       margin: 0 0 4px 0;
@@ -914,7 +914,7 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
       line-height: 1.45;
     }
     .step-math {
-      background: #101432;
+      background: #10132D;
       border-radius: 10px;
       padding: 8px 12px;
       color: #ffffff;

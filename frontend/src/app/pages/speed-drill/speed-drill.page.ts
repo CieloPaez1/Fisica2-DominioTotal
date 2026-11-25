@@ -244,7 +244,7 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
   `,
   styles: [`
     .arcade-wrapper {
-      max-width: 1120px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -262,8 +262,8 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
     }
     .ah-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
     .pill-purple {
-      background: #7c5dfa;
-      border: 2px solid #1b1438;
+      background: #8957FF;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -273,7 +273,7 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
     }
     .pill-gold {
       background: #ffd166;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -283,7 +283,7 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
     }
     .pill-emerald {
       background: #38e595;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #191538;
       font-family: 'Baloo 2', sans-serif;
       font-size: 0.78rem;
@@ -321,7 +321,7 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
       cursor: pointer;
     }
     .mode-btn.active {
-      background: #7c5dfa;
+      background: #8957FF;
       box-shadow: 0 4px 0 #1b1438;
     }
 
@@ -364,7 +364,7 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
     .dot-btn.active {
       background: #ffd166;
       color: #191538;
-      border-color: #1b1438;
+      border-color: rgba(166, 130, 255, 0.55);
     }
     .giant-flashcard {
       background: linear-gradient(145deg, #f3efff 0%, #dcd0ff 100%);
@@ -419,7 +419,7 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
       font-weight: 600;
     }
     .fc-answer-highlight {
-      background: #1b224b;
+      background: #15193B;
       border: 3px solid #38e595;
       color: #38e595;
       padding: 16px 20px;
@@ -561,7 +561,7 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
       .arcade-options-grid { grid-template-columns: 1fr; }
     }
     .arcade-opt-btn {
-      background: #1b224b;
+      background: #15193B;
       border: 3px solid #1b1438;
       border-radius: 18px;
       padding: 14px;
@@ -591,7 +591,7 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
       height: 34px;
       border-radius: 10px;
       background: #8c6df7;
-      border: 2px solid #1b1438;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       color: #ffffff;
       font-family: 'Baloo 2', sans-serif;
       font-weight: 800;

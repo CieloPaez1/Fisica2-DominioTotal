@@ -15,23 +15,41 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 /* ============================================================================
-   DIRECCIÓN ARTÍSTICA GLOBAL: CARTOON SCIENCE STUDIO ("¡HOLA CIELO! ♡")
+   SISTEMA DE DISEÑO GLOBAL — FÍSICA 2 (COSMIC PHYSICS STUDIO)
    ============================================================================ */
+:root {
+  --f2-bg: #0B0D20;
+  --f2-bg-elevated: #121533;
+  --f2-panel: rgba(18, 21, 52, 0.88);
+  --f2-panel-strong: rgba(24, 28, 68, 0.94);
+  --f2-primary: #8957FF;
+  --f2-primary-light: #a682ff;
+  --f2-border: rgba(137, 87, 255, 0.30);
+  --f2-border-strong: rgba(166, 130, 255, 0.52);
+  --f2-lavender: #d7c6ff;
+  --f2-cream: #f4ead5;
+  --f2-peach: #f3c18f;
+  --f2-gold: #ffd166;
+  --f2-cyan: #5ce1e6;
+  --f2-mint: #38e595;
+  --f2-ink-dark: #161332;
+}
 
 ion-content {
   --background: transparent;
-  background-color: #0b0e24;
+  background-color: var(--f2-bg);
   background-image:
-    radial-gradient(circle at 82% 10%, rgba(124, 93, 250, 0.28) 0%, transparent 45%),
-    radial-gradient(circle at 15% 22%, rgba(92, 225, 230, 0.10) 0%, transparent 38%),
-    radial-gradient(circle at 50% 90%, rgba(139, 92, 246, 0.20) 0%, transparent 48%),
-    radial-gradient(2px 2px at 60px 45px, #e9e0ff 80%, transparent),
-    radial-gradient(2px 2px at 220px 95px, #ffd166 80%, transparent),
-    radial-gradient(2.5px 2.5px at 420px 35px, #d7c6ff 80%, transparent),
-    radial-gradient(2px 2px at 680px 75px, #ffffff 80%, transparent),
-    radial-gradient(2px 2px at 920px 48px, #ffd166 80%, transparent),
-    radial-gradient(2px 2px at 1140px 110px, #e9e0ff 80%, transparent);
+    radial-gradient(circle at 82% 8%, rgba(137, 87, 255, 0.24) 0%, transparent 44%),
+    radial-gradient(circle at 14% 22%, rgba(92, 225, 230, 0.08) 0%, transparent 38%),
+    radial-gradient(circle at 52% 92%, rgba(137, 87, 255, 0.16) 0%, transparent 48%),
+    radial-gradient(1.8px 1.8px at 60px 45px, rgba(233, 224, 255, 0.75) 80%, transparent),
+    radial-gradient(1.6px 1.6px at 220px 95px, rgba(255, 209, 102, 0.7) 80%, transparent),
+    radial-gradient(2px 2px at 420px 35px, rgba(215, 198, 255, 0.75) 80%, transparent),
+    radial-gradient(1.5px 1.5px at 680px 75px, rgba(255, 255, 255, 0.7) 80%, transparent),
+    radial-gradient(1.8px 1.8px at 920px 48px, rgba(255, 209, 102, 0.65) 80%, transparent),
+    radial-gradient(1.5px 1.5px at 1140px 110px, rgba(233, 224, 255, 0.7) 80%, transparent);
   background-attachment: fixed;
+  color: #f3f0ff;
 }
 
 h1, h2, h3, h4, ion-title, ion-card-title, .font-display {
@@ -44,47 +62,48 @@ code, pre, .font-mono {
 }
 
 ion-toolbar {
-  --background: rgba(13, 16, 40, 0.92) !important;
+  --background: rgba(11, 13, 32, 0.90) !important;
   --color: #ffffff !important;
-  border-bottom: 1.5px solid rgba(167, 139, 250, 0.25);
-  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--f2-border);
+  backdrop-filter: blur(12px);
 }
 
 /* ============================================================================
-   COMPONENTES GLOBALES DEL ESTILO CÓSMICO UNIFICADO
+   CONTENEDORES Y TARJETAS REUTILIZABLES
    ============================================================================ */
-
-.cyber-glass-card, .cielo-dark-panel {
-  background: rgba(22, 25, 62, 0.86);
-  border: 1.5px solid rgba(167, 139, 250, 0.3);
+.cyber-glass-card,
+.cielo-dark-panel {
+  background: linear-gradient(160deg, rgba(24, 28, 68, 0.90) 0%, rgba(15, 18, 44, 0.94) 100%);
+  border: 1.5px solid var(--f2-border);
   border-radius: 20px;
   box-shadow:
-    0 14px 32px -10px rgba(4, 6, 18, 0.72),
-    0 0 22px -6px rgba(124, 93, 250, 0.22);
-  backdrop-filter: blur(8px);
+    0 14px 34px -10px rgba(4, 5, 16, 0.78),
+    0 0 24px -8px rgba(137, 87, 255, 0.24);
+  backdrop-filter: blur(10px);
   position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .cielo-lavender-card {
   background: linear-gradient(135deg, #f4ead5 0%, #e4dcff 100%);
-  border: 2px solid rgba(167, 139, 250, 0.55);
+  border: 1.5px solid rgba(166, 130, 255, 0.55);
   border-radius: 20px;
-  color: #191538;
-  box-shadow: 0 12px 28px -8px rgba(8, 10, 28, 0.55);
+  color: var(--f2-ink-dark);
+  box-shadow: 0 12px 28px -8px rgba(6, 8, 24, 0.55);
 }
 .cielo-lavender-card .katex {
-  color: #191538 !important;
+  color: var(--f2-ink-dark) !important;
 }
 
-/* Banner Hero Cósmico Unificado (igual a la referencia visual en todas las pantallas) */
+/* Banner Hero Cósmico Unificado en las 13 páginas */
 .cielo-hero-banner {
-  background: radial-gradient(circle at 85% 20%, rgba(124, 93, 250, 0.36) 0%, rgba(22, 25, 62, 0.92) 60%);
-  border: 1.5px solid rgba(167, 139, 250, 0.38);
+  background: radial-gradient(circle at 86% 20%, rgba(137, 87, 255, 0.34) 0%, rgba(18, 21, 52, 0.94) 62%);
+  border: 1.5px solid rgba(137, 87, 255, 0.38);
   border-radius: 22px;
   color: #ffffff;
   box-shadow:
-    0 16px 36px -10px rgba(6, 8, 24, 0.75),
-    0 0 28px -6px rgba(124, 93, 250, 0.35);
+    0 18px 40px -12px rgba(4, 5, 16, 0.8),
+    0 0 32px -8px rgba(137, 87, 255, 0.32);
   position: relative;
   overflow: hidden;
 }
@@ -96,76 +115,80 @@ ion-toolbar {
 .cielo-hero-banner p,
 .cielo-hero-banner .sub,
 .cielo-hero-banner span:not(.pill-purple):not(.pill-gold) {
-  color: #d7c6ff;
+  color: var(--f2-lavender);
 }
 
 .cielo-section-pill {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: rgba(124, 93, 250, 0.22);
-  border: 1.5px solid rgba(196, 181, 253, 0.4);
+  background: rgba(137, 87, 255, 0.18);
+  border: 1.5px solid var(--f2-border-strong);
   color: #ffffff;
   padding: 7px 20px;
   border-radius: 99px;
   font-family: 'Baloo 2', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 800;
 }
 
-/* Botón Violeta Brillante Unificado */
-.cielo-btn-purple, .cyber-btn-primary {
-  background: linear-gradient(90deg, #7c5dfa 0%, #9b7bf7 100%) !important;
+/* Botones Violeta Eléctrico */
+.cielo-btn-purple,
+.cyber-btn-primary {
+  background: linear-gradient(90deg, #8957FF 0%, #a682ff 100%) !important;
   color: #ffffff !important;
-  border: 1.5px solid rgba(215, 198, 255, 0.45) !important;
+  border: 1px solid rgba(215, 198, 255, 0.45) !important;
   border-radius: 99px !important;
   padding: 10px 22px !important;
   font-family: 'Baloo 2', sans-serif !important;
   font-weight: 800 !important;
   font-size: 0.95rem !important;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(124, 93, 250, 0.45) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  box-shadow: 0 6px 18px rgba(137, 87, 255, 0.42) !important;
+  transition: transform 0.16s ease, box-shadow 0.16s ease !important;
 }
-.cielo-btn-purple:hover, .cyber-btn-primary:hover {
+.cielo-btn-purple:hover,
+.cyber-btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(124, 93, 250, 0.62) !important;
+  box-shadow: 0 10px 26px rgba(137, 87, 255, 0.58) !important;
 }
-.cielo-btn-purple:active, .cyber-btn-primary:active {
+.cielo-btn-purple:active,
+.cyber-btn-primary:active {
   transform: translateY(1px);
-  box-shadow: 0 4px 12px rgba(124, 93, 250, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(137, 87, 255, 0.35) !important;
 }
 
-/* Caja de Fórmulas estilo Pizarrón Ilustrado */
+/* Caja de Fórmulas estilo Pizarrón Cósmico */
 .cyber-formula-display {
-  background: linear-gradient(145deg, #17213e 0%, #10172e 100%);
-  border: 2.5px solid #a587ff;
-  border-left: 6px solid #ffd166;
-  border-radius: 18px;
+  background: linear-gradient(145deg, #13183b 0%, #0d1028 100%);
+  border: 1.5px solid rgba(137, 87, 255, 0.42);
+  border-left: 5px solid var(--f2-gold);
+  border-radius: 16px;
   padding: 16px 20px;
   color: #ffffff;
   font-family: 'JetBrains Mono', monospace;
-  box-shadow: inset 0 0 20px rgba(155, 123, 255, 0.16), 0 6px 16px rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 0 22px rgba(137, 87, 255, 0.14), 0 8px 20px rgba(0, 0, 0, 0.35);
   overflow-x: auto;
 }
 
 .katex {
-  font-size: 1.16em !important;
+  font-size: 1.15em !important;
   color: #fff9db;
 }
 
+/* Scrollbar cósmica */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
 }
 ::-webkit-scrollbar-track {
-  background: #0e122b;
+  background: #0B0D20;
 }
 ::-webkit-scrollbar-thumb {
-  background: #7c5dfa;
+  background: #8957FF;
   border-radius: 99px;
-  border: 2px solid #0e122b;
+  border: 2px solid #0B0D20;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #b79eff;
+  background: #a682ff;
 }

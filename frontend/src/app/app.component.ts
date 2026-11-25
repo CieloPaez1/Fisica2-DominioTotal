@@ -170,12 +170,12 @@ import { Fisica2ApiService } from './services/fisica2-api.service';
   `,
   styles: [`
     .cielo-sidebar {
-      --width: 248px;
-      --background: #101432;
-      border-right: 2.5px solid rgba(167, 142, 252, 0.28);
+      --width: 256px;
+      --background: #0B0D20;
+      border-right: 1px solid rgba(137, 87, 255, 0.28);
     }
     .cielo-sidebar-content {
-      --background: linear-gradient(180deg, #121738 0%, #0c1028 100%);
+      --background: linear-gradient(180deg, #0E112B 0%, #090B1C 100%);
     }
     .sidebar-shell {
       min-height: 100%;
@@ -245,16 +245,16 @@ import { Fisica2ApiService } from './services/fisica2-api.service';
       transition: all 0.18s ease;
     }
     .nav-pill-btn:hover {
-      background: rgba(155, 123, 255, 0.18);
-      border-color: rgba(196, 173, 255, 0.35);
+      background: rgba(137, 87, 255, 0.16);
+      border-color: rgba(137, 87, 255, 0.35);
       color: #ffffff;
-      transform: translateX(4px);
+      transform: translateX(3px);
     }
     .nav-pill-btn.active {
-      background: linear-gradient(90deg, #9d7eff 0%, #7c5dfa 100%);
-      border-color: #e2d6ff;
+      background: linear-gradient(90deg, #8957FF 0%, #a682ff 100%);
+      border-color: rgba(215, 198, 255, 0.5);
       color: #ffffff;
-      box-shadow: 0 6px 18px -2px rgba(140, 109, 247, 0.65);
+      box-shadow: 0 6px 18px -2px rgba(137, 87, 255, 0.65);
     }
     .nav-svg-icon {
       width: 34px;

@@ -713,7 +713,7 @@ export interface ProfessorUnitMasterclass {
   `,
   styles: [`
     .prof-studio-wrapper {
-      max-width: 1360px;
+      max-width: 1440px;
       margin: 0 auto 48px auto;
       display: flex;
       flex-direction: column;
@@ -796,14 +796,14 @@ export interface ProfessorUnitMasterclass {
     }
     .preset-voice-btn {
       background: #ffffff;
-      border: 2px solid #191538;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       border-radius: 99px;
       padding: 6px 12px;
       font-size: 0.78rem;
       font-weight: 800;
       color: #191538;
       cursor: pointer;
-      box-shadow: 0 3px 0 #7c5dfa;
+      box-shadow: 0 3px 0 #8957FF;
     }
     .preset-voice-btn.test {
       background: #10b981;
@@ -840,7 +840,7 @@ export interface ProfessorUnitMasterclass {
     }
     .voice-range {
       width: 100%;
-      accent-color: #7c5dfa;
+      accent-color: #8957FF;
       cursor: pointer;
     }
     .live-subtitle-banner {
@@ -897,7 +897,7 @@ export interface ProfessorUnitMasterclass {
       background: #efeaff;
       border-color: #ffffff;
       color: #191538;
-      box-shadow: 0 4px 0 #7c5dfa;
+      box-shadow: 0 4px 0 #8957FF;
     }
     .scene-step-btn.exercise-mode-btn {
       border-color: #fde047;
@@ -939,7 +939,7 @@ export interface ProfessorUnitMasterclass {
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 6px 0 #7c5dfa;
+      box-shadow: 0 6px 0 #8957FF;
     }
     .teacher-avatar-circle.speaking {
       animation: pulseSpeak 1.1s infinite alternate;
@@ -988,7 +988,7 @@ export interface ProfessorUnitMasterclass {
     .tsb-mode-tag {
       font-size: 0.72rem;
       font-weight: 900;
-      color: #7c5dfa;
+      color: #8957FF;
       margin-bottom: 6px;
       letter-spacing: 0.04em;
     }
@@ -1019,7 +1019,7 @@ export interface ProfessorUnitMasterclass {
       font-size: 0.88rem;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 0 #191538;
+      box-shadow: 0 6px 18px rgba(137, 87, 255, 0.38);
     }
     .vc-btn.play { background: #10b981; color: #052e16; }
     .vc-btn.repeat { background: #fde047; color: #191538; }
@@ -1042,7 +1042,7 @@ export interface ProfessorUnitMasterclass {
     }
     .depth-chip.active {
       background: #191538;
-      border-color: #191538;
+      border-color: rgba(166, 130, 255, 0.55);
       color: #fde047;
     }
     .vcp-nav-row {
@@ -1053,7 +1053,7 @@ export interface ProfessorUnitMasterclass {
     .nav-scene-btn {
       flex: 1;
       background: #ffffff;
-      border: 2px solid #191538;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       border-radius: 12px;
       padding: 8px 12px;
       font-weight: 800;
@@ -1062,7 +1062,7 @@ export interface ProfessorUnitMasterclass {
       cursor: pointer;
     }
     .nav-scene-btn.primary {
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
     }
     .nav-scene-btn:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -1138,7 +1138,7 @@ export interface ProfessorUnitMasterclass {
       color: #191538;
       text-align: center;
       font-size: 1.2rem;
-      box-shadow: 0 4px 0 #191538;
+      box-shadow: 0 6px 18px rgba(137, 87, 255, 0.38);
       overflow-x: auto;
     }
     .bfb-right {
@@ -1204,7 +1204,7 @@ export interface ProfessorUnitMasterclass {
       background: #efeaff;
       border-color: #ffffff;
       color: #191538;
-      box-shadow: 0 5px 0 #7c5dfa;
+      box-shadow: 0 5px 0 #8957FF;
     }
     .prof-exercise-board {
       display: flex;
@@ -1234,7 +1234,7 @@ export interface ProfessorUnitMasterclass {
       font-weight: 700;
       color: #191538;
       background: #ffffff;
-      border: 2px solid #191538;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       padding: 12px 16px;
       border-radius: 14px;
       margin: 0 0 10px 0;
@@ -1266,7 +1266,7 @@ export interface ProfessorUnitMasterclass {
       gap: 8px;
     }
     .psb-num {
-      background: #7c5dfa;
+      background: #8957FF;
       color: #ffffff;
       font-weight: 900;
       font-size: 0.75rem;
@@ -1334,16 +1334,16 @@ export interface ProfessorUnitMasterclass {
     }
     .qq-btn {
       background: #ffffff;
-      border: 2px solid #191538;
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       border-radius: 99px;
       padding: 7px 14px;
       font-size: 0.8rem;
       font-weight: 800;
       color: #191538;
       cursor: pointer;
-      box-shadow: 0 3px 0 #7c5dfa;
+      box-shadow: 0 3px 0 #8957FF;
     }
-    .qq-btn:hover { background: #7c5dfa; color: #ffffff; }
+    .qq-btn:hover { background: #8957FF; color: #ffffff; }
     .ask-input-row {
       display: grid;
       grid-template-columns: 1fr auto;
@@ -1369,7 +1369,7 @@ export interface ProfessorUnitMasterclass {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      box-shadow: 0 6px 0 #7c5dfa;
+      box-shadow: 0 6px 0 #8957FF;
     }
     .pca-top {
       display: flex;

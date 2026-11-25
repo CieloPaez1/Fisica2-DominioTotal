@@ -91,8 +91,17 @@ ion-toolbar {
   color: var(--f2-ink-dark);
   box-shadow: 0 12px 28px -8px rgba(6, 8, 24, 0.55);
 }
-.cielo-lavender-card .katex {
-  color: var(--f2-ink-dark) !important;
+.cielo-lavender-card .katex,
+.cielo-lavender-card .katex *,
+.cream-formula-card .katex,
+.cream-formula-card .katex *,
+.sticky-note-card .katex,
+.sticky-note-card .katex *,
+.cfc-math,
+.cfc-math *,
+.snc-katex,
+.snc-katex * {
+  color: #161332 !important;
 }
 
 /* Banner Hero Cósmico Unificado en las 13 páginas */

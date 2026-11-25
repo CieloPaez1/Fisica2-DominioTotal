@@ -39,11 +39,16 @@ public class CatedraPdfController {
 
     @GetMapping("/{filename}/raw")
     public ResponseEntity<Resource> downloadRawPdf(@PathVariable String filename) {
-        File pdfFile = pdfService.getPdfFile(filename);
-        Resource resource = new FileSystemResource(pdfFile);
+        File docFile = pdfService.getPdfFile(filename);
+        Resource resource = new FileSystemResource(docFile);
+        boolean isDocx = docFile.getName().toLowerCase().endsWith(".docx");
+        MediaType mediaType = isDocx
+                ? MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                : MediaType.APPLICATION_PDF;
+        String disposition = (isDocx ? "attachment" : "inline") + "; filename=\"" + docFile.getName() + "\"";
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + pdfFile.getName() + "\"")
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition)
                 .body(resource);
     }
 

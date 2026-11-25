@@ -56,8 +56,8 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
           </div>
           <div class="sh-upload">
             <label class="cielo-btn-purple" style="display: inline-block;">
-              <span>📤 + Subir Nuevo PDF</span>
-              <input type="file" accept=".pdf" (change)="onFileSelected($event)" hidden />
+              <span>📤 + Subir Nuevo PDF / Word</span>
+              <input type="file" accept=".pdf,.docx" (change)="onFileSelected($event)" hidden />
             </label>
           </div>
         </div>
@@ -218,7 +218,7 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
                 ⚡ Sumar a Unidad
               </button>
               <a [href]="getRawPdfUrl(pdf.filename)" target="_blank" rel="noopener" class="btn-open-raw">
-                ↗ PDF
+                {{ pdf.filename.toLowerCase().endsWith('.docx') ? '↗ WORD' : '↗ PDF' }}
               </a>
             </div>
           </div>

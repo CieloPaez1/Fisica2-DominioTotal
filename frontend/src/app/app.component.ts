@@ -119,6 +119,12 @@ import { Fisica2ApiService } from './services/fisica2-api.service';
                         <rect x="13.5" y="12" width="5" height="15" rx="1.5" fill="#a78bfa" stroke="#1b1438" stroke-width="1.8" />
                         <rect x="21" y="6" width="5" height="21" rx="1.5" fill="#38e595" stroke="#1b1438" stroke-width="1.8" />
                       </svg>
+                      <!-- Demostraciones (Pizarra con Integral) -->
+                      <svg *ngSwitchCase="'derivations'" viewBox="0 0 32 32">
+                        <rect x="4" y="6" width="24" height="19" rx="3" fill="#5ce1e6" stroke="#1b1438" stroke-width="2.2" />
+                        <path d="M 11 20 C 13 20, 14 11, 16 11 C 18 11, 19 20, 21 20" fill="none" stroke="#1b1438" stroke-width="2.4" stroke-linecap="round" />
+                        <circle cx="22.5" cy="11.5" r="2" fill="#ffd166" />
+                      </svg>
                       <!-- Biblioteca PDFs -->
                       <svg *ngSwitchDefault viewBox="0 0 32 32">
                         <path d="M 4 9 L 13 9 L 16 12 L 28 12 L 28 25 L 4 25 Z" fill="#ffd166" stroke="#1b1438" stroke-width="2.2" stroke-linejoin="round" />
@@ -333,6 +339,7 @@ export class AppComponent implements OnInit {
     { title: 'Inicio', url: '/home', tab: null, iconKey: 'home' },
     { title: 'Unidades', url: '/units', tab: 'teoria', iconKey: 'units' },
     { title: 'Profesor Virtual', url: '/profesor', tab: null, iconKey: 'oral' },
+    { title: 'Demostraciones', url: '/demostraciones', tab: null, iconKey: 'derivations' },
     { title: 'Calculadora & TPs', url: '/calculadora', tab: null, iconKey: 'exercises' },
     { title: 'Laboratorio', url: '/units', tab: 'graficos', iconKey: 'lab' },
     { title: 'Ejercicios', url: '/units', tab: 'practica', iconKey: 'exercises' },

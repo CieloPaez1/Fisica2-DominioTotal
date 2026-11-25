@@ -13,6 +13,7 @@ import {
 } from '@ionic/angular/standalone';
 import { KatexRenderService } from '../../services/katex-render.service';
 import { Fisica2ApiService } from '../../services/fisica2-api.service';
+import { VoiceOptionItem, VoiceTutorService } from '../../services/voice-tutor.service';
 import { CieloIllustrationComponent } from '../../components/cielo-illustration.component';
 
 export interface ProfessorScene {
@@ -119,6 +120,73 @@ export interface ProfessorUnitMasterclass {
         </div>
 
         <!-- ================================================================
+             ESTUDIO DE VOZ FLUIDA: ELEGÍ LA VOZ, RITMO Y ESTILO DE TU PROFESOR
+             ================================================================ -->
+        <div class="cielo-lavender-card voice-studio-bar">
+          <div class="vsb-top">
+            <div class="vsb-title">
+              <span class="badge-dark">🎙️ PERSONALIZÁ LA VOZ Y FLUIDEZ DE TU PROFESOR</span>
+              <strong>Elegí quién te da la clase y a qué velocidad</strong>
+            </div>
+
+            <div class="vsb-presets">
+              <button class="preset-voice-btn" (click)="applyVoicePreset('profesora')">👩‍🏫 Profesora Cálida</button>
+              <button class="preset-voice-btn" (click)="applyVoicePreset('profesor')">👨‍🏫 Profesor Dinámico</button>
+              <button class="preset-voice-btn" (click)="applyVoicePreset('fluido')">⚡ Más Fluido (1.18x)</button>
+              <button class="preset-voice-btn" (click)="applyVoicePreset('pausado')">🧘 Pausado (0.92x)</button>
+              <button class="preset-voice-btn test" (click)="testSelectedVoice()">🔊 Probar Voz</button>
+            </div>
+          </div>
+
+          <div class="vsb-controls-grid">
+            <div class="vsb-field">
+              <label>Voz del Profesor/a ({{ availableVoices.length }} voces detectadas — las ⭐ son las más naturales):</label>
+              <select
+                [(ngModel)]="selectedVoiceId"
+                (ngModelChange)="onVoiceChange($event)"
+                class="voice-select-box"
+              >
+                <option *ngFor="let v of availableVoices" [ngValue]="v.id">
+                  {{ v.displayLabel }}
+                </option>
+              </select>
+            </div>
+
+            <div class="vsb-field small">
+              <label>Fluidez / Velocidad: <strong>{{ speechRate.toFixed(2) }}x</strong></label>
+              <input
+                type="range"
+                min="0.80"
+                max="1.40"
+                step="0.02"
+                [(ngModel)]="speechRate"
+                (change)="onRatePitchChange()"
+                class="voice-range"
+              />
+            </div>
+
+            <div class="vsb-field small">
+              <label>Tono / Calidez: <strong>{{ speechPitch.toFixed(2) }}</strong></label>
+              <input
+                type="range"
+                min="0.85"
+                max="1.15"
+                step="0.02"
+                [(ngModel)]="speechPitch"
+                (change)="onRatePitchChange()"
+                class="voice-range"
+              />
+            </div>
+          </div>
+
+          <!-- SUBTÍTULO EN VIVO MIENTRAS HABLA EL PROFESOR -->
+          <div class="live-subtitle-banner" *ngIf="isSpeaking && currentSubtitle">
+            <span class="lsb-tag">🗣️ DICIENDO AHORA:</span>
+            <span class="lsb-txt">"{{ currentSubtitle }}"</span>
+          </div>
+        </div>
+
+        <!-- ================================================================
              AULA ANIMADA: PROFESOR + PIZARRÓN TIPO VIDEO INTERACTIVO CON VOZ
              ================================================================ -->
         <div class="cielo-dark-panel classroom-stage" *ngIf="currentClass as mc">
@@ -176,8 +244,11 @@ export interface ProfessorUnitMasterclass {
               <!-- CONTROLES DE REPRODUCCIÓN TIPO VIDEO / REPETIR / CAMBIAR NIVEL -->
               <div class="voice-controls-panel">
                 <div class="vcp-main-btns">
-                  <button class="vc-btn play" (click)="speakCurrentExplanation()">
-                    {{ isSpeaking ? '⏸️ Reiniciar Voz' : '▶ Escuchar al Profesor' }}
+                  <button class="vc-btn play" *ngIf="!isSpeaking" (click)="speakCurrentExplanation()">
+                    ▶ Escuchar al Profesor
+                  </button>
+                  <button class="vc-btn play" *ngIf="isSpeaking" (click)="togglePauseSpeech()">
+                    {{ isPaused ? '▶ Continuar Voz' : '⏸️ Pausar Voz' }}
                   </button>
                   <button class="vc-btn repeat" (click)="repeatCurrentExplanation()">
                     🔁 Volver a Repetir
@@ -692,6 +763,109 @@ export interface ProfessorUnitMasterclass {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    /* ESTUDIO DE SELECCIÓN DE VOZ */
+    .voice-studio-bar {
+      padding: 16px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .vsb-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .vsb-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .vsb-title strong {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      color: #191538;
+    }
+    .vsb-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .preset-voice-btn {
+      background: #ffffff;
+      border: 2px solid #191538;
+      border-radius: 99px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #191538;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #7c5dfa;
+    }
+    .preset-voice-btn.test {
+      background: #10b981;
+      color: #052e16;
+      box-shadow: 0 3px 0 #191538;
+    }
+    .vsb-controls-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+    @media (max-width: 920px) {
+      .vsb-controls-grid { grid-template-columns: 1fr; }
+    }
+    .vsb-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .vsb-field label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #2b2354;
+    }
+    .voice-select-box {
+      background: #ffffff;
+      border: 2.5px solid #191538;
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #191538;
+    }
+    .voice-range {
+      width: 100%;
+      accent-color: #7c5dfa;
+      cursor: pointer;
+    }
+    .live-subtitle-banner {
+      background: #191538;
+      border: 2.5px solid #10b981;
+      border-radius: 14px;
+      padding: 10px 14px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .lsb-tag {
+      background: #10b981;
+      color: #052e16;
+      font-size: 0.7rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+    .lsb-txt {
+      color: #fef08a;
     }
 
     /* AULA PRINCIPAL */
@@ -1229,6 +1403,12 @@ export class ProfesorPage implements OnInit, OnDestroy {
   explanationDepth: 'normal' | 'easy' | 'deep' = 'normal';
   selectedExerciseIdx = 0;
   isSpeaking = false;
+  isPaused = false;
+  currentSubtitle = '';
+  availableVoices: VoiceOptionItem[] = [];
+  selectedVoiceId = '';
+  speechRate = 1.03;
+  speechPitch = 1.0;
 
   studentQuestionInput = '';
   professorReply: { speechText: string; formulaLatex?: string; calcTip?: string } | null = null;
@@ -1718,10 +1898,25 @@ export class ProfesorPage implements OnInit, OnDestroy {
   constructor(
     private katex: KatexRenderService,
     private api: Fisica2ApiService,
+    private voiceTutor: VoiceTutorService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    this.speechRate = this.voiceTutor.settings.rate;
+    this.speechPitch = this.voiceTutor.settings.pitch;
+    this.selectedVoiceId = this.voiceTutor.settings.selectedVoiceId;
+
+    this.voiceTutor.voices$.subscribe((vList) => {
+      this.availableVoices = vList;
+      if (this.voiceTutor.settings.selectedVoiceId) {
+        this.selectedVoiceId = this.voiceTutor.settings.selectedVoiceId;
+      }
+    });
+    this.voiceTutor.isSpeaking$.subscribe((sp) => (this.isSpeaking = sp));
+    this.voiceTutor.isPaused$.subscribe((pa) => (this.isPaused = pa));
+    this.voiceTutor.currentSubtitle$.subscribe((sub) => (this.currentSubtitle = sub));
+
     this.api.getUnits().subscribe();
     this.api.units$.subscribe((units) => {
       this.highestUnlockedUnit = this.api.getHighestUnlockedUnitNumber(units);
@@ -1828,8 +2023,35 @@ export class ProfesorPage implements OnInit, OnDestroy {
   }
 
   // ==========================================================================
-  // SÍNTESIS DE VOZ DEL PROFESOR (WEB SPEECH API)
+  // SÍNTESIS DE VOZ FLUIDA Y PERSONALIZABLE (VOICE TUTOR SERVICE)
   // ==========================================================================
+  onVoiceChange(voiceId: string) {
+    this.voiceTutor.selectVoice(voiceId);
+    if (this.isSpeaking) {
+      this.speakCurrentExplanation();
+    }
+  }
+
+  onRatePitchChange() {
+    this.voiceTutor.updateRateAndPitch(this.speechRate, this.speechPitch);
+  }
+
+  applyVoicePreset(preset: 'profesora' | 'profesor' | 'fluido' | 'pausado') {
+    this.voiceTutor.applyPreset(preset);
+    this.selectedVoiceId = this.voiceTutor.settings.selectedVoiceId;
+    this.speechRate = this.voiceTutor.settings.rate;
+    this.speechPitch = this.voiceTutor.settings.pitch;
+    this.testSelectedVoice();
+  }
+
+  testSelectedVoice() {
+    this.voiceTutor.speakFluid('¡Hola Cielo! Esta es mi nueva voz fluida para acompañarte paso a paso en Física 2.');
+  }
+
+  togglePauseSpeech() {
+    this.voiceTutor.togglePauseResume();
+  }
+
   speakCurrentExplanation() {
     const sc = this.currentScene;
     const text =
@@ -1856,33 +2078,11 @@ export class ProfesorPage implements OnInit, OnDestroy {
   }
 
   speakSingleText(text: string) {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'es-AR';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.02;
-
-    utterance.onstart = () => {
-      this.isSpeaking = true;
-    };
-    utterance.onend = () => {
-      this.isSpeaking = false;
-    };
-    utterance.onerror = () => {
-      this.isSpeaking = false;
-    };
-
-    this.isSpeaking = true;
-    window.speechSynthesis.speak(utterance);
+    this.voiceTutor.speakFluid(text);
   }
 
   stopSpeech() {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-    this.isSpeaking = false;
+    this.voiceTutor.stop();
   }
 
   // ==========================================================================

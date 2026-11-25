@@ -40,66 +40,41 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     <ion-content [fullscreen]="true" class="ion-padding">
       <div class="podcasts-wrapper">
 
-        <!-- BANNER LAVANDA ILUSTRADO DEL ESTUDIO DE PODCASTS -->
-        <div class="cielo-hero-banner studio-hero">
-          <app-cielo-art name="podcast-studio" [width]="115" [height]="105"></app-cielo-art>
-          <div class="sh-copy">
-            <div class="sh-badges">
-              <span class="pill-purple">🔊 CÁPSULAS DE AUDIO NARRADO • 9 EPISODIOS</span>
-              <span class="pill-gold">⏱️ 3 MINUTOS POR UNIDAD</span>
-            </div>
-            <h1>Estudio de Podcasts & Repaso Oral ♡</h1>
-            <p>
-              Escuchá con síntesis de voz los 3 pilares clave de cada unidad: el fenómeno físico, la demostración de pizarrón y la trampa mortal a evitar.
-            </p>
-          </div>
+        <!-- COMPACT HEADER (REFERENCIA PANEL 13) -->
+        <div class="pod-top-bar">
+          <span class="pod-bar-title">🎧 Podcasts de Repaso — Cápsulas de Audio (3 min)</span>
+          <span class="pill-gold">⏱️ 9 Episodios • U1–U9</span>
         </div>
 
-        <!-- SELECTOR DE UNIDADES (DESBLOQUEO SECUENCIAL ESTRICTO AL 100%) -->
-        <div class="unit-episodes-bar">
-          <button
-            *ngFor="let ep of episodes"
-            class="ep-btn"
-            [class.active]="selectedUnit === ep.unitNumber"
-            [style.opacity]="isUnitUnlocked(ep.unitNumber) ? '1' : '0.5'"
-            (click)="selectUnit(ep.unitNumber)"
-          >
-            <app-cielo-art [name]="getUnitArt(ep.unitNumber)" [width]="40" [height]="40"></app-cielo-art>
-            <span class="eb-num">{{ isUnitUnlocked(ep.unitNumber) ? '🔓' : '🔒' }} U{{ ep.unitNumber }}</span>
-            <span class="eb-dur">{{ isUnitUnlocked(ep.unitNumber) ? ep.durationLabel : 'Bloqueada' }}</span>
-          </button>
-        </div>
-        <div class="cielo-lavender-card" *ngIf="lockedPodcastMsg" style="padding: 12px 18px; background: #ffe4e6; border: 2.5px solid #f43f5e; color: #881337; font-weight: 800;">
+        <div class="cielo-lavender-card" *ngIf="lockedPodcastMsg" style="padding: 12px 18px; background: #ffe4e6; border: 1.5px solid #f43f5e; color: #881337; font-weight: 800;">
           {{ lockedPodcastMsg }}
         </div>
 
-        <!-- CONSOLA REPRODUCTORA ILUSTRADA -->
-        <div class="cielo-dark-panel player-card" *ngIf="currentEpisode as ep">
-          <div class="pc-header-split">
-            <app-cielo-art [name]="getUnitArt(ep.unitNumber)" [width]="95" [height]="95"></app-cielo-art>
-            <div class="pc-info">
-              <div class="sh-badges">
-                <span class="pill-purple">EPISODIO {{ ep.unitNumber }} DE 9</span>
-                <span class="pill-gold">⏱️ {{ ep.durationLabel }}</span>
-              </div>
-              <h2 class="ep-title">{{ ep.title }}</h2>
-              <p class="ep-summary">{{ ep.summary }}</p>
+        <!-- LAYOUT 2 COLUMNAS: REPRODUCTOR MODERNO + LISTA DE EPISODIOS -->
+        <div class="pod-two-col" *ngIf="currentEpisode as ep">
+          <!-- COLUMNA IZQUIERDA: REPRODUCTOR -->
+          <div class="cielo-dark-panel pod-player-box">
+            <div class="pod-cover-art">
+              <div class="pod-wave-ring">🎧</div>
             </div>
-          </div>
+            <h2 class="pod-ep-name">Podcast de Repaso — Unidad {{ ep.unitNumber }}</h2>
+            <p class="pod-ep-sub">{{ ep.title }}</p>
 
-          <div class="audio-controls-row">
-            <button *ngIf="!isPlaying" class="cielo-btn-purple" (click)="playSpeech()">
-              ▶️ Escuchar Episodio Completo
-            </button>
-            <button *ngIf="isPlaying" class="btn-pause" (click)="pauseOrResume()">
-              {{ isPaused ? '▶️ Reanudar' : '⏸️ Pausar' }}
-            </button>
-            <button *ngIf="isPlaying" class="btn-stop" (click)="stopSpeech()">
-              ⏹️ Detener
-            </button>
+            <div class="pod-controls-bar">
+              <button *ngIf="!isPlaying" class="pod-play-circle" (click)="playSpeech()" title="Reproducir">
+                ▶
+              </button>
+              <button *ngIf="isPlaying" class="pod-play-circle" (click)="pauseOrResume()" title="Pausar/Reanudar">
+                {{ isPaused ? '▶' : '⏸' }}
+              </button>
+              <button *ngIf="isPlaying" class="btn-stop" (click)="stopSpeech()">
+                ⏹ Detener
+              </button>
+              <span class="pod-time-badge">0:00 / {{ ep.durationLabel }}</span>
+            </div>
 
-            <div class="speed-box">
-              <span>Velocidad de voz:</span>
+            <div class="speed-box" style="justify-content: center;">
+              <span>Velocidad:</span>
               <button
                 *ngFor="let r of [0.85, 1.0, 1.2, 1.4]"
                 class="rate-pill"
@@ -109,9 +84,29 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
                 {{ r }}x
               </button>
             </div>
+
+            <p class="ep-summary" style="text-align: center; margin-top: 8px;">{{ ep.summary }}</p>
           </div>
 
-          <!-- BLOQUES ILUSTRADOS DEL GUION -->
+          <!-- COLUMNA DERECHA: LISTA DE EPISODIOS -->
+          <div class="cielo-dark-panel pod-episodes-list">
+            <div class="pel-head">Lista de Episodios</div>
+            <button
+              *ngFor="let item of episodes"
+              class="pel-row"
+              [class.active]="selectedUnit === item.unitNumber"
+              [style.opacity]="isUnitUnlocked(item.unitNumber) ? '1' : '0.48'"
+              (click)="selectUnit(item.unitNumber)"
+            >
+              <span class="pel-play-dot">{{ isUnitUnlocked(item.unitNumber) ? '▶' : '🔒' }}</span>
+              <span class="pel-title">Unidad {{ item.unitNumber }} — {{ item.title }}</span>
+              <span class="pel-dur">{{ isUnitUnlocked(item.unitNumber) ? item.durationLabel : 'Bloqueada' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- GUION DETALLADO DEL EPISODIO -->
+        <div class="cielo-dark-panel player-card" *ngIf="currentEpisode as ep">
           <div class="blocks-stack">
             <div class="cielo-lavender-card script-block-card" *ngFor="let b of ep.scriptParagraphs; let idx = index">
               <div class="sbc-head">
@@ -147,6 +142,129 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     @media (max-width: 720px) {
       .studio-hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
     }
+    .pod-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: rgba(18, 21, 52, 0.9);
+      border: 1px solid rgba(137, 87, 255, 0.3);
+      border-radius: 18px;
+      padding: 12px 18px;
+    }
+    .pod-bar-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .pod-two-col {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+    @media (max-width: 960px) {
+      .pod-two-col { grid-template-columns: 1fr; }
+    }
+    .pod-player-box {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .pod-cover-art {
+      width: 112px;
+      height: 112px;
+      border-radius: 26px;
+      background: radial-gradient(circle, rgba(137, 87, 255, 0.5) 0%, rgba(20, 23, 56, 0.95) 72%);
+      border: 2px solid rgba(166, 130, 255, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 28px rgba(137, 87, 255, 0.45);
+    }
+    .pod-wave-ring { font-size: 3rem; }
+    .pod-ep-name {
+      margin: 4px 0 0 0;
+      color: #ffffff;
+      font-size: 1.25rem;
+      text-align: center;
+    }
+    .pod-ep-sub {
+      margin: 0;
+      color: #d7c6ff;
+      font-size: 0.88rem;
+      text-align: center;
+    }
+    .pod-controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0;
+    }
+    .pod-play-circle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #8957FF, #a682ff);
+      color: #ffffff;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(137, 87, 255, 0.5);
+    }
+    .pod-time-badge {
+      color: #d7c6ff;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .pod-episodes-list {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .pel-head {
+      font-family: 'Baloo 2', sans-serif;
+      color: #ffd166;
+      font-weight: 800;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+    .pel-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(137, 87, 255, 0.25);
+      border-radius: 14px;
+      padding: 10px 14px;
+      color: #e2d6ff;
+      text-align: left;
+      cursor: pointer;
+    }
+    .pel-row.active {
+      background: rgba(137, 87, 255, 0.25);
+      border-color: #8957FF;
+      color: #ffffff;
+    }
+    .pel-play-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #8957FF;
+      color: #ffffff;
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .pel-title { font-weight: 800; font-size: 0.9rem; flex: 1; }
+    .pel-dur { font-size: 0.78rem; color: #ffd166; font-weight: 700; }
     .sh-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
     .pill-purple {
       background: #8957FF;

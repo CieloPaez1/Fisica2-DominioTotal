@@ -41,32 +41,24 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
     <ion-content [fullscreen]="true" class="ion-padding">
       <div class="demo-wrapper">
 
-        <!-- HERO BANNER -->
-        <div class="cielo-hero-banner demo-hero">
-          <div class="dh-copy">
-            <div class="dh-badges">
-              <span class="pill-purple">📐 DEDUCCIONES DE FÓRMULAS + DIBUJOS DE CÁTEDRA</span>
-              <span class="pill-gold">🔓 {{ unlockedUnitsCount }} / 9 UNIDADES DESBLOQUEADAS</span>
-            </div>
-            <h1>Demostraciones Paso a Paso ♡</h1>
-            <p>
-              Cada fórmula explicada desde su principio físico hasta la ecuación final, acompañada de su dibujo vectorial y gráficos del apunte maestro <strong>FISICA2.docx</strong>.
-            </p>
+        <!-- COMPACT HEADER CON PLANETA DECORATIVO -->
+        <div class="demo-top-bar">
+          <div class="dtb-left">
+            <span class="dtb-pill">📐 Demostración: {{ selectedDerivation?.title || 'Unidades 1 a 9' }}</span>
+            <span class="pill-gold">🔓 {{ unlockedUnitsCount }} / 9 desbloqueadas</span>
           </div>
-        </div>
-
-        <!-- SELECTOR DE UNIDADES CON BLOQUEO SECUENCIAL ESTRICTO -->
-        <div class="unit-tabs-row">
-          <button
-            *ngFor="let u of unitNumbers"
-            class="unit-tab-btn"
-            [class.active]="selectedUnit === u"
-            [class.locked]="!isUnitUnlocked(u)"
-            (click)="selectUnit(u)"
-          >
-            <span *ngIf="isUnitUnlocked(u)">Unidad {{ u }}</span>
-            <span *ngIf="!isUnitUnlocked(u)">🔒 U{{ u }}</span>
-          </button>
+          <div class="unit-tabs-row">
+            <button
+              *ngFor="let u of unitNumbers"
+              class="unit-tab-btn"
+              [class.active]="selectedUnit === u"
+              [class.locked]="!isUnitUnlocked(u)"
+              (click)="selectUnit(u)"
+            >
+              <span *ngIf="isUnitUnlocked(u)">U{{ u }}</span>
+              <span *ngIf="!isUnitUnlocked(u)">🔒 U{{ u }}</span>
+            </button>
+          </div>
         </div>
 
         <!-- AVISO SI UNIDAD BLOQUEADA -->
@@ -78,76 +70,72 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
         </div>
 
         <!-- CONTENIDO DE LA UNIDAD DESBLOQUEADA -->
-        <div *ngIf="isUnitUnlocked(selectedUnit)" class="demo-grid">
+        <div *ngIf="isUnitUnlocked(selectedUnit)" class="demo-main-layout">
 
-          <!-- LISTA DE DEMOSTRACIONES DE LA UNIDAD -->
-          <div class="cielo-dark-panel demo-sidebar">
-            <h3 class="ds-title">Fórmulas de la Unidad {{ selectedUnit }}</h3>
-            <div class="ds-list">
-              <button
-                *ngFor="let d of unitDerivations"
-                class="ds-item-btn"
-                [class.active]="selectedDerivation?.id === d.id"
-                (click)="selectDerivation(d)"
-              >
-                <span class="ds-item-title">{{ d.title }}</span>
-                <span class="ds-item-sub">{{ d.steps.length }} pasos + dibujo</span>
-              </button>
-            </div>
+          <!-- SELECTOR HORIZONTAL DE FÓRMULAS DE LA UNIDAD -->
+          <div class="formula-chips-bar">
+            <button
+              *ngFor="let d of unitDerivations"
+              class="formula-chip-btn"
+              [class.active]="selectedDerivation?.id === d.id"
+              (click)="selectDerivation(d)"
+            >
+              {{ d.title }}
+            </button>
           </div>
 
-          <!-- PANEL PRINCIPAL DE DEMOSTRACIÓN -->
+          <!-- ESCENARIO 3 COLUMNAS (REFERENCIA PANEL 4) -->
           <div class="cielo-dark-panel demo-stage" *ngIf="selectedDerivation as d">
-            <div class="stage-head">
-              <div>
-                <span class="pill-purple">{{ d.unitTitle }}</span>
-                <h2 class="stage-title">{{ d.title }}</h2>
-                <p class="stage-sub">{{ d.subtitle }}</p>
-              </div>
-              <div class="stage-audio-actions">
-                <button class="cielo-btn-gold" (click)="speakDerivation(d)">
-                  {{ isSpeaking ? '⏹ Detener Voz' : '🔊 Escuchar Paso a Paso' }}
+            <!-- TABS SUPERIORES: FÓRMULA Y EXPLICACIÓN | GRÁFICOS ORIGINALES -->
+            <div class="stage-top-tabs">
+              <div class="stt-group">
+                <button
+                  class="stt-tab"
+                  [class.active]="diagramMode === 'svg'"
+                  (click)="diagramMode = 'svg'"
+                >
+                  Fórmula y explicación
+                </button>
+                <button
+                  class="stt-tab"
+                  *ngIf="d.docxImage"
+                  [class.active]="diagramMode === 'docx'"
+                  (click)="diagramMode = 'docx'"
+                >
+                  Gráficos originales (Word)
                 </button>
               </div>
+              <button class="cielo-btn-purple" style="padding: 7px 16px !important; font-size: 0.84rem !important;" (click)="speakDerivation(d)">
+                {{ isSpeaking ? '⏹ Detener Voz' : '🔊 Escuchar Paso a Paso' }}
+              </button>
             </div>
 
-            <!-- FÓRMULA OBJETIVO -->
-            <div class="target-formula-box">
-              <div class="tf-label">FÓRMULA A DEMOSTRAR</div>
-              <div class="tf-math" [innerHTML]="renderFormula(d.targetFormulaLatex)"></div>
-              <p class="tf-meaning">💡 <strong>Sentido físico:</strong> {{ d.physicalMeaning }}</p>
-            </div>
-
-            <!-- DIBUJO VECTORIAL + IMAGEN DEL WORD -->
-            <div class="drawing-section">
-              <div class="drawing-header">
-                <span class="dh-label">🎨 DIBUJO ESQUEMÁTICO Y DIAGRAMAS</span>
-                <div class="drawing-toggle" *ngIf="d.docxImage">
-                  <button
-                    class="toggle-chip"
-                    [class.active]="diagramMode === 'svg'"
-                    (click)="diagramMode = 'svg'"
-                  >
-                    📐 Diagrama Vectorial
-                  </button>
-                  <button
-                    class="toggle-chip"
-                    [class.active]="diagramMode === 'docx'"
-                    (click)="diagramMode = 'docx'"
-                  >
-                    📄 Gráfico de FISICA2.docx
-                  </button>
+            <div class="three-col-stage">
+              <!-- COLUMNA IZQUIERDA: TARJETA CREMA CON FÓRMULA + SENTIDO FÍSICO -->
+              <div class="cream-formula-card">
+                <div class="cfc-unit-tag">{{ d.unitTitle }}</div>
+                <div class="cfc-math" [innerHTML]="renderFormula(d.targetFormulaLatex)"></div>
+                <div class="cfc-meaning">
+                  <strong>Sentido físico:</strong>
+                  <p>{{ d.physicalMeaning }}</p>
                 </div>
+                <div class="cfc-tip">
+                  <strong>🎯 Clave examen:</strong> {{ d.examTip }}
+                </div>
+                <button class="cielo-btn-purple cfc-btn" (click)="resetSteps()">
+                  Paso a Paso ↓
+                </button>
               </div>
 
-              <!-- IMAGEN EXTRAÍDA DEL WORD -->
-              <div class="docx-img-frame" *ngIf="diagramMode === 'docx' && d.docxImage">
-                <img [src]="d.docxImage" [alt]="d.title" class="docx-img" />
-                <p class="diagram-caption">Gráfico original del apunte FISICA2.docx — {{ d.diagramCaption }}</p>
-              </div>
+              <!-- COLUMNA CENTRAL: LIENZO SVG INTERACTIVO O GRÁFICO DEL WORD -->
+              <div class="center-canvas-col">
+                <div class="docx-img-frame" *ngIf="diagramMode === 'docx' && d.docxImage">
+                  <img [src]="d.docxImage" [alt]="d.title" class="docx-img" />
+                  <p class="diagram-caption">Gráfico original del apunte FISICA2.docx — {{ d.diagramCaption }}</p>
+                </div>
 
-              <!-- DIBUJO SVG INTERACTIVO POR CADA DEMOSTRACIÓN -->
-              <div class="svg-frame" [class.anim-paused]="!animateSvg" *ngIf="diagramMode === 'svg' || !d.docxImage">
+                <!-- DIBUJO SVG INTERACTIVO POR CADA DEMOSTRACIÓN -->
+                <div class="svg-frame" [class.anim-paused]="!animateSvg" *ngIf="diagramMode === 'svg' || !d.docxImage">
                 <div class="svg-stage-box">
                   <ng-container [ngSwitch]="d.svgKey">
 
@@ -477,42 +465,34 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
 
                 <p class="diagram-caption">{{ d.diagramCaption }}</p>
               </div>
-            </div>
-
-            <!-- CONTROLES PASO A PASO -->
-            <div class="steps-toolbar">
-              <span class="st-progress">Mostrando {{ visibleStepsCount }} de {{ d.steps.length }} pasos</span>
-              <div class="st-btns">
-                <button class="st-btn" (click)="revealNextStep(d)" [disabled]="visibleStepsCount >= d.steps.length">
-                  ➕ Siguiente Paso
-                </button>
-                <button class="st-btn" (click)="showAllSteps(d)">
-                  👁 Ver Todos
-                </button>
-                <button class="st-btn" (click)="resetSteps()">
-                  ↺ Paso a Paso
-                </button>
               </div>
-            </div>
 
-            <!-- LISTA NUMERADA DE PASOS -->
-            <div class="steps-list">
-              <div
-                *ngFor="let step of d.steps.slice(0, visibleStepsCount)"
-                class="step-card"
-              >
-                <div class="step-badge">Paso {{ step.stepNumber }}</div>
-                <div class="step-body">
-                  <h4>{{ step.title }}</h4>
-                  <p>{{ step.explanation }}</p>
-                  <div *ngIf="step.formulaLatex" class="step-math" [innerHTML]="renderFormula(step.formulaLatex)"></div>
+              <!-- COLUMNA DERECHA: PASOS NUMERADOS + VER TODOS / SIGUIENTE -->
+              <div class="right-steps-col">
+                <div class="rsc-head">
+                  <span>Pasos ({{ visibleStepsCount }}/{{ d.steps.length }})</span>
+                  <div class="rsc-btns">
+                    <button class="rsc-btn" (click)="showAllSteps(d)">Ver todos</button>
+                    <button class="rsc-btn primary" (click)="revealNextStep(d)" [disabled]="visibleStepsCount >= d.steps.length">
+                      Siguiente →
+                    </button>
+                  </div>
+                </div>
+
+                <div class="steps-list">
+                  <div
+                    *ngFor="let step of d.steps.slice(0, visibleStepsCount)"
+                    class="step-card"
+                  >
+                    <div class="step-num-circle">{{ step.stepNumber }}</div>
+                    <div class="step-body">
+                      <h4>{{ step.title }}</h4>
+                      <p>{{ step.explanation }}</p>
+                      <div *ngIf="step.formulaLatex" class="step-math" [innerHTML]="renderFormula(step.formulaLatex)"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <!-- TIP DE EXAMEN -->
-            <div class="exam-tip-box">
-              <strong>🎯 Clave para el Examen Final:</strong> {{ d.examTip }}
             </div>
 
           </div>
@@ -525,6 +505,187 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
     .demo-wrapper {
       max-width: 1440px;
       margin: 0 auto 48px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .demo-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: rgba(18, 21, 52, 0.9);
+      border: 1px solid rgba(137, 87, 255, 0.3);
+      border-radius: 16px;
+      padding: 10px 16px;
+    }
+    .dtb-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .dtb-pill {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .formula-chips-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .formula-chip-btn {
+      background: rgba(24, 28, 68, 0.85);
+      color: #d7c6ff;
+      border: 1px solid rgba(137, 87, 255, 0.32);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .formula-chip-btn.active {
+      background: linear-gradient(90deg, #8957FF, #a682ff);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(137, 87, 255, 0.45);
+    }
+    .stage-top-tabs {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(137, 87, 255, 0.25);
+    }
+    .stt-group {
+      display: flex;
+      gap: 8px;
+    }
+    .stt-tab {
+      background: rgba(255, 255, 255, 0.06);
+      color: #d7c6ff;
+      border: 1px solid rgba(137, 87, 255, 0.3);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-weight: 800;
+      font-size: 0.86rem;
+      cursor: pointer;
+    }
+    .stt-tab.active {
+      background: #8957FF;
+      color: #ffffff;
+      border-color: transparent;
+    }
+    .three-col-stage {
+      display: grid;
+      grid-template-columns: 300px 1fr 340px;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 1180px) {
+      .three-col-stage {
+        grid-template-columns: 1fr;
+      }
+    }
+    .cream-formula-card {
+      background: linear-gradient(145deg, #f4ead5 0%, #ede0c8 100%);
+      color: #161332;
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 12px 26px rgba(4, 5, 16, 0.45);
+    }
+    .cream-formula-card .katex {
+      color: #161332 !important;
+      font-size: 1.18em !important;
+    }
+    .cfc-unit-tag {
+      font-size: 0.74rem;
+      font-weight: 900;
+      color: #5b21b6;
+      text-transform: uppercase;
+    }
+    .cfc-math {
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      overflow-x: auto;
+    }
+    .cfc-meaning p {
+      margin: 4px 0 0 0;
+      font-size: 0.86rem;
+      line-height: 1.4;
+    }
+    .cfc-tip {
+      background: rgba(137, 87, 255, 0.14);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .cfc-btn {
+      width: 100%;
+    }
+    .right-steps-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .rsc-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+    .rsc-btns {
+      display: flex;
+      gap: 6px;
+    }
+    .rsc-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #d7c6ff;
+      border: 1px solid rgba(137, 87, 255, 0.35);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .rsc-btn.primary {
+      background: #8957FF;
+      color: #ffffff;
+      border-color: transparent;
+    }
+    .rsc-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .step-num-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #8957FF;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
       display: flex;
       flex-direction: column;
       gap: 18px;
@@ -884,12 +1045,12 @@ import { FORMULA_DERIVATIONS, FormulaDerivation } from '../../data/demostracione
     }
     .step-card {
       display: grid;
-      grid-template-columns: 82px 1fr;
-      gap: 12px;
+      grid-template-columns: 32px 1fr;
+      gap: 10px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1.5px solid rgba(215, 198, 255, 0.25);
+      border: 1px solid rgba(137, 87, 255, 0.25);
       border-radius: 14px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       align-items: start;
     }
     .step-badge {

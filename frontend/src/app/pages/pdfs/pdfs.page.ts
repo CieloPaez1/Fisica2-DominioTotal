@@ -40,26 +40,27 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
       <div class="library-wrapper">
 
         <!-- ================================================================
-             1. BANNER LAVANDA ILUSTRADO DE LA ESTANTERÍA DIGITAL
+             1. COMPACT HEADER + 3 TABS (REFERENCIA PANEL 11)
              ================================================================ -->
-        <div class="cielo-hero-banner shelf-hero">
-          <app-cielo-art name="tool-book" [width]="115" [height]="98"></app-cielo-art>
-          <div class="sh-copy">
-            <div class="sh-badges">
-              <span class="pill-purple">📚 ESTANTERÍA DIGITAL DE LA CÁTEDRA UNdeC</span>
-              <span class="pill-gold">★ {{ allPdfs.length }} LIBROS, APUNTES Y TPs</span>
+        <div class="pdf-top-bar">
+          <div class="ptb-left">
+            <span class="ptb-title">📂 Biblioteca PDFs y Word ({{ allPdfs.length }})</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab" [class.active]="pdfSectionTab === 'biblioteca'" (click)="pdfSectionTab = 'biblioteca'">
+                Biblioteca
+              </button>
+              <button class="ptb-tab" [class.active]="pdfSectionTab === 'archivos'" (click)="pdfSectionTab = 'archivos'">
+                Mis Archivos
+              </button>
+              <button class="ptb-tab" [class.active]="pdfSectionTab === 'expansion'" (click)="pdfSectionTab = 'expansion'; showManualIngestForm = true">
+                Motor de Expansión
+              </button>
             </div>
-            <h1>Biblioteca Ilustrada de Física 2 ♡</h1>
-            <p>
-              Explorá los apuntes teóricos oficiales (Prof. Ing. Chade Vergara), diapositivas (Ing. Tejada Barrantes) y Trabajos Prácticos TP N°1 a TP N°7. Abrí cualquier tomo para leer sus páginas o subí nuevos exámenes.
-            </p>
           </div>
-          <div class="sh-upload">
-            <label class="cielo-btn-purple" style="display: inline-block;">
-              <span>📤 + Subir Nuevo PDF / Word</span>
-              <input type="file" accept=".pdf,.docx" (change)="onFileSelected($event)" hidden />
-            </label>
-          </div>
+          <label class="cielo-btn-purple" style="padding: 7px 16px !important; font-size: 0.84rem !important; display: inline-block;">
+            <span>📤 Subir archivo</span>
+            <input type="file" accept=".pdf,.docx" (change)="onFileSelected($event)" hidden />
+          </label>
         </div>
 
         <div *ngIf="uploadSuccessMessage" class="cielo-lavender-card upload-toast">
@@ -67,160 +68,108 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
           <button class="close-btn" (click)="uploadSuccessMessage = null">✕</button>
         </div>
 
-        <!-- PANEL DE EXPANSIÓN AUTOMÁTICA DE CONOCIMIENTO (PDFs, LIBROS Y TPs NUEVOS) -->
-        <div class="cielo-lavender-card" style="padding: 18px 22px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-            <div>
-              <span class="pill-purple">🧠 MOTOR DE EXPANSIÓN AUTOMÁTICA DE CONOCIMIENTO</span>
-              <h2 style="font-family: 'Baloo 2', sans-serif; font-size: 1.35rem; color: #191538; margin: 6px 0 2px 0;">
-                Cada PDF, Libro o Trabajo Práctico que agregues actualiza automáticamente Teoría y Práctica ♡
-              </h2>
-              <p style="margin: 0; font-size: 0.88rem; font-weight: 700; color: #2b2354;">
-                Actualmente tenés <strong>{{ dynamicTheoryCount }} temas teóricos nuevos</strong> y <strong>{{ dynamicExercisesCount }} prácticos nuevos</strong> incorporados dinámicamente a las unidades.
-              </p>
-            </div>
-            <button class="cielo-btn-purple" (click)="showManualIngestForm = !showManualIngestForm">
-              {{ showManualIngestForm ? '▲ Ocultar Panel' : '➕ Pegar Apunte / Libro / Trabajo Práctico Nuevo' }}
-            </button>
-          </div>
-
-          <div *ngIf="showManualIngestForm" style="margin-top: 14px; display: flex; flex-direction: column; gap: 10px; border-top: 2px dashed rgba(25,21,56,0.2); padding-top: 14px;">
+        <!-- PANEL MOTOR DE EXPANSIÓN -->
+        <div class="cielo-dark-panel" *ngIf="pdfSectionTab === 'expansion'" style="padding: 20px;">
+          <h2 style="font-family: 'Baloo 2', sans-serif; color: #ffffff; margin: 0 0 6px 0;">
+            🧠 Motor de Expansión Automática ({{ dynamicTheoryCount }} temas • {{ dynamicExercisesCount }} prácticos nuevos)
+          </h2>
+          <p style="margin: 0 0 14px 0; color: #d7c6ff; font-size: 0.9rem;">
+            Pegá el texto de un apunte, libro o Trabajo Práctico nuevo para incorporarlo automáticamente a Teoría y Práctica.
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
             <div style="display: grid; grid-template-columns: 1fr 220px; gap: 10px;">
               <input
                 type="text"
                 [(ngModel)]="manualDocTitle"
-                placeholder="Título del Libro, Apunte o Trabajo Práctico (ej: Sears Zemansky Cap. 24 Capacitores)..."
-                style="background: #fff; border: 2.5px solid #191538; border-radius: 12px; padding: 10px 14px; font-weight: 800; color: #191538;"
+                placeholder="Título del Libro, Apunte o Trabajo Práctico..."
+                style="background: #10132D; border: 1.5px solid rgba(137,87,255,0.4); border-radius: 12px; padding: 10px 14px; font-weight: 700; color: #ffffff;"
               />
               <select
                 [(ngModel)]="manualDocUnit"
-                style="background: #fff; border: 2.5px solid #191538; border-radius: 12px; padding: 10px 12px; font-weight: 800; color: #191538;"
+                style="background: #10132D; border: 1.5px solid rgba(137,87,255,0.4); border-radius: 12px; padding: 10px 12px; font-weight: 700; color: #ffffff;"
               >
-                <option [ngValue]="0">Auto-detectar Unidad (1 a 9)</option>
+                <option [ngValue]="0">Auto-detectar Unidad</option>
                 <option *ngFor="let uNum of [1,2,3,4,5,6,7,8,9]" [ngValue]="uNum">Unidad {{ uNum }}</option>
               </select>
             </div>
             <textarea
               [(ngModel)]="manualDocContent"
-              rows="4"
-              placeholder="Pegá acá el texto teórico del libro, fórmulas o enunciados del Trabajo Práctico nuevo para que la plataforma lo agregue a Teoría Visual y a Práctico Guiado..."
-              style="background: #fff; border: 2.5px solid #191538; border-radius: 14px; padding: 12px 14px; font-weight: 700; color: #191538;"
+              rows="5"
+              placeholder="Pegá acá el texto teórico del libro, fórmulas o enunciados del Trabajo Práctico..."
+              style="background: #10132D; border: 1.5px solid rgba(137,87,255,0.4); border-radius: 14px; padding: 12px 14px; font-weight: 600; color: #ffffff;"
             ></textarea>
             <div style="display: flex; justify-content: flex-end;">
               <button class="cielo-btn-purple" (click)="ingestManualText()">
-                ⚡ Incorporar Conocimiento a Teoría y Práctica de la Unidad
+                ⚡ Incorporar Conocimiento a la Unidad
               </button>
             </div>
           </div>
         </div>
 
-        <!-- ================================================================
-             2. BUSCADOR Y ESTANTES POR UNIDAD Y TIPO DE MATERIAL
-             ================================================================ -->
-        <div class="cielo-dark-panel shelf-filters">
-          <input
-            type="text"
-            [(ngModel)]="searchQuery"
-            placeholder="🔍 Buscar tomo, apunte, Trabajo Práctico o palabra clave..."
-            class="shelf-search"
-          />
-
-          <div class="shelf-tabs-row">
-            <div class="shelf-group">
-              <button class="shelf-pill" [class.active]="selectedCategory === 'all'" (click)="selectedCategory = 'all'">📚 Todos los Estantes</button>
-              <button class="shelf-pill" [class.active]="selectedCategory === 'programa'" (click)="selectedCategory = 'programa'">🟨 Programa Oficial</button>
-              <button class="shelf-pill" [class.active]="selectedCategory === 'teoria'" (click)="selectedCategory = 'teoria'">🟪 Tomos de Teoría</button>
-              <button class="shelf-pill" [class.active]="selectedCategory === 'tp'" (click)="selectedCategory = 'tp'">🟦 Guías de TPs</button>
+        <!-- LAYOUT 2 COLUMNAS: LISTA DE ARCHIVOS + VISOR INTEGRADO (PANEL 11) -->
+        <div *ngIf="pdfSectionTab !== 'expansion'" class="pdf-split-layout">
+          <!-- COLUMNA IZQUIERDA: BUSCADOR + LISTA COMPACTA -->
+          <div class="cielo-dark-panel pdf-list-col">
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              placeholder="🔍 Buscar FISICA2.docx, apunte o TP..."
+              class="shelf-search"
+            />
+            <div class="shelf-group" style="margin: 8px 0;">
+              <button class="shelf-pill" [class.active]="selectedCategory === 'all'" (click)="selectedCategory = 'all'">Todos</button>
+              <button class="shelf-pill" [class.active]="selectedCategory === 'teoria'" (click)="selectedCategory = 'teoria'">Teoría</button>
+              <button class="shelf-pill" [class.active]="selectedCategory === 'tp'" (click)="selectedCategory = 'tp'">TPs</button>
+              <button class="shelf-pill" [class.active]="selectedCategory === 'programa'" (click)="selectedCategory = 'programa'">Programa</button>
             </div>
 
-            <div class="shelf-group">
-              <button class="shelf-pill" [class.active]="selectedUnitFilter === 0" (click)="selectedUnitFilter = 0">
-                🔓 Desbloqueadas (U1{{ highestUnlockedUnit > 1 ? '–U' + highestUnlockedUnit : '' }})
-              </button>
-              <button
-                *ngFor="let uNum of [1, 2, 3, 4, 5, 6, 7, 8, 9]"
-                class="shelf-pill"
-                [class.active]="selectedUnitFilter === uNum"
-                [style.opacity]="uNum <= highestUnlockedUnit ? '1' : '0.45'"
-                (click)="selectPdfUnitFilter(uNum)"
+            <div class="pdf-compact-list">
+              <div
+                *ngFor="let pdf of filteredPdfs"
+                class="pdf-row-item"
+                [class.active]="inspectedPdf?.filename === pdf.filename"
+                (click)="inspectDocument(pdf.filename)"
               >
-                {{ uNum <= highestUnlockedUnit ? 'U' + uNum : '🔒U' + uNum }}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ================================================================
-             3. LECTOR DE LIBRO ABIERTO (INSPECTOR PDFBOX)
-             ================================================================ -->
-        <div *ngIf="inspectedPdf" class="cielo-lavender-card reader-modal">
-          <div class="rm-header">
-            <div class="rm-title-row">
-              <app-cielo-art name="tool-book" [width]="65" [height]="54"></app-cielo-art>
-              <div>
-                <span class="pill-purple">LECTOR DE CÁTEDRA PDFBOX • {{ inspectedPdf.totalPages }} PÁGINAS</span>
-                <h2>{{ inspectedPdf.filename }}</h2>
+                <span class="pri-badge" [class.docx]="pdf.filename.toLowerCase().endsWith('.docx')">
+                  {{ pdf.filename.toLowerCase().endsWith('.docx') ? 'DOC' : 'PDF' }}
+                </span>
+                <div class="pri-meta">
+                  <div class="pri-name">{{ pdf.filename }}</div>
+                  <div class="pri-sub">{{ pdf.sizeKB || 200 }} KB • U{{ (pdf.unitNumbers || [1])[0] }}</div>
+                </div>
+                <button class="pri-action" title="Sumar a unidad" (click)="$event.stopPropagation(); ingestExistingPdf(pdf)">⚡</button>
+                <a class="pri-action" [href]="getRawPdfUrl(pdf.filename)" target="_blank" rel="noopener" (click)="$event.stopPropagation()">↗</a>
               </div>
             </div>
-            <div class="rm-actions">
-              <a [href]="getRawPdfUrl(inspectedPdf.filename)" target="_blank" rel="noopener" class="cielo-btn-purple" style="text-decoration: none;">
-                ↗ Abrir PDF Original
-              </a>
-              <button class="close-btn" (click)="inspectedPdf = null">✕ Cerrar</button>
-            </div>
           </div>
 
-          <div class="book-pages-scroll">
-            <div class="book-page-sheet" *ngFor="let pageText of inspectedPdf.pages; let idx = index">
-              <div class="bps-header">📖 PÁGINA {{ idx + 1 }} DE {{ inspectedPdf.totalPages }}</div>
-              <pre class="bps-text">{{ pageText }}</pre>
+          <!-- COLUMNA DERECHA: VISOR INTEGRADO -->
+          <div class="cielo-dark-panel pdf-reader-col">
+            <div *ngIf="!inspectedPdf" class="reader-empty">
+              <h3>📖 Seleccioná un apunte o libro de la izquierda</h3>
+              <p>Hacé clic en <strong>FISICA2.docx</strong> o en cualquier PDF para leerlo acá mismo.</p>
             </div>
-          </div>
-        </div>
 
-        <!-- ================================================================
-             4. ESTANTERÍA DIGITAL ILUSTRADA CON PORTADAS 3D DE DOCUMENTOS
-             ================================================================ -->
-        <div class="bookshelf-grid">
-          <div class="cielo-dark-panel book-volume-card" *ngFor="let pdf of filteredPdfs">
-            <div class="bvc-main">
-              <!-- PORTADA 3D ILUSTRADA SEGÚN CATEGORÍA -->
-              <div class="book-3d-cover" [attr.data-cat]="pdf.category">
-                <div class="book-spine"></div>
-                <div class="book-front">
-                  <span class="bf-badge">{{ pdf.category | uppercase }}</span>
-                  <app-cielo-art
-                    [name]="pdf.category === 'tp' ? 'challenge-target' : pdf.category === 'programa' ? 'bulb' : 'tool-book'"
-                    [width]="54"
-                    [height]="54"
-                  ></app-cielo-art>
-                  <span class="bf-units">U{{ (pdf.unitNumbers || [1])[0] }}</span>
+            <ng-container *ngIf="inspectedPdf">
+              <div class="rm-header">
+                <div>
+                  <span class="pill-purple">VISOR INTEGRADO • {{ inspectedPdf.totalPages }} PÁGINAS</span>
+                  <h2 style="color: #ffffff; margin: 4px 0 0 0; font-size: 1.2rem;">{{ inspectedPdf.filename }}</h2>
+                </div>
+                <div class="rm-actions">
+                  <a [href]="getRawPdfUrl(inspectedPdf.filename)" target="_blank" rel="noopener" class="cielo-btn-purple" style="text-decoration: none; padding: 6px 14px !important; font-size: 0.82rem !important;">
+                    ↗ Abrir Original
+                  </a>
                 </div>
               </div>
 
-              <!-- Ficha del Tomo -->
-              <div class="bvc-info">
-                <div class="bvc-meta">
-                  <span class="bvc-size">{{ pdf.sizeKB || 200 }} KB</span>
-                  <span class="bvc-u-pill" *ngFor="let u of (pdf.unitNumbers || []).slice(0, 4)">U{{ u }}</span>
+              <div class="book-pages-scroll">
+                <div class="book-page-sheet" *ngFor="let pageText of inspectedPdf.pages; let idx = index">
+                  <div class="bps-header">📖 PÁGINA {{ idx + 1 }} DE {{ inspectedPdf.totalPages }}</div>
+                  <pre class="bps-text">{{ pageText }}</pre>
                 </div>
-                <h3 class="bvc-title">{{ pdf.filename }}</h3>
-                <p class="bvc-desc">{{ pdf.description }}</p>
-                <div class="bvc-author">✍️ {{ pdf.authors || 'Cátedra Física 2 UNdeC' }}</div>
               </div>
-            </div>
-
-            <div class="bvc-actions">
-              <button class="btn-read-book" (click)="inspectDocument(pdf.filename)">
-                📖 Leer Páginas
-              </button>
-              <button class="btn-read-book" style="background: #fde047;" (click)="ingestExistingPdf(pdf)">
-                ⚡ Sumar a Unidad
-              </button>
-              <a [href]="getRawPdfUrl(pdf.filename)" target="_blank" rel="noopener" class="btn-open-raw">
-                {{ pdf.filename.toLowerCase().endsWith('.docx') ? '↗ WORD' : '↗ PDF' }}
-              </a>
-            </div>
+            </ng-container>
           </div>
         </div>
 
@@ -228,6 +177,123 @@ import { CieloIllustrationComponent } from '../../components/cielo-illustration.
     </ion-content>
   `,
   styles: [`
+    .pdf-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: rgba(18, 21, 52, 0.9);
+      border: 1px solid rgba(137, 87, 255, 0.3);
+      border-radius: 18px;
+      padding: 12px 18px;
+    }
+    .ptb-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .ptb-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .ptb-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ptb-tab {
+      background: rgba(255, 255, 255, 0.06);
+      color: #d7c6ff;
+      border: 1px solid rgba(137, 87, 255, 0.3);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-weight: 800;
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+    .ptb-tab.active {
+      background: #8957FF;
+      color: #ffffff;
+      border-color: transparent;
+    }
+    .pdf-split-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .pdf-split-layout { grid-template-columns: 1fr; }
+    }
+    .pdf-list-col {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 680px;
+    }
+    .pdf-compact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .pdf-row-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(137, 87, 255, 0.25);
+      border-radius: 12px;
+      padding: 9px 10px;
+      cursor: pointer;
+      color: #e2d6ff;
+    }
+    .pdf-row-item.active {
+      background: rgba(137, 87, 255, 0.25);
+      border-color: #8957FF;
+      color: #ffffff;
+    }
+    .pri-badge {
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 900;
+      padding: 3px 6px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .pri-badge.docx { background: #3b82f6; }
+    .pri-meta { flex: 1; min-width: 0; }
+    .pri-name {
+      font-weight: 800;
+      font-size: 0.84rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pri-sub { font-size: 0.72rem; color: #c4b5fd; }
+    .pri-action {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffd166;
+      border: 1px solid rgba(137, 87, 255, 0.35);
+      border-radius: 8px;
+      padding: 4px 7px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .pdf-reader-col {
+      padding: 18px;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .reader-empty {
+      margin: auto;
+      text-align: center;
+      color: #d7c6ff;
+      padding: 40px 20px;
+    }
+    .reader-empty h3 { color: #ffffff; margin: 0 0 6px 0; }
     .library-wrapper {
       max-width: 1440px;
       margin: 0 auto 48px auto;
@@ -541,6 +607,7 @@ export class PdfsPage implements OnInit {
   searchQuery = '';
   selectedCategory = 'all';
   selectedUnitFilter = 0;
+  pdfSectionTab: 'biblioteca' | 'archivos' | 'expansion' = 'biblioteca';
   inspectedPdf: any = null;
   uploadSuccessMessage: string | null = null;
   showManualIngestForm = false;
@@ -603,6 +670,10 @@ export class PdfsPage implements OnInit {
   loadPdfs() {
     this.api.getPdfs().subscribe((list) => {
       this.allPdfs = list || [];
+      if (!this.inspectedPdf && this.allPdfs.length > 0) {
+        const masterDoc = this.allPdfs.find((p) => p.filename.toLowerCase() === 'fisica2.docx');
+        this.inspectDocument((masterDoc || this.allPdfs[0]).filename);
+      }
     });
   }
 

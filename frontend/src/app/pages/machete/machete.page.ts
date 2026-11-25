@@ -47,19 +47,22 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
     <ion-content [fullscreen]="true" class="ion-padding">
       <div class="machete-wrapper">
 
-        <!-- BANNER HERO LAVANDA ILUSTRADO -->
-        <div class="cielo-hero-banner machete-hero no-print">
-          <div class="mh-art">
-            <app-cielo-art name="tool-chalkboard" [width]="140" [height]="115"></app-cielo-art>
+        <!-- COMPACT HEADER + TABS (REFERENCIA PANEL 8) -->
+        <div class="machete-top-bar no-print">
+          <div class="mtb-left">
+            <span class="mtb-title">🧠 Machete Legal — Unidad {{ selectedUnit }}</span>
+            <div class="mtb-tabs">
+              <button class="mtb-tab" [class.active]="macheteTab === 'formulas'" (click)="macheteTab = 'formulas'">
+                Fórmulas Esenciales
+              </button>
+              <button class="mtb-tab" [class.active]="macheteTab === 'reglas'" (click)="macheteTab = 'reglas'">
+                Reglas de Pizarrón
+              </button>
+            </div>
           </div>
-          <div class="mh-copy">
-            <span class="mh-pill">TRADUCTOR DE FÓRMULAS • UNIDADES 1 A 9 • CÁTEDRA UNdeC</span>
-            <h1>Machete Legal A4 & Reglas de Pizarrón ♡</h1>
-            <p>
-              Cada ecuación traducida al español: qué significa físicamente, en qué unidades se mide,
-              cuándo es válida en el pizarrón y qué trampa mortal tenés que evitar.
-            </p>
-          </div>
+          <button class="cielo-btn-purple" style="padding: 7px 16px !important; font-size: 0.84rem !important;" (click)="printA4()">
+            🖨️ Imprimir A4
+          </button>
         </div>
 
         <!-- SELECTOR ILUSTRADO DE UNIDADES (DESBLOQUEO SECUENCIAL ESTRICTO AL 100%) -->
@@ -71,87 +74,83 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
             [style.opacity]="isUnitUnlocked(sheet.unitNumber) ? '1' : '0.52'"
             (click)="selectUnit(sheet.unitNumber)"
           >
-            <app-cielo-art [name]="getUnitArt(sheet.unitNumber)" [width]="38" [height]="38"></app-cielo-art>
+            <app-cielo-art [name]="getUnitArt(sheet.unitNumber)" [width]="34" [height]="34"></app-cielo-art>
             <div class="ub-meta">
-              <span class="ub-num">{{ isUnitUnlocked(sheet.unitNumber) ? '🔓' : '🔒' }} UNIDAD {{ sheet.unitNumber }}</span>
+              <span class="ub-num">{{ isUnitUnlocked(sheet.unitNumber) ? '🔓' : '🔒' }} U{{ sheet.unitNumber }}</span>
               <span class="ub-short">{{ isUnitUnlocked(sheet.unitNumber) ? sheet.shortTitle : 'Bloqueada' }}</span>
             </div>
           </button>
         </div>
 
-        <div class="cielo-lavender-card no-print" *ngIf="lockedSheetMessage" style="padding: 14px 20px; background: #ffe4e6; border: 3px solid #f43f5e; display: flex; justify-content: space-between; align-items: center;">
+        <div class="cielo-lavender-card no-print" *ngIf="lockedSheetMessage" style="padding: 14px 20px; background: #ffe4e6; border: 1.5px solid #f43f5e; display: flex; justify-content: space-between; align-items: center;">
           <strong style="color: #881337; font-size: 0.9rem;">{{ lockedSheetMessage }}</strong>
           <button class="cielo-btn-purple" (click)="lockedSheetMessage = ''">Entendido ♡</button>
         </div>
 
-        <!-- HOJA A4 ILUSTRADA DE ESTUDIO E IMPRESIÓN -->
-        <div class="cielo-dark-panel a4-sheet" id="printable-sheet" *ngIf="currentSheet as s">
-          <!-- Encabezado Lavanda de la Unidad -->
-          <div class="cielo-lavender-card a4-header-card">
-            <div class="ah-left">
-              <span class="chip-parcial">{{ s.parcialGroup }} • RESUMEN OFICIAL DE CÁTEDRA UNdeC</span>
-              <h2 class="a4-title">{{ s.title }}</h2>
+        <!-- MODO A: 2 COLUMNAS (LISTA DE FÓRMULAS + STICKY NOTE CREMA) -->
+        <div class="cielo-dark-panel machete-stage" id="printable-sheet" *ngIf="currentSheet as s">
+          <div *ngIf="macheteTab === 'formulas'" class="machete-two-col">
+            <div class="topic-list-col">
+              <div class="tlc-head">{{ s.title }}</div>
+              <button
+                *ngFor="let f of s.formulas; let i = index"
+                class="topic-row-btn"
+                [class.active]="selectedFormulaIndex === i"
+                (click)="selectedFormulaIndex = i"
+              >
+                <span class="topic-dot"></span>
+                <span class="topic-name">{{ f.name }}</span>
+                <span class="topic-si">{{ f.siUnits }}</span>
+              </button>
             </div>
-            <div class="ah-art">
-              <app-cielo-art [name]="getUnitArt(s.unitNumber)" [width]="95" [height]="95"></app-cielo-art>
-              <span class="a4-badge">HOJA A4 • FÍSICA 2 ♡</span>
+
+            <div class="sticky-note-col" *ngIf="s.formulas[selectedFormulaIndex] || s.formulas[0] as f">
+              <div class="sticky-note-card">
+                <div class="sticky-tape"></div>
+                <div class="snc-header">
+                  <strong>{{ f.name }}</strong>
+                  <span class="snc-si">SI: {{ f.siUnits }}</span>
+                </div>
+                <div class="snc-katex" [innerHTML]="renderMath(f.latex, true)"></div>
+                <p class="snc-interp">{{ f.interpretation }}</p>
+                <div class="snc-validity">
+                  <strong>✅ Condiciones de validez:</strong>
+                  <ul>
+                    <li *ngFor="let c of f.conditionsOfValidity">{{ c }}</li>
+                  </ul>
+                </div>
+                <div class="snc-trap">
+                  <strong>⚠️ Trampa Mortal:</strong> {{ f.mortalTrap }}
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Principios Rectores Innegociables -->
-          <div class="principles-box">
-            <div class="pb-header">
-              <span class="pb-badge">⚡ PRINCIPIOS FÍSICOS INNEGOCIABLES DE LA UNIDAD {{ s.unitNumber }}</span>
+          <!-- MODO B: REGLAS DE PIZARRÓN Y PRINCIPIOS -->
+          <div *ngIf="macheteTab === 'reglas'" class="reglas-stage">
+            <div class="principles-box">
+              <div class="pb-header">
+                <span class="pb-badge">⚡ PRINCIPIOS FÍSICOS INNEGOCIABLES DE LA UNIDAD {{ s.unitNumber }}</span>
+              </div>
+              <ul>
+                <li *ngFor="let p of s.corePrinciples">{{ p }}</li>
+              </ul>
             </div>
-            <ul>
-              <li *ngFor="let p of s.corePrinciples">{{ p }}</li>
-            </ul>
-          </div>
 
-          <!-- Grilla de Tarjetas Lavanda de Fórmulas Traducidas -->
-          <div class="cielo-section-pill">
-            <span>📐</span>
-            <h2>Fórmulas Traducidas y Condiciones de Validez ({{ s.formulas.length }})</h2>
-          </div>
-
-          <div class="formulas-grid">
-            <div class="cielo-lavender-card formula-sheet-card" *ngFor="let f of s.formulas">
-              <div class="fsc-top">
-                <strong>{{ f.name }}</strong>
-                <span class="fsc-unit">SI: {{ f.siUnits }}</span>
+            <div class="bottom-two-cols">
+              <div class="chalkboard-diagram-box">
+                <div class="cb-tag">🖍️ PIZARRÓN OBLIGATORIO DE DEFENSA ORAL</div>
+                <h3>¿Qué tenés que dibujar siempre en esta unidad?</h3>
+                <p>{{ s.blackboardDiagramNote }}</p>
               </div>
 
-              <div class="formula-katex-stage" [innerHTML]="renderMath(f.latex, true)"></div>
-
-              <p class="fsc-interp">{{ f.interpretation }}</p>
-
-              <div class="fsc-validity">
-                <strong>✅ Condiciones de validez en examen:</strong>
+              <div class="traps-box">
+                <div class="tb-tag">🚫 ERRORES QUE ANULAN EL EXAMEN</div>
+                <h3>Checklist Anti-Trampas Antes de Entregar</h3>
                 <ul>
-                  <li *ngFor="let c of f.conditionsOfValidity">{{ c }}</li>
+                  <li *ngFor="let t of s.topExamTraps">{{ t }}</li>
                 </ul>
               </div>
-
-              <div class="fsc-trap">
-                <strong>⚠️ Trampa Mortal:</strong> {{ f.mortalTrap }}
-              </div>
-            </div>
-          </div>
-
-          <!-- Pizarrón Verde Universitario + Alertas de Examen -->
-          <div class="bottom-two-cols">
-            <div class="chalkboard-diagram-box">
-              <div class="cb-tag">🖍️ PIZARRÓN OBLIGATORIO DE DEFENSA ORAL</div>
-              <h3>¿Qué tenés que dibujar siempre en esta unidad?</h3>
-              <p>{{ s.blackboardDiagramNote }}</p>
-            </div>
-
-            <div class="traps-box">
-              <div class="tb-tag">🚫 ERRORES QUE ANULAN EL EXAMEN</div>
-              <h3>Checklist Anti-Trampas Antes de Entregar</h3>
-              <ul>
-                <li *ngFor="let t of s.topExamTraps">{{ t }}</li>
-              </ul>
             </div>
           </div>
         </div>
@@ -160,6 +159,164 @@ import { CieloIllustrationComponent, CieloArtName } from '../../components/cielo
     </ion-content>
   `,
   styles: [`
+    .machete-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: rgba(18, 21, 52, 0.9);
+      border: 1px solid rgba(137, 87, 255, 0.3);
+      border-radius: 18px;
+      padding: 12px 18px;
+    }
+    .mtb-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .mtb-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .mtb-tabs { display: flex; gap: 8px; }
+    .mtb-tab {
+      background: rgba(255, 255, 255, 0.06);
+      color: #d7c6ff;
+      border: 1px solid rgba(137, 87, 255, 0.3);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .mtb-tab.active {
+      background: #8957FF;
+      color: #ffffff;
+      border-color: transparent;
+    }
+    .machete-stage {
+      padding: 22px;
+    }
+    .machete-two-col {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .machete-two-col { grid-template-columns: 1fr; }
+    }
+    .topic-list-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tlc-head {
+      font-family: 'Baloo 2', sans-serif;
+      color: #ffd166;
+      font-weight: 800;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+    .topic-row-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(137, 87, 255, 0.25);
+      border-radius: 14px;
+      padding: 10px 14px;
+      color: #e2d6ff;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .topic-row-btn.active {
+      background: rgba(137, 87, 255, 0.26);
+      border-color: #8957FF;
+      color: #ffffff;
+    }
+    .topic-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #8957FF;
+      flex-shrink: 0;
+    }
+    .topic-name { font-weight: 800; font-size: 0.92rem; flex: 1; }
+    .topic-si { font-size: 0.74rem; color: #ffd166; font-weight: 700; }
+    .sticky-note-col {
+      display: flex;
+      justify-content: center;
+      padding: 12px 6px;
+    }
+    .sticky-note-card {
+      position: relative;
+      background: linear-gradient(145deg, #f4ead5 0%, #ede0c8 100%);
+      color: #161332;
+      border-radius: 18px;
+      padding: 26px 28px;
+      width: 100%;
+      max-width: 660px;
+      transform: rotate(-1.2deg);
+      box-shadow: 0 20px 44px rgba(4, 5, 16, 0.65);
+    }
+    .sticky-note-card .katex {
+      color: #161332 !important;
+      font-size: 1.35em !important;
+    }
+    .sticky-tape {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%) rotate(2deg);
+      width: 96px;
+      height: 22px;
+      background: rgba(137, 87, 255, 0.45);
+      border-radius: 4px;
+    }
+    .snc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.25rem;
+    }
+    .snc-si {
+      background: #8957FF;
+      color: #ffffff;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-weight: 800;
+    }
+    .snc-katex {
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .snc-interp {
+      font-weight: 700;
+      font-size: 0.96rem;
+      margin: 0 0 10px 0;
+    }
+    .snc-validity ul { margin: 4px 0 10px 18px; padding: 0; font-size: 0.88rem; }
+    .snc-trap {
+      background: rgba(244, 63, 94, 0.14);
+      border-left: 4px solid #f43f5e;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+    .reglas-stage { display: flex; flex-direction: column; gap: 16px; }
     .machete-wrapper {
       max-width: 1440px;
       margin: 0 auto 44px auto;
@@ -498,6 +655,8 @@ export class MachetePage implements OnInit {
   selectedUnit = 1;
   highestUnlockedUnit = 1;
   lockedSheetMessage = '';
+  macheteTab: 'formulas' | 'reglas' = 'formulas';
+  selectedFormulaIndex = 0;
   allSheets: UnitCheatsheet[] = CATEDRA_CHEATSHEETS;
 
   constructor(
@@ -526,6 +685,7 @@ export class MachetePage implements OnInit {
     }
     this.lockedSheetMessage = '';
     this.selectedUnit = unitNum;
+    this.selectedFormulaIndex = 0;
   }
 
   get currentSheet(): UnitCheatsheet {

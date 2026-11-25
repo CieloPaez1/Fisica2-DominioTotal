@@ -41,29 +41,25 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
       <div class="arcade-wrapper">
 
         <!-- ================================================================
-             1. BANNER LAVANDA ILUSTRADO + SELECTOR DE MODO (FLASHCARDS VS 90s)
+             1. COMPACT COSMIC HEADER + TABS CENTRADAS (REFERENCIA PANEL 6)
              ================================================================ -->
-        <div class="cielo-hero-banner arcade-hero">
-          <app-cielo-art [name]="activeMode === 'flashcards' ? 'tool-flashcards' : 'stopwatch-90s'" [width]="115" [height]="100"></app-cielo-art>
-          <div class="ah-copy">
-            <div class="ah-badges">
-              <span class="pill-purple">
-                🔓 UNIDADES HABILITADAS: UNIDAD 1{{ highestUnlockedUnit > 1 ? (' A UNIDAD ' + highestUnlockedUnit) : ' (EXCLUSIVO)' }} • {{ masterBank.length }} TARJETAS
-              </span>
-              <span class="pill-gold">🏆 RÉCORD: {{ highScore }} PTS</span>
-            </div>
-            <h1>Flashcards & Muerte Súbita (90s) ♡</h1>
-            <p>
-              Solo aparecen tarjetas y preguntas de las unidades que ya desbloqueaste (<strong>Unidad 1{{ highestUnlockedUnit > 1 ? ' a Unidad ' + highestUnlockedUnit : '' }}</strong>). Al completar cada unidad al 100%, sus tarjetas se suman automáticamente al mazo.
-            </p>
+        <div class="sd-top-bar">
+          <div class="sd-left">
+            <span class="pill-purple">
+              🔓 U1{{ highestUnlockedUnit > 1 ? ('–U' + highestUnlockedUnit) : '' }} • {{ masterBank.length }} tarjetas
+            </span>
+            <span class="pill-gold">🏆 Récord: {{ highScore }} pts</span>
           </div>
           <div class="mode-toggle-pills">
+            <button class="mode-btn" [class.active]="activeMode === 'flashcards'" (click)="switchMode('flashcards')">
+              Flashcards
+            </button>
             <button class="mode-btn" [class.active]="activeMode === 'drill'" (click)="switchMode('drill')">
               ⚡ Muerte Súbita (90s)
             </button>
-            <button class="mode-btn" [class.active]="activeMode === 'flashcards'" (click)="switchMode('flashcards')">
-              🃏 Mazo de Flashcards
-            </button>
+          </div>
+          <div class="sd-counter" *ngIf="activeMode === 'flashcards'">
+            {{ flashIndex + 1 }} / {{ masterBank.length }}
           </div>
         </div>
 
@@ -71,72 +67,53 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
              MODO A: MAZO DE FLASHCARDS INTERACTIVAS VOLTEABLES
              ================================================================ -->
         <div *ngIf="activeMode === 'flashcards'" class="flashcard-deck-arena">
-          <div class="deck-nav-bar cielo-dark-panel">
-            <span class="deck-counter">Tarjeta {{ flashIndex + 1 }} de {{ masterBank.length }}</span>
-            <div class="deck-unit-pills">
-              <button
-                *ngFor="let q of masterBank; let i = index"
-                class="dot-btn"
-                [class.active]="i === flashIndex"
-                (click)="flashIndex = i; isCardFlipped = false"
-              >
-                {{ i + 1 }}
-              </button>
+          <div class="fc-stage-row">
+            <button class="circle-nav-btn" (click)="prevFlashcard()" title="Anterior">‹</button>
+
+            <div
+              class="giant-flashcard"
+              [class.flipped]="isCardFlipped"
+              *ngIf="masterBank[flashIndex] as fc"
+              (click)="isCardFlipped = !isCardFlipped"
+            >
+              <!-- FRENTE DE LA FLASHCARD -->
+              <div class="fc-face front" *ngIf="!isCardFlipped">
+                <div class="fc-top-tags">
+                  <span class="pill-purple">UNIDAD {{ fc.unitNumber }}</span>
+                  <span class="pill-gold">{{ getCategoryLabel(fc.category) }}</span>
+                </div>
+
+                <div class="fc-main-center">
+                  <h2 class="fc-question-txt">{{ fc.prompt }}</h2>
+                </div>
+
+                <div class="fc-hint-strip">
+                  💡 <strong>Pista:</strong> {{ fc.ruleHint }}
+                </div>
+              </div>
+
+              <!-- DORSO DE LA FLASHCARD -->
+              <div class="fc-face back" *ngIf="isCardFlipped">
+                <div class="fc-top-tags">
+                  <span class="pill-emerald">✓ RESPUESTA OFICIAL</span>
+                  <span class="pill-purple">UNIDAD {{ fc.unitNumber }}</span>
+                </div>
+
+                <div class="fc-answer-highlight">
+                  {{ fc.options[fc.correctIndex] }}
+                </div>
+
+                <p class="fc-explanation-txt">{{ fc.explanation }}</p>
+              </div>
             </div>
+
+            <button class="circle-nav-btn" (click)="nextFlashcard()" title="Siguiente">›</button>
           </div>
 
-          <div
-            class="giant-flashcard"
-            [class.flipped]="isCardFlipped"
-            *ngIf="masterBank[flashIndex] as fc"
-            (click)="isCardFlipped = !isCardFlipped"
-          >
-            <!-- FRENTE DE LA FLASHCARD -->
-            <div class="fc-face front" *ngIf="!isCardFlipped">
-              <div class="fc-top-tags">
-                <span class="pill-purple">UNIDAD {{ fc.unitNumber }}</span>
-                <span class="pill-gold">{{ getCategoryLabel(fc.category) }}</span>
-              </div>
-
-              <div class="fc-main-split">
-                <app-cielo-art [name]="getUnitArt(fc.unitNumber)" [width]="115" [height]="115"></app-cielo-art>
-                <h2 class="fc-question-txt">{{ fc.prompt }}</h2>
-              </div>
-
-              <div class="fc-hint-strip">
-                💡 <strong>Pista Rápida:</strong> {{ fc.ruleHint }}
-              </div>
-
-              <div class="fc-flip-cta">
-                <span>🔄 Tocá la tarjeta para darla vuelta y ver la respuesta ♡</span>
-              </div>
-            </div>
-
-            <!-- DORSO DE LA FLASHCARD (RESPUESTA Y EXPLICACIÓN) -->
-            <div class="fc-face back" *ngIf="isCardFlipped">
-              <div class="fc-top-tags">
-                <span class="pill-emerald">✓ RESPUESTA OFICIAL DE CÁTEDRA</span>
-                <span class="pill-purple">UNIDAD {{ fc.unitNumber }}</span>
-              </div>
-
-              <div class="fc-answer-highlight">
-                {{ fc.options[fc.correctIndex] }}
-              </div>
-
-              <p class="fc-explanation-txt">{{ fc.explanation }}</p>
-
-              <div class="fc-flip-cta">
-                <span>🔄 Tocá para volver al frente de la tarjeta</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="deck-controls-row">
-            <button class="deck-arrow-btn" (click)="prevFlashcard()">← Tarjeta Anterior</button>
-            <button class="cielo-btn-purple" (click)="isCardFlipped = !isCardFlipped">
-              🔄 {{ isCardFlipped ? 'Ver Pregunta' : 'Revelar Respuesta' }}
+          <div class="fc-center-actions">
+            <button class="cielo-btn-purple flip-main-btn" (click)="isCardFlipped = !isCardFlipped">
+              {{ isCardFlipped ? 'Ver Pregunta' : 'Voltear' }}
             </button>
-            <button class="deck-arrow-btn" (click)="nextFlashcard()">Siguiente Tarjeta →</button>
           </div>
         </div>
 
@@ -410,13 +387,85 @@ const HIGH_SCORE_KEY = 'fisica2_speed_drill_highscore_v3';
       margin: 0;
       line-height: 1.3;
     }
+    .sd-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: rgba(18, 21, 52, 0.9);
+      border: 1px solid rgba(137, 87, 255, 0.3);
+      border-radius: 18px;
+      padding: 12px 18px;
+    }
+    .sd-left { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .sd-counter {
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #d7c6ff;
+    }
+    .fc-stage-row {
+      display: grid;
+      grid-template-columns: 56px 1fr 56px;
+      gap: 18px;
+      align-items: center;
+      max-width: 960px;
+      margin: 18px auto 0 auto;
+    }
+    .circle-nav-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(24, 28, 68, 0.92);
+      border: 1.5px solid rgba(137, 87, 255, 0.45);
+      color: #ffffff;
+      font-size: 1.7rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .giant-flashcard {
+      position: relative;
+      background: linear-gradient(145deg, #f4ead5 0%, #ede0c8 100%);
+      color: #161332;
+      border-radius: 24px;
+      padding: 34px 38px;
+      min-height: 290px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow:
+        0 14px 0 rgba(215, 198, 255, 0.22),
+        0 24px 48px rgba(4, 5, 16, 0.65);
+      transition: transform 0.2s ease;
+    }
+    .giant-flashcard:hover {
+      transform: translateY(-3px);
+    }
+    .fc-main-center {
+      text-align: center;
+      padding: 24px 12px;
+    }
+    .fc-center-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+    }
+    .flip-main-btn {
+      min-width: 180px;
+      font-size: 1.05rem !important;
+    }
     .fc-hint-strip {
-      background: rgba(255, 255, 255, 0.7);
-      border: 2px solid #9d7eff;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1.5px solid rgba(137, 87, 255, 0.35);
       padding: 10px 16px;
-      border-radius: 16px;
+      border-radius: 14px;
       font-size: 0.9rem;
-      font-weight: 600;
+      font-weight: 700;
     }
     .fc-answer-highlight {
       background: #15193B;

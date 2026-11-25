@@ -20,21 +20,17 @@
 
 ion-content {
   --background: transparent;
-  background-color: #0f132e;
+  background-color: #0b0e24;
   background-image:
-    /* Halos de luz lavanda y violeta */
-    radial-gradient(circle at 15% 15%, rgba(155, 123, 255, 0.24) 0%, transparent 40%),
-    radial-gradient(circle at 85% 12%, rgba(196, 173, 255, 0.2) 0%, transparent 38%),
-    radial-gradient(circle at 50% 88%, rgba(124, 93, 250, 0.2) 0%, transparent 45%),
-    /* Constelación de estrellas estilo ilustración */
-    radial-gradient(2.5px 2.5px at 60px 45px, #e9e0ff 80%, transparent),
+    radial-gradient(circle at 82% 10%, rgba(124, 93, 250, 0.28) 0%, transparent 45%),
+    radial-gradient(circle at 15% 22%, rgba(92, 225, 230, 0.10) 0%, transparent 38%),
+    radial-gradient(circle at 50% 90%, rgba(139, 92, 246, 0.20) 0%, transparent 48%),
+    radial-gradient(2px 2px at 60px 45px, #e9e0ff 80%, transparent),
     radial-gradient(2px 2px at 220px 95px, #ffd166 80%, transparent),
-    radial-gradient(3px 3px at 420px 35px, #d7c6ff 80%, transparent),
+    radial-gradient(2.5px 2.5px at 420px 35px, #d7c6ff 80%, transparent),
     radial-gradient(2px 2px at 680px 75px, #ffffff 80%, transparent),
-    radial-gradient(2.5px 2.5px at 920px 48px, #ffd166 80%, transparent),
-    radial-gradient(2px 2px at 1140px 110px, #e9e0ff 80%, transparent),
-    radial-gradient(2.5px 2.5px at 140px 420px, #c4b5fd 80%, transparent),
-    radial-gradient(2px 2px at 1050px 520px, #ffd166 80%, transparent);
+    radial-gradient(2px 2px at 920px 48px, #ffd166 80%, transparent),
+    radial-gradient(2px 2px at 1140px 110px, #e9e0ff 80%, transparent);
   background-attachment: fixed;
 }
 
@@ -48,90 +44,96 @@ code, pre, .font-mono {
 }
 
 ion-toolbar {
-  --background: rgba(17, 22, 52, 0.95) !important;
+  --background: rgba(13, 16, 40, 0.92) !important;
   --color: #ffffff !important;
-  border-bottom: 2px solid rgba(186, 164, 255, 0.3);
+  border-bottom: 1.5px solid rgba(167, 139, 250, 0.25);
+  backdrop-filter: blur(10px);
 }
 
 /* ============================================================================
-   COMPONENTES GLOBALES DEL ESTILO ILUSTRADO
+   COMPONENTES GLOBALES DEL ESTILO CÓSMICO UNIFICADO
    ============================================================================ */
 
-/* Contenedor Azul Noche con Borde Lavanda Brillante (como las cajas del dashboard) */
 .cyber-glass-card, .cielo-dark-panel {
-  background: linear-gradient(180deg, #1b224b 0%, #131838 100%);
-  border: 2.5px solid rgba(167, 142, 252, 0.42);
-  border-radius: 28px;
+  background: rgba(22, 25, 62, 0.86);
+  border: 1.5px solid rgba(167, 139, 250, 0.3);
+  border-radius: 20px;
   box-shadow:
-    0 16px 36px -8px rgba(4, 6, 18, 0.78),
-    0 0 24px -4px rgba(139, 108, 246, 0.25),
-    inset 0 2px 0 rgba(255, 255, 255, 0.12);
+    0 14px 32px -10px rgba(4, 6, 18, 0.72),
+    0 0 22px -6px rgba(124, 93, 250, 0.22);
+  backdrop-filter: blur(8px);
   position: relative;
 }
 
-/* Tarjeta Lavanda Pastel Ilustrada (protagonista) */
 .cielo-lavender-card {
-  background: linear-gradient(180deg, #efeaff 0%, #d9cbff 100%);
-  border: 3px solid #9d7eff;
-  border-radius: 26px;
+  background: linear-gradient(135deg, #f4ead5 0%, #e4dcff 100%);
+  border: 2px solid rgba(167, 139, 250, 0.55);
+  border-radius: 20px;
   color: #191538;
-  box-shadow:
-    0 14px 30px -6px rgba(8, 10, 28, 0.65),
-    0 0 24px -4px rgba(157, 126, 255, 0.45),
-    inset 0 3px 0 rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 28px -8px rgba(8, 10, 28, 0.55);
+}
+.cielo-lavender-card .katex {
+  color: #191538 !important;
 }
 
-/* Banner Hero Lavanda con borde cartoon */
+/* Banner Hero Cósmico Unificado (igual a la referencia visual en todas las pantallas) */
 .cielo-hero-banner {
-  background: linear-gradient(135deg, #e5dbff 0%, #cfbfff 50%, #ece4ff 100%);
-  border: 3.5px solid #9c7dff;
-  border-radius: 34px;
-  color: #191538;
+  background: radial-gradient(circle at 85% 20%, rgba(124, 93, 250, 0.36) 0%, rgba(22, 25, 62, 0.92) 60%);
+  border: 1.5px solid rgba(167, 139, 250, 0.38);
+  border-radius: 22px;
+  color: #ffffff;
   box-shadow:
-    0 18px 40px -8px rgba(6, 8, 24, 0.75),
-    0 0 32px -4px rgba(156, 125, 255, 0.5),
-    inset 0 3px 0 rgba(255, 255, 255, 0.9);
+    0 16px 36px -10px rgba(6, 8, 24, 0.75),
+    0 0 28px -6px rgba(124, 93, 250, 0.35);
   position: relative;
   overflow: hidden;
 }
+.cielo-hero-banner h1,
+.cielo-hero-banner h2,
+.cielo-hero-banner h3 {
+  color: #ffffff !important;
+}
+.cielo-hero-banner p,
+.cielo-hero-banner .sub,
+.cielo-hero-banner span:not(.pill-purple):not(.pill-gold) {
+  color: #d7c6ff;
+}
 
-/* Píldora de título de sección lavanda (ej. "Unidades del Programa") */
 .cielo-section-pill {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(90deg, #e3d8ff 0%, #cbb8ff 100%);
-  border: 2.5px solid #9d7eff;
-  color: #191538;
-  padding: 7px 22px;
+  background: rgba(124, 93, 250, 0.22);
+  border: 1.5px solid rgba(196, 181, 253, 0.4);
+  color: #ffffff;
+  padding: 7px 20px;
   border-radius: 99px;
   font-family: 'Baloo 2', sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  box-shadow: 0 8px 20px -4px rgba(140, 109, 247, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.8);
 }
 
-/* Botón Violeta Cartoon 3D */
+/* Botón Violeta Brillante Unificado */
 .cielo-btn-purple, .cyber-btn-primary {
-  background: linear-gradient(180deg, #9f82ff 0%, #7c5dfa 100%) !important;
+  background: linear-gradient(90deg, #7c5dfa 0%, #9b7bf7 100%) !important;
   color: #ffffff !important;
-  border: 2px solid #c8b6ff !important;
-  border-radius: 18px !important;
-  padding: 11px 22px !important;
+  border: 1.5px solid rgba(215, 198, 255, 0.45) !important;
+  border-radius: 99px !important;
+  padding: 10px 22px !important;
   font-family: 'Baloo 2', sans-serif !important;
   font-weight: 800 !important;
-  font-size: 0.98rem !important;
+  font-size: 0.95rem !important;
   cursor: pointer;
-  box-shadow: 0 6px 0 #4c32b8, 0 10px 20px rgba(124, 93, 250, 0.45) !important;
+  box-shadow: 0 6px 18px rgba(124, 93, 250, 0.45) !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
 .cielo-btn-purple:hover, .cyber-btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 0 #4c32b8, 0 14px 26px rgba(124, 93, 250, 0.6) !important;
+  box-shadow: 0 10px 24px rgba(124, 93, 250, 0.62) !important;
 }
 .cielo-btn-purple:active, .cyber-btn-primary:active {
-  transform: translateY(3px);
-  box-shadow: 0 3px 0 #4c32b8, 0 6px 12px rgba(124, 93, 250, 0.4) !important;
+  transform: translateY(1px);
+  box-shadow: 0 4px 12px rgba(124, 93, 250, 0.4) !important;
 }
 
 /* Caja de Fórmulas estilo Pizarrón Ilustrado */

@@ -1045,5 +1045,347 @@ export const FORMULA_DERIVATIONS: FormulaDerivation[] = [
         formulaLatex: '\\oint \\vec{B}\\cdot d\\vec{l} = \\mu_0\\left(I_c + \\varepsilon_0\\frac{d\\Phi_E}{dt}\\right)'
       }
     ]
+  },
+
+  // =========================================================================
+  // DEMOSTRACIONES ADICIONALES — COBERTURA TOTAL DE FÓRMULAS (U1 A U9)
+  // =========================================================================
+  {
+    id: 'u1-ley-coulomb',
+    unitNumber: 1,
+    unitTitle: 'Unidad 1: Carga y Campo Eléctrico',
+    title: 'Ley de Coulomb y Constante k = 1/(4πε₀)',
+    subtitle: 'Origen experimental en la balanza de torsión y forma vectorial exacta',
+    targetFormulaLatex: '\\vec{F}_{12} = \\frac{1}{4\\pi\\varepsilon_0}\\frac{q_1\\,q_2}{r^2}\\hat{r}_{12}',
+    physicalMeaning: 'Cuantifica la fuerza de atracción o repulsión entre dos cargas puntuales en el vacío a lo largo de la recta que las une.',
+    diagramCaption: 'Dos cargas q₁ y q₂ separadas distancia r con fuerzas iguales y opuestas.',
+    svgKey: 'coulomb-field',
+    examTip: 'La fuerza es vectorial: calculá el módulo con |q₁||q₂|/r² y asigná el sentido según los signos (se repelen si tienen igual signo).',
+    steps: [
+      { stepNumber: 1, title: 'Proporcionalidad con las cargas', explanation: 'En la balanza de torsión, Coulomb observó que al duplicar una carga la fuerza se duplica.', formulaLatex: 'F \\propto |q_1|\\,|q_2|' },
+      { stepNumber: 2, title: 'Ley del inverso del cuadrado', explanation: 'Al duplicar la distancia r, la fuerza cae a la cuarta parte por la geometría esférica 4πr².', formulaLatex: 'F \\propto \\frac{1}{r^2}' },
+      { stepNumber: 3, title: 'Constante de Coulomb en el vacío', explanation: 'Introducimos k = 1/(4πε₀) ≈ 8.99×10⁹ N·m²/C² para ajustar unidades al Sistema Internacional.', formulaLatex: 'k = \\frac{1}{4\\pi\\varepsilon_0} \\implies \\vec{F}_{12} = \\frac{1}{4\\pi\\varepsilon_0}\\frac{q_1 q_2}{r^2}\\hat{r}_{12}' }
+    ]
+  },
+  {
+    id: 'u1-distribucion-continua',
+    unitNumber: 1,
+    unitTitle: 'Unidad 1: Carga y Campo Eléctrico',
+    title: 'Campo de Distribución Continua de Carga',
+    subtitle: 'Paso de la sumatoria discreta de cargas a la integral con λ, σ y ρ',
+    targetFormulaLatex: '\\vec{E} = \\frac{1}{4\\pi\\varepsilon_0}\\int \\frac{dq}{r^2}\\hat{r} \\quad (dq = \\lambda\\,dl,\\;\\sigma\\,dA,\\;\\rho\\,dV)',
+    physicalMeaning: 'Cuando la carga está repartida de forma continua en un hilo, placa o volumen, dividimos el cuerpo en elementos diferenciales dq y sumamos (integramos) sus campos dE.',
+    diagramCaption: 'Elemento diferencial dq en un cuerpo continuo generando dE en el punto P.',
+    svgKey: 'coulomb-field',
+    examTip: 'Aprovechá siempre la simetría para cancelar componentes perpendiculares antes de integrar.',
+    steps: [
+      { stepNumber: 1, title: 'Elemento diferencial de campo dE', explanation: 'Un trocito infinitesimal de carga dq a distancia r produce un campo elemental:', formulaLatex: 'd\\vec{E} = \\frac{1}{4\\pi\\varepsilon_0}\\frac{dq}{r^2}\\hat{r}' },
+      { stepNumber: 2, title: 'Expresamos dq según la geometría', explanation: 'Usamos densidad lineal λ = dq/dl, superficial σ = dq/dA o volumétrica ρ = dq/dV.', formulaLatex: 'dq = \\lambda\\,dl \\quad | \\quad dq = \\sigma\\,dA \\quad | \\quad dq = \\rho\\,dV' },
+      { stepNumber: 3, title: 'Integramos sobre todo el cuerpo', explanation: 'Aplicamos el principio de superposición en forma integral por componentes:', formulaLatex: '\\vec{E} = \\int d\\vec{E} = \\frac{1}{4\\pi\\varepsilon_0}\\int \\frac{dq}{r^2}\\hat{r}' }
+    ]
+  },
+  {
+    id: 'u1-gauss-hilo-plano',
+    unitNumber: 1,
+    unitTitle: 'Unidad 1: Carga y Campo Eléctrico',
+    title: 'Campo de Hilo y Plano Infinito (Gauss)',
+    subtitle: 'Simetría cilíndrica para línea infinita y simetría planar para lámina',
+    targetFormulaLatex: 'E_{\\text{hilo}} = \\frac{\\lambda}{2\\pi\\varepsilon_0\\,r}, \\qquad E_{\\text{plano}} = \\frac{\\sigma}{2\\varepsilon_0}',
+    physicalMeaning: 'En un hilo infinito el campo decae como 1/r; en un plano infinito el campo es completamente uniforme e independiente de la distancia.',
+    diagramCaption: 'Superficie gaussiana cilíndrica para hilo infinito y caja para plano.',
+    svgKey: 'gauss-sphere',
+    examTip: 'Para un conductor plano con dos caras o placas paralelas, no confundas σ/(2ε₀) de una lámina aislante con σ/ε₀.',
+    steps: [
+      { stepNumber: 1, title: 'Hilo infinito: cilindro gaussiano de radio r y largo L', explanation: 'Las tapas no tienen flujo (E ⟂ dA). Solo contribuye la cara lateral de área 2πrL:', formulaLatex: 'E\\,(2\\pi r L) = \\frac{\\lambda L}{\\varepsilon_0} \\implies E_{\\text{hilo}} = \\frac{\\lambda}{2\\pi\\varepsilon_0\\,r}' },
+      { stepNumber: 2, title: 'Plano infinito: cilindro/caja atravesando la lámina', explanation: 'El flujo sale por ambas tapas de área A en sentidos opuestos (2·E·A) encerrando carga σA:', formulaLatex: '2\\,E\\,A = \\frac{\\sigma\\,A}{\\varepsilon_0} \\implies E_{\\text{plano}} = \\frac{\\sigma}{2\\varepsilon_0}' }
+    ]
+  },
+  {
+    id: 'u2-potencial-puntual',
+    unitNumber: 2,
+    unitTitle: 'Unidad 2: Potencial Eléctrico',
+    title: 'Potencial de Carga Puntual y Superposición',
+    subtitle: 'Integración de E(r) desde r hasta el infinito',
+    targetFormulaLatex: 'V(r) = \\frac{1}{4\\pi\\varepsilon_0}\\frac{q}{r}, \\qquad V_{\\text{total}} = \\frac{1}{4\\pi\\varepsilon_0}\\sum \\frac{q_i}{r_i}',
+    physicalMeaning: 'El potencial es un escalar (no vector): en un punto P se suman algebraicamente los aportes de cada carga con su signo.',
+    diagramCaption: 'Potencial V(r) decayendo como 1/r respecto a la carga fuente q.',
+    svgKey: 'potential-energy',
+    examTip: 'Aunque el campo E sea cero en un punto (ej. punto medio entre dos cargas iguales), el potencial V NO tiene por qué ser cero.',
+    steps: [
+      { stepNumber: 1, title: 'Integral desde r hasta infinito (V(∞)=0)', explanation: 'Usando V(r) - V(∞) = ∫_r^∞ E·dr:', formulaLatex: 'V(r) = \\int_r^{\\infty} \\frac{k\\,q}{r\'^2}\\,dr\' = k\\,q\\left[-\\frac{1}{r\'}\\right]_r^{\\infty} = \\frac{1}{4\\pi\\varepsilon_0}\\frac{q}{r}' },
+      { stepNumber: 2, title: 'Principio de superposición escalar', explanation: 'Para N cargas puntuales sumamos los potenciales individuales respetando signos:', formulaLatex: 'V = \\sum_{i=1}^N V_i = \\frac{1}{4\\pi\\varepsilon_0}\\sum_{i=1}^N \\frac{q_i}{r_i}' }
+    ]
+  },
+  {
+    id: 'u2-energia-sistema',
+    unitNumber: 2,
+    unitTitle: 'Unidad 2: Potencial Eléctrico',
+    title: 'Energía Potencial de un Sistema de Cargas',
+    subtitle: 'Trabajo total de armado trayendo cada carga desde el infinito',
+    targetFormulaLatex: 'U_{\\text{sistema}} = \\frac{1}{4\\pi\\varepsilon_0}\\sum_{i < j} \\frac{q_i\\,q_j}{r_{ij}}',
+    physicalMeaning: 'Representa la energía necesaria para ensamblar un conjunto discreto de cargas sin contar pares repetidos.',
+    diagramCaption: 'Pares de interacción (i < j) entre tres o más cargas puntuales.',
+    svgKey: 'potential-energy',
+    examTip: 'Para 3 cargas hay 3 pares: U = U₁₂ + U₁₃ + U₂₃.',
+    steps: [
+      { stepNumber: 1, title: 'Traemos q₁, luego q₂, luego q₃', explanation: 'Traer q₁ sola cuesta 0. Traer q₂ cuesta kq₁q₂/r₁₂. Traer q₃ cuesta kq₁q₃/r₁₃ + kq₂q₃/r₂₃.', formulaLatex: 'U = W_1 + W_2 + W_3 = k\\left(\\frac{q_1 q_2}{r_{12}} + \\frac{q_1 q_3}{r_{13}} + \\frac{q_2 q_3}{r_{23}}\\right)' },
+      { stepNumber: 2, title: 'Forma general sin repetir pares', explanation: 'Generalizando para N cargas (i < j):', formulaLatex: 'U = \\frac{1}{4\\pi\\varepsilon_0}\\sum_{i < j} \\frac{q_i\\,q_j}{r_{ij}}' }
+    ]
+  },
+  {
+    id: 'u3-serie-paralelo',
+    unitNumber: 3,
+    unitTitle: 'Unidad 3: Capacitancia',
+    title: 'Capacitores en Serie y en Paralelo',
+    subtitle: 'Conservación de carga en serie e igualdad de potencial en paralelo',
+    targetFormulaLatex: '\\frac{1}{C_{\\text{serie}}} = \\sum \\frac{1}{C_i}, \\qquad C_{\\text{paralelo}} = \\sum C_i',
+    physicalMeaning: 'En serie almacenan la misma carga Q y reparten voltaje; en paralelo comparten el mismo voltaje V y suman cargas.',
+    diagramCaption: 'Comparación de asociación de capacitores en serie y paralelo.',
+    svgKey: 'parallel-capacitor',
+    examTip: 'Las reglas de capacitores son exactamente opuestas a las de resistores.',
+    steps: [
+      { stepNumber: 1, title: 'En Serie: misma carga Q, se suman voltajes', explanation: 'V = V₁ + V₂ = Q/C₁ + Q/C₂ = Q/C_eq:', formulaLatex: '\\frac{1}{C_{\\text{serie}}} = \\frac{1}{C_1} + \\frac{1}{C_2} + \\dots' },
+      { stepNumber: 2, title: 'En Paralelo: mismo voltaje V, se suman cargas', explanation: 'Q = Q₁ + Q₂ = C₁V + C₂V = C_eq·V:', formulaLatex: 'C_{\\text{paralelo}} = C_1 + C_2 + \\dots' }
+    ]
+  },
+  {
+    id: 'u3-desplazamiento-polarizacion',
+    unitNumber: 3,
+    unitTitle: 'Unidad 3: Capacitancia',
+    title: 'Vectores Polarización P y Desplazamiento D',
+    subtitle: 'Ley de Gauss en medios dieléctricos lineales',
+    targetFormulaLatex: '\\vec{D} = \\varepsilon_0\\vec{E} + \\vec{P} = \\varepsilon\\vec{E}, \\qquad \\oint \\vec{D}\\cdot d\\vec{A} = Q_{\\text{libre}}',
+    physicalMeaning: 'El vector D depende únicamente de las cargas libres que colocamos en las placas, absorbiendo el efecto de las cargas ligadas de polarización.',
+    diagramCaption: 'Dipolos inducidos P en el dieléctrico y vector D.',
+    svgKey: 'dielectric-capacitor',
+    examTip: 'D siempre apunta en el mismo sentido que E en dieléctricos isotrópicos lineales: D = κε₀E.',
+    steps: [
+      { stepNumber: 1, title: 'Carga ligada y vector Polarización P', explanation: 'La densidad superficial de carga ligada en la cara del dieléctrico vale σ_b = P = χ_e ε₀ E.', formulaLatex: 'E = \\frac{\\sigma_{\\text{libre}} - \\sigma_b}{\\varepsilon_0} = \\frac{\\sigma_{\\text{libre}} - P}{\\varepsilon_0}' },
+      { stepNumber: 2, title: 'Definición del vector Desplazamiento D', explanation: 'Pasando ε₀ multiplicando y agrupando ε₀E + P:', formulaLatex: '\\vec{D} = \\varepsilon_0\\vec{E} + \\vec{P} = \\varepsilon_0(1 + \\chi_e)\\vec{E} = \\kappa\\varepsilon_0\\vec{E} = \\varepsilon\\vec{E}' }
+    ]
+  },
+  {
+    id: 'u4-resistencia-temperatura',
+    unitNumber: 4,
+    unitTitle: 'Unidad 4: Corriente y Resistencia',
+    title: 'Variación de Resistividad y Resistencia con T',
+    subtitle: 'Dependencia lineal térmica en conductores metálicos',
+    targetFormulaLatex: '\\rho(T) = \\rho_0\\left[1 + \\alpha(T - T_0)\\right], \\qquad R(T) = R_0\\left[1 + \\alpha(T - T_0)\\right]',
+    physicalMeaning: 'Al subir la temperatura, los iones de la red vibran más, aumentando los choques con los electrones y elevando la resistencia.',
+    diagramCaption: 'Conductor incrementando su resistividad al elevar la temperatura T.',
+    svgKey: 'ohm-microscopic',
+    examTip: 'En metales α > 0; en semiconductores α < 0 (su resistencia baja al calentarse).',
+    steps: [
+      { stepNumber: 1, title: 'Aproximación lineal alrededor de T₀ (20 °C)', explanation: 'Experimentalmente la variación fraccionaria Δρ/ρ₀ es proporcional al cambio de temperatura ΔT:', formulaLatex: '\\frac{\\rho - \\rho_0}{\\rho_0} = \\alpha\\,(T - T_0)' },
+      { stepNumber: 2, title: 'Despeje para ρ(T) y R(T)', explanation: 'Como R = ρ·L/A, multiplicando por L/A obtenemos la misma ley para R:', formulaLatex: 'R(T) = R_0\\left[1 + \\alpha(T - T_0)\\right]' }
+    ]
+  },
+  {
+    id: 'u4-modelo-drude',
+    unitNumber: 4,
+    unitTitle: 'Unidad 4: Corriente y Resistencia',
+    title: 'Modelo de Drude: Conductividad y Tiempo Libre τ',
+    subtitle: 'Deducción microscópica de ρ = m / (n·e²·τ)',
+    targetFormulaLatex: '\\sigma = \\frac{n\\,e^2\\,\\tau}{m}, \\qquad \\rho = \\frac{m}{n\\,e^2\\,\\tau}',
+    physicalMeaning: 'Explica por qué los materiales cumplen la Ley de Ohm a partir de la aceleración entre colisiones de los electrones libres.',
+    diagramCaption: 'Electrones acelerados por E sufriendo colisiones cada tiempo medio τ.',
+    svgKey: 'drift-current',
+    examTip: 'A mayor tiempo medio entre choques τ, mayor conductividad σ y menor resistividad ρ.',
+    steps: [
+      { stepNumber: 1, title: 'Velocidad de arrastre por aceleración en tiempo τ', explanation: 'La fuerza eléctrica F = eE produce aceleración a = eE/m durante el tiempo medio libre τ:', formulaLatex: 'v_d = a\\,\\tau = \\frac{e\\,E}{m}\\tau' },
+      { stepNumber: 2, title: 'Sustituimos en J = n·e·v_d', explanation: 'Comparando con J = σ·E identificamos σ y su inversa ρ:', formulaLatex: 'J = n\\,e\\left(\\frac{e\\,E}{m}\\tau\\right) = \\left(\\frac{n\\,e^2\\,\\tau}{m}\\right)E \\implies \\rho = \\frac{m}{n\\,e^2\\,\\tau}' }
+    ]
+  },
+  {
+    id: 'u5-fem-interna',
+    unitNumber: 5,
+    unitTitle: 'Unidad 5: Circuitos Eléctricos',
+    title: 'FEM y Voltaje en Bornes con Resistencia Interna r',
+    subtitle: 'Diferencia entre fem ideal ε y voltaje real V_ab',
+    targetFormulaLatex: 'V_{ab} = \\varepsilon - I\\,r, \\qquad I = \\frac{\\varepsilon}{R + r}',
+    physicalMeaning: 'Toda batería real tiene resistencia interna r; cuando entrega corriente I, parte del voltaje se pierde internamente.',
+    diagramCaption: 'Fuente real (ε en serie con r) conectada a resistencia de carga R.',
+    svgKey: 'kirchhoff-resistors',
+    examTip: 'A circuito abierto (I = 0), V_ab = ε. Si la batería se está cargando, V_ab = ε + I·r.',
+    steps: [
+      { stepNumber: 1, title: 'Malla completa de Kirchhoff', explanation: 'Sumamos la subida ε y las caídas en r y R:', formulaLatex: '\\varepsilon - I\\,r - I\\,R = 0 \\implies I = \\frac{\\varepsilon}{R + r}' },
+      { stepNumber: 2, title: 'Voltaje en bornes de la batería', explanation: 'Entre los terminales a y b queda la diferencia:', formulaLatex: 'V_{ab} = I\\,R = \\varepsilon - I\\,r' }
+    ]
+  },
+  {
+    id: 'u5-potencia-maxima',
+    unitNumber: 5,
+    unitTitle: 'Unidad 5: Circuitos Eléctricos',
+    title: 'Teorema de Máxima Transferencia de Potencia',
+    subtitle: 'Condición R = r para máxima potencia en la carga',
+    targetFormulaLatex: 'P_R = \\frac{\\varepsilon^2 R}{(R + r)^2} \\implies P_{\\text{máx}} = \\frac{\\varepsilon^2}{4r} \\; (R = r)',
+    physicalMeaning: 'La potencia entregada a la resistencia externa R es máxima cuando la carga iguala la resistencia interna de la fuente.',
+    diagramCaption: 'Potencia en R alcanzando su máximo en R = r.',
+    svgKey: 'joule-power',
+    examTip: 'Se demuestra derivando dP_R/dR = 0.',
+    steps: [
+      { stepNumber: 1, title: 'Potencia disipada en la carga R', explanation: 'Sustituimos I = ε/(R+r) en P = I²R:', formulaLatex: 'P_R(R) = \\frac{\\varepsilon^2 R}{(R + r)^2}' },
+      { stepNumber: 2, title: 'Derivamos respecto a R e igualamos a cero', explanation: 'Por regla del cociente el numerador se anula cuando (R+r)² - 2R(R+r) = 0:', formulaLatex: '(R + r) - 2R = 0 \\implies R = r \\implies P_{\\text{máx}} = \\frac{\\varepsilon^2}{4r}' }
+    ]
+  },
+  {
+    id: 'u6-efecto-hall',
+    unitNumber: 6,
+    unitTitle: 'Unidad 6: Campo Magnético',
+    title: 'Efecto Hall y Voltaje Hall',
+    subtitle: 'Equilibrio transversal entre fuerza eléctrica y magnética en un conductor',
+    targetFormulaLatex: 'V_H = \\frac{I\\,B}{n\\,|q|\\,t} = v_d\\,B\\,w',
+    physicalMeaning: 'Permite medir el signo de los portadores de carga, su concentración n y la intensidad del campo magnético B.',
+    diagramCaption: 'Lámina conductora de ancho w y espesor t en campo B transversal.',
+    svgKey: 'velocity-selector',
+    examTip: 'El signo del voltaje Hall revela si conducen electrones (-) o huecos (+).',
+    steps: [
+      { stepNumber: 1, title: 'Equilibrio de fuerzas transversales', explanation: 'La acumulación lateral de cargas crea un campo Hall E_H = V_H/w que equilibra la fuerza magnética:', formulaLatex: '|q|\\,E_H = |q|\\,v_d\\,B \\implies \\frac{V_H}{w} = v_d\\,B \\implies V_H = v_d\\,B\\,w' },
+      { stepNumber: 2, title: 'Sustituimos v_d = I / (n·|q|·w·t)', explanation: 'Usando A = w·t obtenemos la expresión práctica:', formulaLatex: 'V_H = \\frac{I\\,B}{n\\,|q|\\,t}' }
+    ]
+  },
+  {
+    id: 'u6-espectrometro-masas',
+    unitNumber: 6,
+    unitTitle: 'Unidad 6: Campo Magnético',
+    title: 'Espectrómetro de Masas (Bainbridge)',
+    subtitle: 'Separación de isótopos combinando selector de velocidades y cámara magnética',
+    targetFormulaLatex: 'm = \\frac{q\\,B\\,B_0\\,r}{E} = \\frac{q\\,r^2\\,B^2}{2\\,\\Delta V}',
+    physicalMeaning: 'Iones de distinta masa ingresan con igual velocidad y describen semicírculos de radios proporcionales a su masa m.',
+    diagramCaption: 'Trayectoria semicircular de radio r impactando en detector.',
+    svgKey: 'cyclotron-radius',
+    examTip: 'A igual carga q y velocidad v, el radio r es directamente proporcional a la masa m.',
+    steps: [
+      { stepNumber: 1, title: 'Velocidad fijada por el selector (v = E/B₀) o acelerador', explanation: 'Si se acelera por ΔV: ½mv² = qΔV.', formulaLatex: 'v = \\frac{E}{B_0}' },
+      { stepNumber: 2, title: 'Semicírculo en campo B', explanation: 'Reemplazando v en r = mv/(qB) despejamos la masa:', formulaLatex: 'm = \\frac{q\\,B\\,r}{v} = \\frac{q\\,B\\,B_0\\,r}{E}' }
+    ]
+  },
+  {
+    id: 'u7-fuerza-alambres-paralelos',
+    unitNumber: 7,
+    unitTitle: 'Unidad 7: Fuentes de Campo Magnético',
+    title: 'Fuerza entre Dos Alambres Paralelos',
+    subtitle: 'Base de la definición del Ampere en el SI',
+    targetFormulaLatex: '\\frac{F}{L} = \\frac{\\mu_0\\,I_1\\,I_2}{2\\pi\\,d}',
+    physicalMeaning: 'Corrientes en el mismo sentido se atraen; corrientes en sentidos opuestos se repelen.',
+    diagramCaption: 'Dos cables paralelos a distancia d con corrientes I₁ e I₂.',
+    svgKey: 'biot-savart-wire',
+    examTip: '¡No lo confundas con cargas! Corrientes paralelas de igual sentido SE ATRAEN.',
+    steps: [
+      { stepNumber: 1, title: 'Campo B₁ creado por el cable 1 sobre el cable 2', explanation: 'A distancia d, el primer cable genera:', formulaLatex: 'B_1 = \\frac{\\mu_0\\,I_1}{2\\pi\\,d}' },
+      { stepNumber: 2, title: 'Fuerza sobre el tramo L del cable 2', explanation: 'Como B₁ es perpendicular al cable 2, F = I₂·L·B₁:', formulaLatex: 'F = I_2\\,L\\left(\\frac{\\mu_0\\,I_1}{2\\pi\\,d}\\right) \\implies \\frac{F}{L} = \\frac{\\mu_0\\,I_1\\,I_2}{2\\pi\\,d}' }
+    ]
+  },
+  {
+    id: 'u7-ampere-toroide',
+    unitNumber: 7,
+    unitTitle: 'Unidad 7: Fuentes de Campo Magnético',
+    title: 'Campo Magnético de un Toroide (Ampère)',
+    subtitle: 'Circulación sobre circunferencia interior de radio r',
+    targetFormulaLatex: 'B(r) = \\frac{\\mu_0\\,N\\,I}{2\\pi\\,r}',
+    physicalMeaning: 'En un toroide todo el campo queda confinado en el núcleo, pero a diferencia del solenoide recto, B varía con 1/r.',
+    diagramCaption: 'Lazo amperiano circular de radio r dentro de la rosquilla toroidal.',
+    svgKey: 'ampere-solenoid',
+    examTip: 'Fuera del toroide (r < r_int o r > r_ext) I_enc neta es 0, por lo que B = 0.',
+    steps: [
+      { stepNumber: 1, title: 'Circulación en círculo concéntrico de radio r', explanation: 'Por simetría axial B es tangente y constante sobre el círculo 2πr:', formulaLatex: '\\oint \\vec{B}\\cdot d\\vec{l} = B\\,(2\\pi r)' },
+      { stepNumber: 2, title: 'Corriente encerrada N·I y despeje', explanation: 'Igualando a μ₀·N·I:', formulaLatex: 'B\\,(2\\pi r) = \\mu_0\\,N\\,I \\implies B = \\frac{\\mu_0\\,N\\,I}{2\\pi\\,r}' }
+    ]
+  },
+  {
+    id: 'u8-generador-ca',
+    unitNumber: 8,
+    unitTitle: 'Unidad 8: Ley de Faraday',
+    title: 'Generador de Corriente Alterna',
+    subtitle: 'Espira giratoria a velocidad angular ω en campo B uniforme',
+    targetFormulaLatex: '\\varepsilon(t) = N\\,B\\,A\\,\\omega\\,\\sin(\\omega t) = \\varepsilon_{\\text{máx}}\\sin(\\omega t)',
+    physicalMeaning: 'Convierte energía mecánica de rotación en voltaje alterno sinusoidal variando el ángulo θ = ωt del flujo magnético.',
+    diagramCaption: 'Bobina rotando con frecuencia angular ω dentro de B uniforme.',
+    svgKey: 'faraday-integral',
+    examTip: 'La fem es máxima cuando el flujo magnético Φ_B pasa por cero (θ = 90°).',
+    steps: [
+      { stepNumber: 1, title: 'Flujo magnético en función del tiempo', explanation: 'Con θ = ωt, el flujo en N espiras es:', formulaLatex: '\\Phi_B(t) = B\\,A\\,\\cos(\\omega t)' },
+      { stepNumber: 2, title: 'Derivamos según Faraday-Lenz', explanation: 'Aplicando ε = -N·dΦ_B/dt:', formulaLatex: '\\varepsilon(t) = -N\\frac{d}{dt}[B\\,A\\,\\cos(\\omega t)] = N\\,B\\,A\\,\\omega\\,\\sin(\\omega t)' }
+    ]
+  },
+  {
+    id: 'u8-inductancia-mutua',
+    unitNumber: 8,
+    unitTitle: 'Unidad 8: Ley de Faraday',
+    title: 'Inductancia Mutua M entre Dos Bobinas',
+    subtitle: 'Base del transformador y acoplamiento magnético',
+    targetFormulaLatex: 'M = \\frac{N_2\\,\\Phi_{21}}{I_1} = \\frac{N_1\\,\\Phi_{12}}{I_2}, \\qquad \\varepsilon_2 = -M\\frac{dI_1}{dt}',
+    physicalMeaning: 'Una corriente variable en la bobina 1 induce una fem en la bobina 2 vecina; M depende solo de la geometría mutua.',
+    diagramCaption: 'Dos bobinas acopladas compartiendo flujo magnético.',
+    svgKey: 'faraday-integral',
+    examTip: 'M es simétrica (M₁₂ = M₂₁ = M) y cumple M ≤ √(L₁·L₂).',
+    steps: [
+      { stepNumber: 1, title: 'Proporcionalidad del flujo mutuo con I₁', explanation: 'El flujo en la bobina 2 debido a la bobina 1 es proporcional a I₁: N₂Φ₂₁ = M·I₁.', formulaLatex: 'M = \\frac{N_2\\,\\Phi_{21}}{I_1}' },
+      { stepNumber: 2, title: 'Aplicamos la Ley de Faraday en la bobina 2', explanation: 'Derivando respecto al tiempo:', formulaLatex: '\\varepsilon_2 = -N_2\\frac{d\\Phi_{21}}{dt} = -M\\frac{dI_1}{dt}' }
+    ]
+  },
+  {
+    id: 'u9-circuito-rl',
+    unitNumber: 9,
+    unitTitle: 'Unidad 9: Inductancia y Maxwell',
+    title: 'Circuito RL (Crecimiento y Decaimiento de I)',
+    subtitle: 'Constante de tiempo inductiva τ_L = L / R',
+    targetFormulaLatex: 'i(t) = \\frac{\\varepsilon}{R}\\left(1 - e^{-t/(L/R)}\\right), \\qquad i_{\\text{desc}}(t) = I_0\\,e^{-t/(L/R)}',
+    physicalMeaning: 'El inductor se opone a los cambios bruscos de corriente, haciendo que i(t) crezca o decaiga exponencialmente con τ = L/R.',
+    diagramCaption: 'Curva exponencial de corriente en circuito RL con τ_L = L/R.',
+    svgKey: 'rc-charge',
+    examTip: 'En t = 0 al cerrar la llave, el inductor actúa como circuito abierto (i = 0); en t → ∞ actúa como cable (di/dt = 0).',
+    steps: [
+      { stepNumber: 1, title: 'Ecuación de malla RL', explanation: 'Sumamos fem, caída en R y fem autoinducida L(di/dt):', formulaLatex: '\\varepsilon - i\\,R - L\\frac{di}{dt} = 0' },
+      { stepNumber: 2, title: 'Separamos variables e integramos desde i(0)=0', explanation: 'Integrando con constante τ_L = L/R:', formulaLatex: 'i(t) = \\frac{\\varepsilon}{R}\\left(1 - e^{-t/\\tau_L}\\right), \\qquad \\tau_L = \\frac{L}{R}' }
+    ]
+  },
+  {
+    id: 'u9-circuito-lc',
+    unitNumber: 9,
+    unitTitle: 'Unidad 9: Inductancia y Maxwell',
+    title: 'Oscilaciones en Circuito LC',
+    subtitle: 'Intercambio armónico entre energía eléctrica U_E y magnética U_B',
+    targetFormulaLatex: '\\frac{d^2 q}{dt^2} + \\frac{1}{LC}q = 0 \\implies \\omega = \\frac{1}{\\sqrt{LC}}',
+    physicalMeaning: 'Sin resistencia, la energía oscila sin pérdidas entre el capacitor y el inductor de forma idéntica a un resorte-masa.',
+    diagramCaption: 'Oscilación armónica de carga q(t) y corriente i(t) en circuito LC.',
+    svgKey: 'rc-discharge',
+    examTip: 'Cuando q es máxima (i = 0), toda la energía está en C; cuando q = 0 (i máxima), toda la energía está en L.',
+    steps: [
+      { stepNumber: 1, title: 'Conservación de energía U_E + U_B = cte', explanation: 'Derivando d/dt [q²/(2C) + ½Li²] = 0 y usando i = dq/dt:', formulaLatex: 'L\\frac{d^2 q}{dt^2} + \\frac{q}{C} = 0 \\implies \\frac{d^2 q}{dt^2} = -\\frac{1}{LC}q' },
+      { stepNumber: 2, title: 'Solución armónica simple', explanation: 'Comparando con d²x/dt² = -ω²x obtenemos la frecuencia angular:', formulaLatex: 'q(t) = Q_{\\text{máx}}\\cos(\\omega t + \\phi), \\qquad \\omega = \\frac{1}{\\sqrt{LC}}' }
+    ]
+  },
+  {
+    id: 'u9-impedancia-rlc',
+    unitNumber: 9,
+    unitTitle: 'Unidad 9: Inductancia y Maxwell',
+    title: 'Impedancia Z y Resonancia en RLC Serie',
+    subtitle: 'Diagrama fasorial de reactancias X_L, X_C y resistencia R',
+    targetFormulaLatex: 'Z = \\sqrt{R^2 + (X_L - X_C)^2}, \\qquad \\tan\\phi = \\frac{X_L - X_C}{R}',
+    physicalMeaning: 'Generaliza la resistencia en corriente alterna combinando la oposición óhmica R con las reactancias inductiva (ωL) y capacitiva (1/ωC).',
+    diagramCaption: 'Triángulo fasorial de impedancias R, X_L - X_C y Z.',
+    svgKey: 'ohm-microscopic',
+    examTip: 'En resonancia X_L = X_C, por lo que Z = R (mínima), la corriente es máxima y φ = 0°.',
+    steps: [
+      { stepNumber: 1, title: 'Fasores de voltaje en serie', explanation: 'V_L adelanta 90° a I, V_C atrasa 90° a I y V_R está en fase con I.', formulaLatex: 'V_{\\text{máx}} = \\sqrt{V_R^2 + (V_L - V_C)^2} = I_{\\text{máx}}\\sqrt{R^2 + (X_L - X_C)^2}' },
+      { stepNumber: 2, title: 'Definición de Impedancia Z y ángulo de fase φ', explanation: 'Dividiendo por I_máx:', formulaLatex: 'Z = \\sqrt{R^2 + \\left(\\omega L - \\frac{1}{\\omega C}\\right)^2}, \\qquad \\cos\\phi = \\frac{R}{Z}' }
+    ]
+  },
+  {
+    id: 'u9-vector-poynting',
+    unitNumber: 9,
+    unitTitle: 'Unidad 9: Inductancia y Maxwell',
+    title: 'Vector de Poynting e Intensidad de Onda EM',
+    subtitle: 'Flujo de energía por unidad de área y tiempo en ondas electromagnéticas',
+    targetFormulaLatex: '\\vec{S} = \\frac{1}{\\mu_0}\\left(\\vec{E} \\times \\vec{B}\\right), \\qquad I = S_{\\text{prom}} = \\frac{E_{\\text{máx}}B_{\\text{máx}}}{2\\mu_0}',
+    physicalMeaning: 'Indica la dirección de propagación de la onda electromagnética y cuánta potencia transporta por metro cuadrado (W/m²).',
+    diagramCaption: 'Campos E y B perpendiculares propagando energía en dirección S = E × B.',
+    svgKey: 'ampere-maxwell',
+    examTip: 'En el vacío E = c·B y c = 1/√(μ₀ε₀), por lo que u_E = u_B y S = c·u_total.',
+    steps: [
+      { stepNumber: 1, title: 'Densidad de energía total u en un frente de onda', explanation: 'La energía por volumen es u = ½ε₀E² + B²/(2μ₀). Como E = cB, ambas mitades son iguales:', formulaLatex: 'u = \\varepsilon_0 E^2 = \\frac{E\\,B}{\\mu_0\\,c}' },
+      { stepNumber: 2, title: 'Flujo de energía S = (dU / A·dt) = c·u', explanation: 'En dt la onda avanza c·dt; multiplicando u por c y expresando dirección vectorial E × B:', formulaLatex: '\\vec{S} = \\frac{1}{\\mu_0}\\vec{E}\\times\\vec{B} \\implies I = \\langle S\\rangle = \\frac{E_{\\text{máx}}^2}{2\\mu_0\\,c}' }
+    ]
   }
 ];
